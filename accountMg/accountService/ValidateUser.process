@@ -1,0 +1,289 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:ns2="http://www.tibco.com/namespaces/tnt/plugins/json" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ns="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd14" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:pfx="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd12">
+    <xsd:import namespace="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd14" schemaLocation="/share_resources/schema_resources/AccountPOSchema.xsd"/>
+    <xsd:import namespace="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd12" schemaLocation="/share_resources/schema_resources/ConditionsSchema.xsd"/>
+    <pd:name>accountMg/accountService/ValidateUser.process</pd:name>
+    <pd:startName>Start</pd:startName>
+    <pd:startType ref="pfx:requestParams"/>
+    <pd:startX>110</pd:startX>
+    <pd:startY>75</pd:startY>
+    <pd:returnBindings>
+        <responseJsonStr>
+            <xsl:value-of select="if (count($AccUserPwdQuery/ns:accountResults/ns:accountObj)>0) then  concat(' {&quot;responseStatus&quot;:&quot;true&quot;, &quot;tokenInfo&quot;:&quot;',$SaveLoginInfo/javaCodeActivityOutput/tokenInfo,'&quot;}')  else  '{&quot;responseStatus&quot;:&quot;false&quot;}'"/>
+        </responseJsonStr>
+    </pd:returnBindings>
+    <pd:endName>End</pd:endName>
+    <pd:endType>
+        <xsd:element name="responseJsonStr" type="xsd:string"/>
+    </pd:endType>
+    <pd:endX>929</pd:endX>
+    <pd:endY>77</pd:endY>
+    <pd:errorSchemas/>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/1491693125913</pd:targetNamespace>
+    <pd:activity name="Parse JSON">
+        <pd:type>com.tibco.plugin.json.activities.JSONParserActivity</pd:type>
+        <pd:resourceType>ae.activities.JSONParserActivity</pd:resourceType>
+        <pd:x>278</pd:x>
+        <pd:y>115</pd:y>
+        <config>
+            <SchemaType>xsdType</SchemaType>
+            <BadgerfishCheck>false</BadgerfishCheck>
+            <ActivityOutputEditor ref="ns:accountObj"/>
+        </config>
+        <pd:inputBindings>
+            <ns2:ActivityInputClass>
+                <jsonString>
+                    <xsl:value-of select="$Start/pfx:requestParams/pfx:jsonPostData"/>
+                </jsonString>
+            </ns2:ActivityInputClass>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="AccUserPwdQuery">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>512</pd:x>
+        <pd:y>85</pd:y>
+        <config>
+            <processName>/accountMg/accountDao/AccountQuery.process</processName>
+        </config>
+        <pd:inputBindings>
+            <root>
+                <xsl:if test="$Parse-JSON/ns2:ActivityOutputClass/ns:accountObj/ns:accountType">
+                    <accountType>
+                        <xsl:value-of select="$Parse-JSON/ns2:ActivityOutputClass/ns:accountObj/ns:accountType"/>
+                    </accountType>
+                </xsl:if>
+                <accouintEmail>
+                    <xsl:value-of select="$Parse-JSON/ns2:ActivityOutputClass/ns:accountObj/ns:accounteEmail"/>
+                </accouintEmail>
+                <accountPwd>
+                    <xsl:value-of select="$Java-Code/javaCodeActivityOutput/userPwdOut"/>
+                </accountPwd>
+            </root>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="SaveLoginInfo">
+        <pd:type>com.tibco.plugin.java.JavaActivity</pd:type>
+        <pd:resourceType>ae.javapalette.javaActivity</pd:resourceType>
+        <pd:x>745</pd:x>
+        <pd:y>235</pd:y>
+        <config>
+            <fileName>ValidateUserSaveLoginInfo</fileName>
+            <packageName>accountMg.accountService.ValidateUser</packageName>
+            <fullsource>package accountMg.accountService.ValidateUser;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+
+import com.tm.mc.redis.MCRedisInstance;
+
+import redis.clients.jedis.Jedis;
+public class ValidateUserSaveLoginInfo{
+/****** START SET/GET METHOD, DO NOT MODIFY *****/
+	protected String userId = "";
+	protected String userName = "";
+	protected String tokenInfo = "";
+	public String getuserId() {
+		return userId;
+	}
+	public void setuserId(String val) {
+		userId = val;
+	}
+	public String getuserName() {
+		return userName;
+	}
+	public void setuserName(String val) {
+		userName = val;
+	}
+	public String gettokenInfo() {
+		return tokenInfo;
+	}
+	public void settokenInfo(String val) {
+		tokenInfo = val;
+	}
+/****** END SET/GET METHOD, DO NOT MODIFY *****/
+	public ValidateUserSaveLoginInfo() {
+	}
+	public void invoke() throws Exception {
+/* Available Variables: DO NOT MODIFY
+	In  : String userId
+	In  : String userName
+	In  : String tokenInfo
+	Out : String tokenInfo
+* Available Variables: DO NOT MODIFY *****/
+Jedis jedis = MCRedisInstance.getInstance().getJedis();
+//System.out.println("jedis==============:"+jedis);
+		Map&lt;String, String&gt; m = new HashMap&lt;String, String&gt;();
+		m.put("userId",userId);
+		m.put("userName",userName);
+		m.put("validateRepeat", String.valueOf(System.currentTimeMillis()));
+		String uuId = UUID.randomUUID().toString();
+		jedis.hmset(uuId, m);
+		//jedis.expire(uuId, 1800);
+		jedis.expire(uuId, 10800);
+		tokenInfo = uuId ;
+		jedis.close();}
+}
+</fullsource>
+            <outputData>
+                <row>
+                    <fieldName>tokenInfo</fieldName>
+                    <fieldType>string</fieldType>
+                    <fieldRequired>optional</fieldRequired>
+                </row>
+            </outputData>
+            <inputData>
+                <row>
+                    <fieldName>userId</fieldName>
+                    <fieldType>string</fieldType>
+                    <fieldRequired>optional</fieldRequired>
+                </row>
+                <row>
+                    <fieldName>userName</fieldName>
+                    <fieldType>string</fieldType>
+                    <fieldRequired>optional</fieldRequired>
+                </row>
+                <row>
+                    <fieldName>tokenInfo</fieldName>
+                    <fieldType>string</fieldType>
+                    <fieldRequired>optional</fieldRequired>
+                </row>
+            </inputData>
+            <byteCode>
+                <class>
+                    <name>ValidateUserSaveLoginInfo</name>
+                    <byteCode>yv66vgAAADMAXgkAFQAsCQAVAC0JABUALgoAFgAvCAAwCgAxADIKADEAMwcANAoACAAvCAAXCwA1ADYIABkIADcKADgAOQoAOgA7CgA8AD0KADwAPgoAPwBACgA/AEEKAD8AQgcAQwcARAEABnVzZXJJZAEAEkxqYXZhL2xhbmcvU3RyaW5nOwEACHVzZXJOYW1lAQAJdG9rZW5JbmZvAQAJZ2V0dXNlcklkAQAUKClMamF2YS9sYW5nL1N0cmluZzsBAARDb2RlAQAPTGluZU51bWJlclRhYmxlAQAJc2V0dXNlcklkAQAVKExqYXZhL2xhbmcvU3RyaW5nOylWAQALZ2V0dXNlck5hbWUBAAtzZXR1c2VyTmFtZQEADGdldHRva2VuSW5mbwEADHNldHRva2VuSW5mbwEABjxpbml0PgEAAygpVgEABmludm9rZQEACkV4Y2VwdGlvbnMHAEUBAApTb3VyY2VGaWxlAQAeVmFsaWRhdGVVc2VyU2F2ZUxvZ2luSW5mby5qYXZhDAAXABgMABkAGAwAGgAYDAAlACYBAAAHAEYMAEcASAwASQBKAQARamF2YS91dGlsL0hhc2hNYXAHAEsMAEwATQEADnZhbGlkYXRlUmVwZWF0BwBODABPAFAHAFEMAFIAUwcAVAwAVQBWDABXABwHAFgMAFkAWgwAWwBcDABdACYBAD9hY2NvdW50TWcvYWNjb3VudFNlcnZpY2UvVmFsaWRhdGVVc2VyL1ZhbGlkYXRlVXNlclNhdmVMb2dpbkluZm8BABBqYXZhL2xhbmcvT2JqZWN0AQATamF2YS9sYW5nL0V4Y2VwdGlvbgEAH2NvbS90bS9tYy9yZWRpcy9NQ1JlZGlzSW5zdGFuY2UBAAtnZXRJbnN0YW5jZQEAIygpTGNvbS90bS9tYy9yZWRpcy9NQ1JlZGlzSW5zdGFuY2U7AQAIZ2V0SmVkaXMBAB0oKUxyZWRpcy9jbGllbnRzL2plZGlzL0plZGlzOwEADWphdmEvdXRpbC9NYXABAANwdXQBADgoTGphdmEvbGFuZy9PYmplY3Q7TGphdmEvbGFuZy9PYmplY3Q7KUxqYXZhL2xhbmcvT2JqZWN0OwEAEGphdmEvbGFuZy9TeXN0ZW0BABFjdXJyZW50VGltZU1pbGxpcwEAAygpSgEAEGphdmEvbGFuZy9TdHJpbmcBAAd2YWx1ZU9mAQAVKEopTGphdmEvbGFuZy9TdHJpbmc7AQAOamF2YS91dGlsL1VVSUQBAApyYW5kb21VVUlEAQASKClMamF2YS91dGlsL1VVSUQ7AQAIdG9TdHJpbmcBABlyZWRpcy9jbGllbnRzL2plZGlzL0plZGlzAQAFaG1zZXQBADUoTGphdmEvbGFuZy9TdHJpbmc7TGphdmEvdXRpbC9NYXA7KUxqYXZhL2xhbmcvU3RyaW5nOwEABmV4cGlyZQEAJShMamF2YS9sYW5nL1N0cmluZztJKUxqYXZhL2xhbmcvTG9uZzsBAAVjbG9zZQAhABUAFgAAAAMABAAXABgAAAAEABkAGAAAAAQAGgAYAAAACAABABsAHAABAB0AAAAdAAEAAQAAAAUqtAABsAAAAAEAHgAAAAYAAQAAABAAAQAfACAAAQAdAAAAIgACAAIAAAAGKiu1AAGxAAAAAQAeAAAACgACAAAAEwAFABQAAQAhABwAAQAdAAAAHQABAAEAAAAFKrQAArAAAAABAB4AAAAGAAEAAAAWAAEAIgAgAAEAHQAAACIAAgACAAAABiortQACsQAAAAEAHgAAAAoAAgAAABkABQAaAAEAIwAcAAEAHQAAAB0AAQABAAAABSq0AAOwAAAAAQAeAAAABgABAAAAHAABACQAIAABAB0AAAAiAAIAAgAAAAYqK7UAA7EAAAABAB4AAAAKAAIAAAAfAAUAIAABACUAJgABAB0AAAA/AAIAAQAAABcqtwAEKhIFtQABKhIFtQACKhIFtQADsQAAAAEAHgAAABYABQAAACIABAAMAAoADQAQAA4AFgAjAAEAJwAmAAIAHQAAAJUABAAEAAAAWbgABrYAB0y7AAhZtwAJTSwSCiq0AAG5AAsDAFcsEgwqtAACuQALAwBXLBINuAAOuAAPuQALAwBXuAAQtgARTistLLYAElcrLREqMLYAE1cqLbUAAyu2ABSxAAAAAQAeAAAAKgAKAAAAKwAHAC0ADwAuABwALwApADAAOAAxAD8AMgBGADQATwA1AFQANgAoAAAABAABACkAAQAqAAAAAgAr</byteCode>
+                </class>
+            </byteCode>
+        </config>
+        <pd:inputBindings>
+            <javaCodeActivityInput>
+                <xsl:if test="$AccUserPwdQuery/ns:accountResults/ns:accountObj[1]/ns:accountId">
+                    <userId>
+                        <xsl:value-of select="$AccUserPwdQuery/ns:accountResults/ns:accountObj[1]/ns:accountId"/>
+                    </userId>
+                </xsl:if>
+                <userName>
+                    <xsl:value-of select="$AccUserPwdQuery/ns:accountResults/ns:accountObj[1]/ns:accounteEmail"/>
+                </userName>
+            </javaCodeActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Java Code">
+        <pd:type>com.tibco.plugin.java.JavaActivity</pd:type>
+        <pd:resourceType>ae.javapalette.javaActivity</pd:resourceType>
+        <pd:x>404</pd:x>
+        <pd:y>159</pd:y>
+        <config>
+            <fileName>ValidateUserJavaCode</fileName>
+            <packageName>accountMg.accountService.ValidateUser</packageName>
+            <fullsource>package accountMg.accountService.ValidateUser;
+import java.util.*;
+import java.io.*;
+import com.tm.mc.util.MD5Util;
+public class ValidateUserJavaCode{
+/****** START SET/GET METHOD, DO NOT MODIFY *****/
+	protected String userPwd = "";
+	protected String userPwdOut = "";
+	public String getuserPwd() {
+		return userPwd;
+	}
+	public void setuserPwd(String val) {
+		userPwd = val;
+	}
+	public String getuserPwdOut() {
+		return userPwdOut;
+	}
+	public void setuserPwdOut(String val) {
+		userPwdOut = val;
+	}
+/****** END SET/GET METHOD, DO NOT MODIFY *****/
+	public ValidateUserJavaCode() {
+	}
+	public void invoke() throws Exception {
+/* Available Variables: DO NOT MODIFY
+	In  : String userPwd
+	Out : String userPwdOut
+* Available Variables: DO NOT MODIFY *****/
+
+userPwdOut = MD5Util.getMD5String(userPwd);}
+}
+</fullsource>
+            <inputData>
+                <row>
+                    <fieldName>userPwd</fieldName>
+                    <fieldType>string</fieldType>
+                    <fieldRequired>optional</fieldRequired>
+                </row>
+            </inputData>
+            <outputData>
+                <row>
+                    <fieldName>userPwdOut</fieldName>
+                    <fieldType>string</fieldType>
+                    <fieldRequired>optional</fieldRequired>
+                </row>
+            </outputData>
+            <byteCode>
+                <class>
+                    <name>ValidateUserJavaCode</name>
+                    <byteCode>yv66vgAAADMAJgkABgAaCQAGABsKAAcAHAgAHQoAHgAfBwAgBwAhAQAHdXNlclB3ZAEAEkxqYXZhL2xhbmcvU3RyaW5nOwEACnVzZXJQd2RPdXQBAApnZXR1c2VyUHdkAQAUKClMamF2YS9sYW5nL1N0cmluZzsBAARDb2RlAQAPTGluZU51bWJlclRhYmxlAQAKc2V0dXNlclB3ZAEAFShMamF2YS9sYW5nL1N0cmluZzspVgEADWdldHVzZXJQd2RPdXQBAA1zZXR1c2VyUHdkT3V0AQAGPGluaXQ+AQADKClWAQAGaW52b2tlAQAKRXhjZXB0aW9ucwcAIgEAClNvdXJjZUZpbGUBABlWYWxpZGF0ZVVzZXJKYXZhQ29kZS5qYXZhDAAIAAkMAAoACQwAEwAUAQAABwAjDAAkACUBADphY2NvdW50TWcvYWNjb3VudFNlcnZpY2UvVmFsaWRhdGVVc2VyL1ZhbGlkYXRlVXNlckphdmFDb2RlAQAQamF2YS9sYW5nL09iamVjdAEAE2phdmEvbGFuZy9FeGNlcHRpb24BABZjb20vdG0vbWMvdXRpbC9NRDVVdGlsAQAMZ2V0TUQ1U3RyaW5nAQAmKExqYXZhL2xhbmcvU3RyaW5nOylMamF2YS9sYW5nL1N0cmluZzsAIQAGAAcAAAACAAQACAAJAAAABAAKAAkAAAAGAAEACwAMAAEADQAAAB0AAQABAAAABSq0AAGwAAAAAQAOAAAABgABAAAACgABAA8AEAABAA0AAAAiAAIAAgAAAAYqK7UAAbEAAAABAA4AAAAKAAIAAAANAAUADgABABEADAABAA0AAAAdAAEAAQAAAAUqtAACsAAAAAEADgAAAAYAAQAAABAAAQASABAAAQANAAAAIgACAAIAAAAGKiu1AAKxAAAAAQAOAAAACgACAAAAEwAFABQAAQATABQAAQANAAAANQACAAEAAAARKrcAAyoSBLUAASoSBLUAArEAAAABAA4AAAASAAQAAAAWAAQABwAKAAgAEAAXAAEAFQAUAAIADQAAACQAAgABAAAADCoqtAABuAAFtQACsQAAAAEADgAAAAYAAQAAAB4AFgAAAAQAAQAXAAEAGAAAAAIAGQ==</byteCode>
+                </class>
+            </byteCode>
+        </config>
+        <pd:inputBindings>
+            <javaCodeActivityInput>
+                <xsl:if test="$Parse-JSON/ns2:ActivityOutputClass/ns:accountObj/ns:accountPwd">
+                    <userPwd>
+                        <xsl:value-of select="$Parse-JSON/ns2:ActivityOutputClass/ns:accountObj/ns:accountPwd"/>
+                    </userPwd>
+                </xsl:if>
+            </javaCodeActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>Parse JSON</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Parse JSON</pd:from>
+        <pd:to>Java Code</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>AccUserPwdQuery</pd:from>
+        <pd:to>SaveLoginInfo</pd:to>
+        <pd:xpathDescription>isExists</pd:xpathDescription>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>xpath</pd:conditionType>
+        <pd:xpath>count($AccUserPwdQuery/ns:accountResults/ns:accountObj)&gt;0</pd:xpath>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>AccUserPwdQuery</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>otherwise</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>SaveLoginInfo</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Java Code</pd:from>
+        <pd:to>AccUserPwdQuery</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>

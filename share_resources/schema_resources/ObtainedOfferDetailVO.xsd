@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	 xmlns="http://www.tibco.com/schemas/n_mc_project/share_resources/schema_resources/Schema.xsd2"
+	 xmlns:ns0="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd2"
+	 xmlns:ns1="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd"
+	 xmlns:ns2="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd5"
+	 xmlns:ns3="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd3"
+	 targetNamespace="http://www.tibco.com/schemas/n_mc_project/share_resources/schema_resources/Schema.xsd2"
+	 elementFormDefault="qualified"
+	 attributeFormDefault="unqualified">
+	<xs:import namespace="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd2"/>
+	<xs:import namespace="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd"/>
+	<xs:import namespace="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd5"/>
+	<xs:import namespace="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd3"/>
+	<xs:element name="ObtainedOfferDetailVO">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="ns0:productObj"/>
+				<xs:element ref="ns1:offerObj"/>
+				<xs:element ref="ns2:campaignObj"/>
+				<xs:element ref="ns3:creativeResults"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

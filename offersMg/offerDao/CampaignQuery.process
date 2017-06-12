@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:pfx="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd5" xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tib="http://www.tibco.com/bw/xslt/custom-functions">
+    <xsd:import namespace="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd5" schemaLocation="/share_resources/schema_resources/CampaignPOSchema.xsd"/>
+    <pd:name>offersMg/offerDao/CampaignQuery.process</pd:name>
+    <pd:startName>Start</pd:startName>
+    <pd:startType>
+        <xsd:element name="root">
+            <xsd:complexType>
+                <xsd:sequence>
+                    <xsd:element name="offerId" type="xsd:string" minOccurs="0"/>
+                    <xsd:element name="campaignId" type="xsd:string" minOccurs="0"/>
+                    <xsd:element name="campaignStatus" type="xsd:string" minOccurs="0"/>
+                    <xsd:element name="searchVal" type="xsd:string" minOccurs="0"/>
+                    <xsd:element name="campaignName" type="xsd:string" minOccurs="0"/>
+                    <xsd:element name="campChangeStatus" type="xsd:string" minOccurs="0"/>
+                    <xsd:element name="paraSelfId" type="xsd:string" minOccurs="0"/>
+                    <xsd:element name="nId" type="xsd:string" minOccurs="0"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:element>
+    </pd:startType>
+    <pd:startX>157</pd:startX>
+    <pd:startY>92</pd:startY>
+    <pd:returnBindings>
+        <pfx:campaignResults>
+            <xsl:for-each select="$SQL-Direct/jdbcGeneralActivityOutput/unknownResultset/row">
+                <pfx:campaignObj>
+                    <pfx:campaignId>
+                        <xsl:value-of select="column[1]/value"/>
+                    </pfx:campaignId>
+                    <pfx:offerId>
+                        <xsl:value-of select="column[2]/value"/>
+                    </pfx:offerId>
+                    <pfx:nId>
+                        <xsl:value-of select="column[3]/value"/>
+                    </pfx:nId>
+                    <pfx:campaignName>
+                        <xsl:value-of select="column[4]/value"/>
+                    </pfx:campaignName>
+                    <pfx:campaignTl>
+                        <xsl:value-of select="column[5]/value"/>
+                    </pfx:campaignTl>
+                    <pfx:campaignExpendT>
+                        <xsl:value-of select="column[6]/value"/>
+                    </pfx:campaignExpendT>
+                    <pfx:campaignExpendC>
+                        <xsl:value-of select="column[7]/value"/>
+                    </pfx:campaignExpendC>
+                    <pfx:campaignExpendN>
+                        <xsl:value-of select="column[8]/value"/>
+                    </pfx:campaignExpendN>
+                    <pfx:campaignRm>
+                        <xsl:value-of select="column[9]/value"/>
+                    </pfx:campaignRm>
+                    <pfx:campaignCap>
+                        <xsl:value-of select="column[10]/value"/>
+                    </pfx:campaignCap>
+                    <pfx:campaignStatus>
+                        <xsl:value-of select="column[11]/value"/>
+                    </pfx:campaignStatus>
+                </pfx:campaignObj>
+            </xsl:for-each>
+        </pfx:campaignResults>
+    </pd:returnBindings>
+    <pd:endName>End</pd:endName>
+    <pd:endType ref="pfx:campaignResults"/>
+    <pd:endX>450</pd:endX>
+    <pd:endY>64</pd:endY>
+    <pd:errorSchemas/>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/1489503007724</pd:targetNamespace>
+    <pd:activity name="SQL Direct">
+        <pd:type>com.tibco.plugin.jdbc.JDBCGeneralActivity</pd:type>
+        <pd:resourceType>ae.activities.JDBCGeneralActivity</pd:resourceType>
+        <pd:x>278</pd:x>
+        <pd:y>94</pd:y>
+        <config>
+            <timeout>10</timeout>
+            <commit>false</commit>
+            <maxRows>0</maxRows>
+            <jdbcSharedConfig>/share_resources/JDBC Connection.sharedjdbc</jdbcSharedConfig>
+        </config>
+        <pd:inputBindings>
+            <jdbcGeneralActivityInput>
+                <statement>
+                    <xsl:value-of select="concat(&quot;select * from tab_campaign where 1=1&quot;,&#xA;if (exists($Start/root/offerId) and tib:trim($Start/root/offerId) !=&quot;&quot;) then concat(&quot; and offer_id =&quot;,$Start/root/offerId)  else &quot;&quot;,&#xA;if (exists($Start/root/campaignId) and  tib:trim($Start/root/campaignId) !=&quot;&quot;) then concat(&quot; and campaign_id =&quot;,$Start/root/campaignId)  else &quot;&quot;,&#xA;if (exists($Start/root/nId) and  tib:trim($Start/root/nId) !=&quot;&quot;) then concat(&quot; and N_ID=&quot;,$Start/root/nId)  else &quot;&quot;,&#xA;if (exists($Start/root/paraSelfId) and  tib:trim($Start/root/paraSelfId) !=&quot;&quot;) then concat(&quot; and campaign_id !=&quot;,$Start/root/paraSelfId)  else &quot;&quot;,&#xA;if (exists($Start/root/campaignName) and  tib:trim($Start/root/campaignName) !=&quot;&quot;) then concat(&quot; and CAMPAIGN_NAME ='&quot;,tib:trim($Start/root/campaignName),&quot;'&quot;)  else &quot;&quot;,&#xA;if (exists($Start/root/campaignStatus) and  tib:trim($Start/root/campaignStatus) !=&quot;&quot; ) then concat(&quot; and campaign_status='&quot;,$Start/root/campaignStatus,&quot;'&quot;)  else &quot;&quot;,&#xA;if (exists($Start/root/campChangeStatus) and  tib:trim($Start/root/campChangeStatus) !=&quot;&quot; ) then concat(&quot; and campaign_status !='&quot;,tib:trim($Start/root/campChangeStatus) ,&quot;'&quot;)  else &quot;&quot;,&#xA;if (exists($Start/root/searchVal) and tib:trim($Start/root/searchVal) !=&quot;&quot;) then  concat(&quot; and  (campaign_name like '%&quot;, tib:trim($Start/root/searchVal) ,&quot;%' or campaign_id like '%&quot;,tib:trim($Start/root/searchVal),&quot;%' )&quot;)  else &quot;&quot;&#xA;,&quot; ORDER BY CAMPAIGN_ID desc&quot;)"/>
+                </statement>
+                <maxRows>
+                    <xsl:value-of select="0"/>
+                </maxRows>
+            </jdbcGeneralActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Catch">
+        <pd:type>com.tibco.pe.core.CatchActivity</pd:type>
+        <pd:resourceType>ae.activities.catch</pd:resourceType>
+        <pd:x>595</pd:x>
+        <pd:y>123</pd:y>
+        <pd:handler>true</pd:handler>
+        <config>
+            <catchAll>true</catchAll>
+        </config>
+        <pd:inputBindings/>
+    </pd:activity>
+    <pd:activity name="Rethrow">
+        <pd:type>com.tibco.pe.core.RethrowActivity</pd:type>
+        <pd:resourceType>ae.activities.rethrow</pd:resourceType>
+        <pd:x>739</pd:x>
+        <pd:y>121</pd:y>
+        <config/>
+        <pd:inputBindings/>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>SQL Direct</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Catch</pd:from>
+        <pd:to>Rethrow</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>SQL Direct</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>

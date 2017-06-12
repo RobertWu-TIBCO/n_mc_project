@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ns="http://www.tibco.com/namespaces/tnt/plugins/json" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:pfx2="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd12" xmlns:pfx="http://www.tibco.com/schemas/n_mc_project/share_resources/schema_resources/Schema.xsd4">
+    <xsd:import namespace="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd12" schemaLocation="/share_resources/schema_resources/ConditionsSchema.xsd"/>
+    <xsd:import namespace="http://www.tibco.com/schemas/n_mc_project/share_resources/schema_resources/Schema.xsd4" schemaLocation="/share_resources/schema_resources/ApplyQueuePO.xsd"/>
+    <pd:name>offersMg/offerService/ApplyQueueQuery.process</pd:name>
+    <pd:startName>Start</pd:startName>
+    <pd:startType ref="pfx2:requestParams"/>
+    <pd:startX>40</pd:startX>
+    <pd:startY>65</pd:startY>
+    <pd:returnBindings>
+        <responseJsonStr>
+            <xsl:value-of select="$Render-JSON/ns:ActivityOutputClass/jsonString"/>
+        </responseJsonStr>
+    </pd:returnBindings>
+    <pd:endName>End</pd:endName>
+    <pd:endType>
+        <xsd:element name="responseJsonStr" type="xsd:string"/>
+    </pd:endType>
+    <pd:endX>756</pd:endX>
+    <pd:endY>69</pd:endY>
+    <pd:errorSchemas/>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/1495872075656</pd:targetNamespace>
+    <pd:activity name="Catch">
+        <pd:type>com.tibco.pe.core.CatchActivity</pd:type>
+        <pd:resourceType>ae.activities.catch</pd:resourceType>
+        <pd:x>830</pd:x>
+        <pd:y>64</pd:y>
+        <pd:handler>true</pd:handler>
+        <config>
+            <catchAll>true</catchAll>
+        </config>
+        <pd:inputBindings/>
+    </pd:activity>
+    <pd:activity name="Rethrow">
+        <pd:type>com.tibco.pe.core.RethrowActivity</pd:type>
+        <pd:resourceType>ae.activities.rethrow</pd:resourceType>
+        <pd:x>874</pd:x>
+        <pd:y>214</pd:y>
+        <config/>
+        <pd:inputBindings/>
+    </pd:activity>
+    <pd:activity name="ApplyQueueQuery">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>505</pd:x>
+        <pd:y>75</pd:y>
+        <config>
+            <processName>/offersMg/offerDao/ApplyQueueQuery.process</processName>
+        </config>
+        <pd:inputBindings>
+            <root>
+                <xsl:if test="$GetNId/javaCodeActivityOutput/nId">
+                    <nId>
+                        <xsl:value-of select="$GetNId/javaCodeActivityOutput/nId"/>
+                    </nId>
+                </xsl:if>
+            </root>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Render JSON">
+        <pd:type>com.tibco.plugin.json.activities.JSONRenderActivity</pd:type>
+        <pd:resourceType>ae.activities.JSONRenderActivity</pd:resourceType>
+        <pd:x>652</pd:x>
+        <pd:y>68</pd:y>
+        <config>
+            <SchemaType>xsdType</SchemaType>
+            <BadgerfishCheck>false</BadgerfishCheck>
+            <ActivityInputEditor ref="pfx:ApplyQueueResults"/>
+        </config>
+        <pd:inputBindings>
+            <ns:ActivityInputClass>
+                <pfx:ApplyQueueResults>
+                    <xsl:copy-of select="$ApplyQueueQuery/pfx:ApplyQueueResults/pfx:ApplyQueueObj"/>
+                </pfx:ApplyQueueResults>
+            </ns:ActivityInputClass>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="GetNId">
+        <pd:type>com.tibco.plugin.java.JavaActivity</pd:type>
+        <pd:resourceType>ae.javapalette.javaActivity</pd:resourceType>
+        <pd:x>388</pd:x>
+        <pd:y>81</pd:y>
+        <config>
+            <fileName>ApplyQueueQueryGetNId</fileName>
+            <packageName>offersMg.offerService.ApplyQueueQuery</packageName>
+            <fullsource>package offersMg.offerService.ApplyQueueQuery;
+import java.util.*;
+import java.io.*;
+import com.tm.mc.redis.MCRedisInstance;
+import redis.clients.jedis.Jedis;
+
+public class ApplyQueueQueryGetNId{
+/****** START SET/GET METHOD, DO NOT MODIFY *****/
+	protected String tokenInfo = "";
+	protected String nId = "";
+	public String gettokenInfo() {
+		return tokenInfo;
+	}
+	public void settokenInfo(String val) {
+		tokenInfo = val;
+	}
+	public String getnId() {
+		return nId;
+	}
+	public void setnId(String val) {
+		nId = val;
+	}
+/****** END SET/GET METHOD, DO NOT MODIFY *****/
+	public ApplyQueueQueryGetNId() {
+	}
+	public void invoke() throws Exception {
+/* Available Variables: DO NOT MODIFY
+	In  : String tokenInfo
+	Out : String nId
+* Available Variables: DO NOT MODIFY *****/
+
+Jedis jedis = MCRedisInstance.getInstance().getJedis();
+		if(jedis.exists(tokenInfo.trim())){
+			nId = jedis.hget(tokenInfo, "userId");
+		}
+		jedis.close();
+	}
+}
+</fullsource>
+            <outputData>
+                <row>
+                    <fieldName>nId</fieldName>
+                    <fieldType>string</fieldType>
+                    <fieldRequired>optional</fieldRequired>
+                </row>
+            </outputData>
+            <inputData>
+                <row>
+                    <fieldName>tokenInfo</fieldName>
+                    <fieldType>string</fieldType>
+                    <fieldRequired>optional</fieldRequired>
+                </row>
+            </inputData>
+            <byteCode>
+                <class>
+                    <name>ApplyQueueQueryGetNId</name>
+                    <byteCode>yv66vgAAADMARgkADQAjCQANACQKAA4AJQgAJgoAJwAoCgAnACkKACoAKwoALAAtCgAuAC8IADAKACwAMQoALAAyBwAzBwA0AQAJdG9rZW5JbmZvAQASTGphdmEvbGFuZy9TdHJpbmc7AQADbklkAQAMZ2V0dG9rZW5JbmZvAQAUKClMamF2YS9sYW5nL1N0cmluZzsBAARDb2RlAQAPTGluZU51bWJlclRhYmxlAQAMc2V0dG9rZW5JbmZvAQAVKExqYXZhL2xhbmcvU3RyaW5nOylWAQAGZ2V0bklkAQAGc2V0bklkAQAGPGluaXQ+AQADKClWAQAGaW52b2tlAQANU3RhY2tNYXBUYWJsZQcANQEACkV4Y2VwdGlvbnMHADYBAApTb3VyY2VGaWxlAQAaQXBwbHlRdWV1ZVF1ZXJ5R2V0TklkLmphdmEMAA8AEAwAEQAQDAAaABsBAAAHADcMADgAOQwAOgA7BwA8DAA9ABMHADUMAD4APwcAQAwAQQBCAQAGdXNlcklkDABDAEQMAEUAGwEAO29mZmVyc01nL29mZmVyU2VydmljZS9BcHBseVF1ZXVlUXVlcnkvQXBwbHlRdWV1ZVF1ZXJ5R2V0TklkAQAQamF2YS9sYW5nL09iamVjdAEAGXJlZGlzL2NsaWVudHMvamVkaXMvSmVkaXMBABNqYXZhL2xhbmcvRXhjZXB0aW9uAQAfY29tL3RtL21jL3JlZGlzL01DUmVkaXNJbnN0YW5jZQEAC2dldEluc3RhbmNlAQAjKClMY29tL3RtL21jL3JlZGlzL01DUmVkaXNJbnN0YW5jZTsBAAhnZXRKZWRpcwEAHSgpTHJlZGlzL2NsaWVudHMvamVkaXMvSmVkaXM7AQAQamF2YS9sYW5nL1N0cmluZwEABHRyaW0BAAZleGlzdHMBACcoTGphdmEvbGFuZy9TdHJpbmc7KUxqYXZhL2xhbmcvQm9vbGVhbjsBABFqYXZhL2xhbmcvQm9vbGVhbgEADGJvb2xlYW5WYWx1ZQEAAygpWgEABGhnZXQBADgoTGphdmEvbGFuZy9TdHJpbmc7TGphdmEvbGFuZy9TdHJpbmc7KUxqYXZhL2xhbmcvU3RyaW5nOwEABWNsb3NlACEADQAOAAAAAgAEAA8AEAAAAAQAEQAQAAAABgABABIAEwABABQAAAAdAAEAAQAAAAUqtAABsAAAAAEAFQAAAAYAAQAAAAwAAQAWABcAAQAUAAAAIgACAAIAAAAGKiu1AAGxAAAAAQAVAAAACgACAAAADwAFABAAAQAYABMAAQAUAAAAHQABAAEAAAAFKrQAArAAAAABABUAAAAGAAEAAAASAAEAGQAXAAEAFAAAACIAAgACAAAABiortQACsQAAAAEAFQAAAAoAAgAAABUABQAWAAEAGgAbAAEAFAAAADUAAgABAAAAESq3AAMqEgS1AAEqEgS1AAKxAAAAAQAVAAAAEgAEAAAAGAAEAAkACgAKABAAGQABABwAGwACABQAAABhAAQAAgAAACu4AAW2AAZMKyq0AAG2AAe2AAi2AAmZABEqKyq0AAESCrYAC7UAAiu2AAyxAAAAAgAVAAAAFgAFAAAAIAAHACEAGAAiACYAJAAqACUAHQAAAAgAAfwAJgcAHgAfAAAABAABACAAAQAhAAAAAgAi</byteCode>
+                </class>
+            </byteCode>
+        </config>
+        <pd:inputBindings>
+            <javaCodeActivityInput>
+                <tokenInfo>
+                    <xsl:value-of select="$Parse-JSON/ns:ActivityOutputClass/pfx:ApplyQueueObj/pfx:tokenInfo"/>
+                </tokenInfo>
+            </javaCodeActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Parse JSON">
+        <pd:type>com.tibco.plugin.json.activities.JSONParserActivity</pd:type>
+        <pd:resourceType>ae.activities.JSONParserActivity</pd:resourceType>
+        <pd:x>188</pd:x>
+        <pd:y>116</pd:y>
+        <config>
+            <SchemaType>xsdType</SchemaType>
+            <BadgerfishCheck>false</BadgerfishCheck>
+            <ActivityOutputEditor ref="pfx:ApplyQueueObj"/>
+        </config>
+        <pd:inputBindings>
+            <ns:ActivityInputClass>
+                <jsonString>
+                    <xsl:value-of select="$Start/pfx2:requestParams/pfx2:jsonPostData"/>
+                </jsonString>
+            </ns:ActivityInputClass>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>Catch</pd:from>
+        <pd:to>Rethrow</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>Parse JSON</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>ApplyQueueQuery</pd:from>
+        <pd:to>Render JSON</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Render JSON</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>GetNId</pd:from>
+        <pd:to>ApplyQueueQuery</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Parse JSON</pd:from>
+        <pd:to>GetNId</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>

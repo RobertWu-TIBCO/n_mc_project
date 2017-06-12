@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:pfx="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd14" xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tib="http://www.tibco.com/bw/xslt/custom-functions">
+    <xsd:import namespace="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd14" schemaLocation="/share_resources/schema_resources/AccountPOSchema.xsd"/>
+    <pd:name>accountMg/accountDao/AccountQuery.process</pd:name>
+    <pd:startName>Start</pd:startName>
+    <pd:startType>
+        <xsd:element name="root">
+            <xsd:complexType>
+                <xsd:sequence>
+                    <xsd:element name="accountId" type="xsd:string" minOccurs="0"/>
+                    <xsd:element name="accountType" type="xsd:string" minOccurs="0"/>
+                    <xsd:element name="accountTel" type="xsd:string" minOccurs="0"/>
+                    <xsd:element name="searchVal" type="xsd:string" minOccurs="0"/>
+                    <xsd:element name="accouintEmail" type="xsd:string" minOccurs="0"/>
+                    <xsd:element name="accountPwd" type="xsd:string" minOccurs="0"/>
+                    <xsd:element name="accountName" type="xsd:string" minOccurs="0"/>
+                    <xsd:element name="paraSelfId" type="xsd:string" minOccurs="0"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:element>
+    </pd:startType>
+    <pd:startX>150</pd:startX>
+    <pd:startY>64</pd:startY>
+    <pd:returnBindings>
+        <pfx:accountResults>
+            <xsl:for-each select="$SQL-Direct/jdbcGeneralActivityOutput/unknownResultset/row">
+                <pfx:accountObj>
+                    <pfx:accountId>
+                        <xsl:value-of select="column[1]/value"/>
+                    </pfx:accountId>
+                    <pfx:managerAccountId>
+                        <xsl:value-of select="column[2]/value"/>
+                    </pfx:managerAccountId>
+                    <pfx:accounteEmail>
+                        <xsl:value-of select="column[3]/value"/>
+                    </pfx:accounteEmail>
+                    <pfx:accountPwd>
+                        <xsl:value-of select="column[4]/value"/>
+                    </pfx:accountPwd>
+                    <pfx:accountName>
+                        <xsl:value-of select="column[5]/value"/>
+                    </pfx:accountName>
+                    <pfx:accountAddress>
+                        <xsl:value-of select="column[6]/value"/>
+                    </pfx:accountAddress>
+                    <pfx:accountConcat>
+                        <xsl:value-of select="column[7]/value"/>
+                    </pfx:accountConcat>
+                    <pfx:accountTel>
+                        <xsl:value-of select="column[8]/value"/>
+                    </pfx:accountTel>
+                    <pfx:accountType>
+                        <xsl:value-of select="column[9]/value"/>
+                    </pfx:accountType>
+                    <xsl:if test="column[10]/value">
+                        <pfx:accountStatus>
+                            <xsl:value-of select="column[10]/value"/>
+                        </pfx:accountStatus>
+                    </xsl:if>
+                    <xsl:if test="column[11]/value">
+                        <pfx:label>
+                            <xsl:value-of select="column[11]/value"/>
+                        </pfx:label>
+                    </xsl:if>
+                </pfx:accountObj>
+            </xsl:for-each>
+        </pfx:accountResults>
+    </pd:returnBindings>
+    <pd:endName>End</pd:endName>
+    <pd:endType ref="pfx:accountResults"/>
+    <pd:endX>450</pd:endX>
+    <pd:endY>64</pd:endY>
+    <pd:errorSchemas/>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/1490682825698</pd:targetNamespace>
+    <pd:activity name="SQL Direct">
+        <pd:type>com.tibco.plugin.jdbc.JDBCGeneralActivity</pd:type>
+        <pd:resourceType>ae.activities.JDBCGeneralActivity</pd:resourceType>
+        <pd:x>282</pd:x>
+        <pd:y>91</pd:y>
+        <config>
+            <timeout>10</timeout>
+            <commit>false</commit>
+            <maxRows>0</maxRows>
+            <jdbcSharedConfig>/share_resources/JDBC Connection.sharedjdbc</jdbcSharedConfig>
+        </config>
+        <pd:inputBindings>
+            <jdbcGeneralActivityInput>
+                <statement>
+                    <xsl:value-of select="concat(&quot;select *,CONCAT(ACCOUNT_ID,'-',ACCOUNT_NAME,'-',ACCOUNT_TYPE) from tab_account where 1=1&quot;,&#xA;if (exists($Start/root/accountId) and tib:trim($Start/root/accountId)!=&quot;&quot;) then concat(&quot; and ACCOUNT_ID =&quot;,tib:trim($Start/root/accountId)) else &quot;&quot;,&#xA;if (exists($Start/root/paraSelfId) and tib:trim($Start/root/paraSelfId)!=&quot;&quot;) then concat(&quot; and ACCOUNT_ID !=&quot;,tib:trim($Start/root/paraSelfId)) else &quot;&quot;,&#xA;if (exists($Start/root/accouintEmail) and tib:trim($Start/root/accouintEmail)!=&quot;&quot;) then concat(&quot; and account_email='&quot;,tib:trim($Start/root/accouintEmail),&quot;'&quot;) else &quot;&quot;,&#xA;if (exists($Start/root/accountPwd) and tib:trim($Start/root/accountPwd)!=&quot;&quot;) then concat(&quot; and account_pwd='&quot;,tib:trim($Start/root/accountPwd),&quot;'&quot;) else &quot;&quot;,&#xA; if (exists($Start/root/accountType) and tib:trim($Start/root/accountType)!=&quot;&quot;) then concat(&quot; and ACCOUNT_TYPE='&quot;,tib:trim($Start/root/accountType),&quot;'&quot;) else &quot;&quot;,&#xA; if (exists($Start/root/accountTel) and tib:trim($Start/root/accountTel)!=&quot;&quot;) then concat(&quot; and ACCOUNT_TEL like '%&quot;,tib:trim($Start/root/accountTel),&quot;%'&quot;) else &quot;&quot;,&#xA; if (exists($Start/root/accountName) and tib:trim($Start/root/accountName)!=&quot;&quot;) then concat(&quot; and ACCOUNT_NAME='&quot;,tib:trim($Start/root/accountName),&quot;'&quot;) else &quot;&quot;,&#xA; if (exists($Start/root/searchVal) and tib:trim($Start/root/searchVal)!=&quot;&quot;) then concat(&quot; and (ACCOUNT_NAME like '%&quot;,tib:trim($Start/root/searchVal),&quot;%'  or ACCOUNT_ID  like '%&quot;,tib:trim($Start/root/searchVal),&quot;%')&quot;) else &quot;&quot;, &quot; order by ACCOUNT_ID desc &quot;&#xA;)"/>
+                </statement>
+                <maxRows>
+                    <xsl:value-of select="0"/>
+                </maxRows>
+            </jdbcGeneralActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Catch">
+        <pd:type>com.tibco.pe.core.CatchActivity</pd:type>
+        <pd:resourceType>ae.activities.catch</pd:resourceType>
+        <pd:x>787</pd:x>
+        <pd:y>64</pd:y>
+        <pd:handler>true</pd:handler>
+        <config>
+            <catchAll>true</catchAll>
+        </config>
+        <pd:inputBindings/>
+    </pd:activity>
+    <pd:activity name="Rethrow">
+        <pd:type>com.tibco.pe.core.RethrowActivity</pd:type>
+        <pd:resourceType>ae.activities.rethrow</pd:resourceType>
+        <pd:x>812</pd:x>
+        <pd:y>214</pd:y>
+        <config/>
+        <pd:inputBindings/>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>SQL Direct</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>SQL Direct</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Catch</pd:from>
+        <pd:to>Rethrow</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>

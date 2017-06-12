@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:ns2="http://www.tibco.com/namespaces/tnt/plugins/json" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ns="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd15" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:pfx="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd12">
+    <xsd:import namespace="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd15" schemaLocation="/share_resources/schema_resources/PostbackPO.xsd"/>
+    <xsd:import namespace="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd12" schemaLocation="/share_resources/schema_resources/ConditionsSchema.xsd"/>
+    <pd:name>postback/postbackService/QueryPostback.process</pd:name>
+    <pd:startName>Start</pd:startName>
+    <pd:startType ref="pfx:requestParams"/>
+    <pd:startX>150</pd:startX>
+    <pd:startY>64</pd:startY>
+    <pd:returnBindings>
+        <responseJsonStr>
+            <xsl:value-of select="$Render-JSON/ns2:ActivityOutputClass/jsonString"/>
+        </responseJsonStr>
+    </pd:returnBindings>
+    <pd:endName>End</pd:endName>
+    <pd:endType>
+        <xsd:element name="responseJsonStr" type="xsd:string"/>
+    </pd:endType>
+    <pd:endX>706</pd:endX>
+    <pd:endY>67</pd:endY>
+    <pd:errorSchemas/>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/1492131360867</pd:targetNamespace>
+    <pd:activity name="Parse JSON">
+        <pd:type>com.tibco.plugin.json.activities.JSONParserActivity</pd:type>
+        <pd:resourceType>ae.activities.JSONParserActivity</pd:resourceType>
+        <pd:x>293</pd:x>
+        <pd:y>82</pd:y>
+        <config>
+            <SchemaType>xsdType</SchemaType>
+            <BadgerfishCheck>false</BadgerfishCheck>
+            <ActivityOutputEditor ref="pfx:requestParams"/>
+        </config>
+        <pd:inputBindings>
+            <ns2:ActivityInputClass>
+                <jsonString>
+                    <xsl:value-of select="$Start/pfx:requestParams/pfx:jsonPostData"/>
+                </jsonString>
+            </ns2:ActivityInputClass>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="QueryPostback">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>500</pd:x>
+        <pd:y>87</pd:y>
+        <config>
+            <processName>/postback/postbackDao/PostbackQuery.process</processName>
+        </config>
+        <pd:inputBindings>
+            <ns:postbackObj>
+                <ns:postbackId>
+                    <xsl:value-of select="$Parse-JSON/ns2:ActivityOutputClass/pfx:requestParams/pfx:paraId"/>
+                </ns:postbackId>
+                <xsl:if test="$Java-Code/javaCodeActivityOutput/nId">
+                    <ns:nId>
+                        <xsl:value-of select="$Java-Code/javaCodeActivityOutput/nId"/>
+                    </ns:nId>
+                </xsl:if>
+                <xsl:if test="$Parse-JSON/ns2:ActivityOutputClass/pfx:requestParams/pfx:paraSearchValue">
+                    <ns:searchVal>
+                        <xsl:value-of select="$Parse-JSON/ns2:ActivityOutputClass/pfx:requestParams/pfx:paraSearchValue"/>
+                    </ns:searchVal>
+                </xsl:if>
+            </ns:postbackObj>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Catch">
+        <pd:type>com.tibco.pe.core.CatchActivity</pd:type>
+        <pd:resourceType>ae.activities.catch</pd:resourceType>
+        <pd:x>934</pd:x>
+        <pd:y>70</pd:y>
+        <pd:handler>true</pd:handler>
+        <config>
+            <catchAll>true</catchAll>
+        </config>
+        <pd:inputBindings/>
+    </pd:activity>
+    <pd:activity name="Rethrow">
+        <pd:type>com.tibco.pe.core.RethrowActivity</pd:type>
+        <pd:resourceType>ae.activities.rethrow</pd:resourceType>
+        <pd:x>955</pd:x>
+        <pd:y>220</pd:y>
+        <config/>
+        <pd:inputBindings/>
+    </pd:activity>
+    <pd:activity name="Render JSON">
+        <pd:type>com.tibco.plugin.json.activities.JSONRenderActivity</pd:type>
+        <pd:resourceType>ae.activities.JSONRenderActivity</pd:resourceType>
+        <pd:x>628</pd:x>
+        <pd:y>170</pd:y>
+        <config>
+            <SchemaType>xsdType</SchemaType>
+            <BadgerfishCheck>false</BadgerfishCheck>
+            <ActivityInputEditor ref="ns:postbackResults"/>
+        </config>
+        <pd:inputBindings>
+            <ns2:ActivityInputClass>
+                <ns:postbackResults>
+                    <xsl:copy-of select="$QueryPostback/ns:postbackResults/ns:postbackObj"/>
+                </ns:postbackResults>
+            </ns2:ActivityInputClass>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Java Code">
+        <pd:type>com.tibco.plugin.java.JavaActivity</pd:type>
+        <pd:resourceType>ae.javapalette.javaActivity</pd:resourceType>
+        <pd:x>369</pd:x>
+        <pd:y>203</pd:y>
+        <config>
+            <fileName>QueryPostbackJavaCode</fileName>
+            <packageName>postback.postbackService.QueryPostback</packageName>
+            <fullsource>package postback.postbackService.QueryPostback;
+import java.util.*;
+import java.io.*;
+import com.tm.mc.redis.MCRedisInstance;
+import redis.clients.jedis.Jedis;
+
+public class QueryPostbackJavaCode{
+/****** START SET/GET METHOD, DO NOT MODIFY *****/
+	protected String tokenInfo = "";
+	protected String nId = "";
+	public String gettokenInfo() {
+		return tokenInfo;
+	}
+	public void settokenInfo(String val) {
+		tokenInfo = val;
+	}
+	public String getnId() {
+		return nId;
+	}
+	public void setnId(String val) {
+		nId = val;
+	}
+/****** END SET/GET METHOD, DO NOT MODIFY *****/
+	public QueryPostbackJavaCode() {
+	}
+	public void invoke() throws Exception {
+/* Available Variables: DO NOT MODIFY
+	In  : String tokenInfo
+	Out : String nId
+* Available Variables: DO NOT MODIFY *****/
+
+Jedis jedis = MCRedisInstance.getInstance().getJedis();
+		if(jedis.exists(tokenInfo.trim())){
+			nId = jedis.hget(tokenInfo, "userId");
+		}
+		jedis.close();
+	}
+}
+</fullsource>
+            <outputData>
+                <row>
+                    <fieldName>nId</fieldName>
+                    <fieldType>string</fieldType>
+                    <fieldRequired>optional</fieldRequired>
+                </row>
+            </outputData>
+            <inputData>
+                <row>
+                    <fieldName>tokenInfo</fieldName>
+                    <fieldType>string</fieldType>
+                    <fieldRequired>optional</fieldRequired>
+                </row>
+            </inputData>
+            <byteCode>
+                <class>
+                    <name>QueryPostbackJavaCode</name>
+                    <byteCode>yv66vgAAADMARgkADQAjCQANACQKAA4AJQgAJgoAJwAoCgAnACkKACoAKwoALAAtCgAuAC8IADAKACwAMQoALAAyBwAzBwA0AQAJdG9rZW5JbmZvAQASTGphdmEvbGFuZy9TdHJpbmc7AQADbklkAQAMZ2V0dG9rZW5JbmZvAQAUKClMamF2YS9sYW5nL1N0cmluZzsBAARDb2RlAQAPTGluZU51bWJlclRhYmxlAQAMc2V0dG9rZW5JbmZvAQAVKExqYXZhL2xhbmcvU3RyaW5nOylWAQAGZ2V0bklkAQAGc2V0bklkAQAGPGluaXQ+AQADKClWAQAGaW52b2tlAQANU3RhY2tNYXBUYWJsZQcANQEACkV4Y2VwdGlvbnMHADYBAApTb3VyY2VGaWxlAQAaUXVlcnlQb3N0YmFja0phdmFDb2RlLmphdmEMAA8AEAwAEQAQDAAaABsBAAAHADcMADgAOQwAOgA7BwA8DAA9ABMHADUMAD4APwcAQAwAQQBCAQAGdXNlcklkDABDAEQMAEUAGwEAPHBvc3RiYWNrL3Bvc3RiYWNrU2VydmljZS9RdWVyeVBvc3RiYWNrL1F1ZXJ5UG9zdGJhY2tKYXZhQ29kZQEAEGphdmEvbGFuZy9PYmplY3QBABlyZWRpcy9jbGllbnRzL2plZGlzL0plZGlzAQATamF2YS9sYW5nL0V4Y2VwdGlvbgEAH2NvbS90bS9tYy9yZWRpcy9NQ1JlZGlzSW5zdGFuY2UBAAtnZXRJbnN0YW5jZQEAIygpTGNvbS90bS9tYy9yZWRpcy9NQ1JlZGlzSW5zdGFuY2U7AQAIZ2V0SmVkaXMBAB0oKUxyZWRpcy9jbGllbnRzL2plZGlzL0plZGlzOwEAEGphdmEvbGFuZy9TdHJpbmcBAAR0cmltAQAGZXhpc3RzAQAnKExqYXZhL2xhbmcvU3RyaW5nOylMamF2YS9sYW5nL0Jvb2xlYW47AQARamF2YS9sYW5nL0Jvb2xlYW4BAAxib29sZWFuVmFsdWUBAAMoKVoBAARoZ2V0AQA4KExqYXZhL2xhbmcvU3RyaW5nO0xqYXZhL2xhbmcvU3RyaW5nOylMamF2YS9sYW5nL1N0cmluZzsBAAVjbG9zZQAhAA0ADgAAAAIABAAPABAAAAAEABEAEAAAAAYAAQASABMAAQAUAAAAHQABAAEAAAAFKrQAAbAAAAABABUAAAAGAAEAAAAMAAEAFgAXAAEAFAAAACIAAgACAAAABiortQABsQAAAAEAFQAAAAoAAgAAAA8ABQAQAAEAGAATAAEAFAAAAB0AAQABAAAABSq0AAKwAAAAAQAVAAAABgABAAAAEgABABkAFwABABQAAAAiAAIAAgAAAAYqK7UAArEAAAABABUAAAAKAAIAAAAVAAUAFgABABoAGwABABQAAAA1AAIAAQAAABEqtwADKhIEtQABKhIEtQACsQAAAAEAFQAAABIABAAAABgABAAJAAoACgAQABkAAQAcABsAAgAUAAAAYQAEAAIAAAAruAAFtgAGTCsqtAABtgAHtgAItgAJmQARKisqtAABEgq2AAu1AAIrtgAMsQAAAAIAFQAAABYABQAAACAABwAhABgAIgAmACQAKgAlAB0AAAAIAAH8ACYHAB4AHwAAAAQAAQAgAAEAIQAAAAIAIg==</byteCode>
+                </class>
+            </byteCode>
+        </config>
+        <pd:inputBindings>
+            <javaCodeActivityInput>
+                <tokenInfo>
+                    <xsl:value-of select="$Parse-JSON/ns2:ActivityOutputClass/pfx:requestParams/pfx:tokenInfo"/>
+                </tokenInfo>
+            </javaCodeActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>Parse JSON</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Parse JSON</pd:from>
+        <pd:to>Java Code</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>QueryPostback</pd:from>
+        <pd:to>Render JSON</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Catch</pd:from>
+        <pd:to>Rethrow</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Render JSON</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Java Code</pd:from>
+        <pd:to>QueryPostback</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>

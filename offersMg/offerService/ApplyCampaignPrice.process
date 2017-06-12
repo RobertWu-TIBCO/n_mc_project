@@ -1,0 +1,434 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:ns2="http://xmlns.tibco.com/body" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ns1="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd14" xmlns:ns="http://www.tibco.com/namespaces/tnt/plugins/mail" xmlns:ns4="http://www.tibco.com/pe/GenerateErrorActivity/InputSchema" xmlns:ns3="http://www.tibco.com/namespaces/tnt/plugins/json" xmlns:pfx5="http://www.tibco.com/schemas/n_mc_project/share_resources/schema_resources/Schema.xsd4" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:pfx4="http://www.tibco.com/schemas/n_mc_project/share_resources/schema_resources/Schema.xsd3" xmlns:tib="http://www.tibco.com/bw/xslt/custom-functions" xmlns:pfx3="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd5" xmlns:pfx2="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd" xmlns:pfx="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd12">
+    <xsd:import namespace="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd12" schemaLocation="/share_resources/schema_resources/ConditionsSchema.xsd"/>
+    <xsd:import namespace="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd" schemaLocation="/share_resources/schema_resources/OfferPOSchema.xsd"/>
+    <xsd:import namespace="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd5" schemaLocation="/share_resources/schema_resources/CampaignPOSchema.xsd"/>
+    <xsd:import namespace="http://www.tibco.com/schemas/n_mc_project/share_resources/schema_resources/Schema.xsd3" schemaLocation="/share_resources/schema_resources/CampaignVO.xsd"/>
+    <pd:name>offersMg/offerService/ApplyCampaignPrice.process</pd:name>
+    <pd:startName>Start</pd:startName>
+    <pd:startType ref="pfx:requestParams"/>
+    <pd:startX>93</pd:startX>
+    <pd:startY>164</pd:startY>
+    <pd:returnBindings>
+        <responseJsonStr>
+            <xsl:value-of select="'{&quot;responseStatus&quot;:&quot;success&quot;}'"/>
+        </responseJsonStr>
+    </pd:returnBindings>
+    <pd:endName>End</pd:endName>
+    <pd:endType>
+        <xsd:element name="responseJsonStr" type="xsd:string"/>
+    </pd:endType>
+    <pd:endX>1495</pd:endX>
+    <pd:endY>278</pd:endY>
+    <pd:errorSchemas/>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/1495575610035</pd:targetNamespace>
+    <pd:activity name="Map Data">
+        <pd:type>com.tibco.plugin.mapper.MapperActivity</pd:type>
+        <pd:resourceType>ae.activities.MapperActivity</pd:resourceType>
+        <pd:x>1006</pd:x>
+        <pd:y>73</pd:y>
+        <config>
+            <element>
+                <xsd:element name="root">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="param" type="xsd:string"/>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+            </element>
+        </config>
+        <pd:inputBindings>
+            <root>
+                <param>
+                    <xsl:value-of select="concat(&quot;&lt;font size='3'>Hi &quot;,$ManagerAccountQuery/ns1:accountResults/ns1:accountObj[1]/ns1:accountName, &quot;,  &lt;br />&lt;br />&quot;, &quot;You have received a new request regarding campaign payout from N, please kindly confirm! &lt;br/>&lt;/font>&quot;,&quot;&lt;font size='2'>From N           : &lt;b> &quot;,concat($Java-Code/javaCodeActivityOutput/nId,&quot;-&quot;,$ManagerAccountQuery/ns1:accountResults/ns1:accountObj[1]/ns1:label),&quot;[&quot;,$Java-Code/javaCodeActivityOutput/nMail,&quot;]&lt;/b>&lt;br/>&quot;,concat(&quot;Current offer   : &lt;b>&quot;,$Parse-JSON/ns3:ActivityOutputClass/pfx4:campaignVO/pfx4:offerId,&quot;-&quot;,$Parse-JSON/ns3:ActivityOutputClass/pfx4:campaignVO/pfx4:offerName),&quot;&lt;/b>&lt;br/>&quot;,&quot;Apply price      : &lt;b>&quot;,concat($Parse-JSON/ns3:ActivityOutputClass/pfx4:campaignVO/pfx4:campaignExpendT, &quot;-&quot;,$Parse-JSON/ns3:ActivityOutputClass/pfx4:campaignVO/pfx4:campaignExpendC,&quot;-&quot;,$Parse-JSON/ns3:ActivityOutputClass/pfx4:campaignVO/pfx4:campaignExpendN),&quot;&lt;/b>&lt;br/>Apply cap        : &lt;b>&quot;,$Parse-JSON/ns3:ActivityOutputClass/pfx4:campaignVO/pfx4:campaignCap,&quot;&lt;/b> &lt;br/>ApplyQueueId : &lt;b>&quot;,$NextApplyQueueIdQuery/root/NextApplyQueueId,&quot;&lt;/b>&lt;br/>&lt;br/>&lt;/font>&lt;div  align='left'>&lt;font size='3'>MC UI Admin&lt;/font>&lt;/div>&quot;)"/>
+                </param>
+            </root>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Parse JSON">
+        <pd:type>com.tibco.plugin.json.activities.JSONParserActivity</pd:type>
+        <pd:resourceType>ae.activities.JSONParserActivity</pd:resourceType>
+        <pd:x>233</pd:x>
+        <pd:y>173</pd:y>
+        <config>
+            <SchemaType>xsdType</SchemaType>
+            <BadgerfishCheck>false</BadgerfishCheck>
+            <ActivityOutputEditor ref="pfx4:campaignVO"/>
+        </config>
+        <pd:inputBindings>
+            <ns3:ActivityInputClass>
+                <jsonString>
+                    <xsl:value-of select="$Start/pfx:requestParams/pfx:jsonPostData"/>
+                </jsonString>
+            </ns3:ActivityInputClass>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Java Code">
+        <pd:type>com.tibco.plugin.java.JavaActivity</pd:type>
+        <pd:resourceType>ae.javapalette.javaActivity</pd:resourceType>
+        <pd:x>520</pd:x>
+        <pd:y>66</pd:y>
+        <config>
+            <fileName>ApplyCampaignPriceJavaCode</fileName>
+            <packageName>offersMg.offerService.ApplyCampaignPrice</packageName>
+            <fullsource>package offersMg.offerService.ApplyCampaignPrice;
+import java.util.*;
+import java.io.*;
+import com.tm.mc.redis.MCRedisInstance;
+import redis.clients.jedis.Jedis;
+
+public class ApplyCampaignPriceJavaCode{
+/****** START SET/GET METHOD, DO NOT MODIFY *****/
+	protected String tokenInfo = "";
+	protected String nId = "";
+	protected String nMail = "";
+	public String gettokenInfo() {
+		return tokenInfo;
+	}
+	public void settokenInfo(String val) {
+		tokenInfo = val;
+	}
+	public String getnId() {
+		return nId;
+	}
+	public void setnId(String val) {
+		nId = val;
+	}
+	public String getnMail() {
+		return nMail;
+	}
+	public void setnMail(String val) {
+		nMail = val;
+	}
+/****** END SET/GET METHOD, DO NOT MODIFY *****/
+	public ApplyCampaignPriceJavaCode() {
+	}
+	public void invoke() throws Exception {
+/* Available Variables: DO NOT MODIFY
+	In  : String tokenInfo
+	Out : String nId
+	Out : String nMail
+* Available Variables: DO NOT MODIFY *****/
+
+Jedis jedis = MCRedisInstance.getInstance().getJedis();
+		if(jedis.exists(tokenInfo.trim())){
+			nId = jedis.hget(tokenInfo, "userId");
+			nMail = jedis.hget(tokenInfo, "userName");
+		}
+		jedis.close();
+	}
+}
+</fullsource>
+            <inputData>
+                <row>
+                    <fieldName>tokenInfo</fieldName>
+                    <fieldType>string</fieldType>
+                    <fieldRequired>optional</fieldRequired>
+                </row>
+            </inputData>
+            <outputData>
+                <row>
+                    <fieldName>nId</fieldName>
+                    <fieldType>string</fieldType>
+                    <fieldRequired>optional</fieldRequired>
+                </row>
+                <row>
+                    <fieldName>nMail</fieldName>
+                    <fieldType>string</fieldType>
+                    <fieldRequired>optional</fieldRequired>
+                </row>
+            </outputData>
+            <byteCode>
+                <class>
+                    <name>ApplyCampaignPriceJavaCode</name>
+                    <byteCode>yv66vgAAADMATQkADwAoCQAPACkJAA8AKgoAEAArCAAsCgAtAC4KAC0ALwoAMAAxCgAyADMKADQANQgANgoAMgA3CAA4CgAyADkHADoHADsBAAl0b2tlbkluZm8BABJMamF2YS9sYW5nL1N0cmluZzsBAANuSWQBAAVuTWFpbAEADGdldHRva2VuSW5mbwEAFCgpTGphdmEvbGFuZy9TdHJpbmc7AQAEQ29kZQEAD0xpbmVOdW1iZXJUYWJsZQEADHNldHRva2VuSW5mbwEAFShMamF2YS9sYW5nL1N0cmluZzspVgEABmdldG5JZAEABnNldG5JZAEACGdldG5NYWlsAQAIc2V0bk1haWwBAAY8aW5pdD4BAAMoKVYBAAZpbnZva2UBAA1TdGFja01hcFRhYmxlBwA8AQAKRXhjZXB0aW9ucwcAPQEAClNvdXJjZUZpbGUBAB9BcHBseUNhbXBhaWduUHJpY2VKYXZhQ29kZS5qYXZhDAARABIMABMAEgwAFAASDAAfACABAAAHAD4MAD8AQAwAQQBCBwBDDABEABYHADwMAEUARgcARwwASABJAQAGdXNlcklkDABKAEsBAAh1c2VyTmFtZQwATAAgAQBDb2ZmZXJzTWcvb2ZmZXJTZXJ2aWNlL0FwcGx5Q2FtcGFpZ25QcmljZS9BcHBseUNhbXBhaWduUHJpY2VKYXZhQ29kZQEAEGphdmEvbGFuZy9PYmplY3QBABlyZWRpcy9jbGllbnRzL2plZGlzL0plZGlzAQATamF2YS9sYW5nL0V4Y2VwdGlvbgEAH2NvbS90bS9tYy9yZWRpcy9NQ1JlZGlzSW5zdGFuY2UBAAtnZXRJbnN0YW5jZQEAIygpTGNvbS90bS9tYy9yZWRpcy9NQ1JlZGlzSW5zdGFuY2U7AQAIZ2V0SmVkaXMBAB0oKUxyZWRpcy9jbGllbnRzL2plZGlzL0plZGlzOwEAEGphdmEvbGFuZy9TdHJpbmcBAAR0cmltAQAGZXhpc3RzAQAnKExqYXZhL2xhbmcvU3RyaW5nOylMamF2YS9sYW5nL0Jvb2xlYW47AQARamF2YS9sYW5nL0Jvb2xlYW4BAAxib29sZWFuVmFsdWUBAAMoKVoBAARoZ2V0AQA4KExqYXZhL2xhbmcvU3RyaW5nO0xqYXZhL2xhbmcvU3RyaW5nOylMamF2YS9sYW5nL1N0cmluZzsBAAVjbG9zZQAhAA8AEAAAAAMABAARABIAAAAEABMAEgAAAAQAFAASAAAACAABABUAFgABABcAAAAdAAEAAQAAAAUqtAABsAAAAAEAGAAAAAYAAQAAAA0AAQAZABoAAQAXAAAAIgACAAIAAAAGKiu1AAGxAAAAAQAYAAAACgACAAAAEAAFABEAAQAbABYAAQAXAAAAHQABAAEAAAAFKrQAArAAAAABABgAAAAGAAEAAAATAAEAHAAaAAEAFwAAACIAAgACAAAABiortQACsQAAAAEAGAAAAAoAAgAAABYABQAXAAEAHQAWAAEAFwAAAB0AAQABAAAABSq0AAOwAAAAAQAYAAAABgABAAAAGQABAB4AGgABABcAAAAiAAIAAgAAAAYqK7UAA7EAAAABABgAAAAKAAIAAAAcAAUAHQABAB8AIAABABcAAAA/AAIAAQAAABcqtwAEKhIFtQABKhIFtQACKhIFtQADsQAAAAEAGAAAABYABQAAAB8ABAAJAAoACgAQAAsAFgAgAAEAIQAgAAIAFwAAAHMABAACAAAAObgABrYAB0wrKrQAAbYACLYACbYACpkAHyorKrQAARILtgAMtQACKisqtAABEg22AAy1AAMrtgAOsQAAAAIAGAAAABoABgAAACgABwApABgAKgAmACsANAAtADgALgAiAAAACAAB/AA0BwAjACQAAAAEAAEAJQABACYAAAACACc=</byteCode>
+                </class>
+            </byteCode>
+        </config>
+        <pd:inputBindings>
+            <javaCodeActivityInput>
+                <tokenInfo>
+                    <xsl:value-of select="$Parse-JSON/ns3:ActivityOutputClass/pfx4:campaignVO/pfx4:tokenInfo"/>
+                </tokenInfo>
+            </javaCodeActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="ManagerAccountQuery">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>667</pd:x>
+        <pd:y>73</pd:y>
+        <config>
+            <processName>/accountMg/accountDao/ManagerAccountMailQuery.process</processName>
+        </config>
+        <pd:inputBindings>
+            <root>
+                <xsl:if test="$Java-Code/javaCodeActivityOutput/nId">
+                    <accountId>
+                        <xsl:value-of select="$Java-Code/javaCodeActivityOutput/nId"/>
+                    </accountId>
+                </xsl:if>
+            </root>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="validateRepeatSubmit">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>379</pd:x>
+        <pd:y>284</pd:y>
+        <config>
+            <processName>/common_functions/ValidateRepeatSubmit.process</processName>
+        </config>
+        <pd:inputBindings>
+            <root>
+                <tokenInfo>
+                    <xsl:value-of select="$Parse-JSON/ns3:ActivityOutputClass/pfx4:campaignVO/pfx4:tokenInfo"/>
+                </tokenInfo>
+                <validateRepeatSubmit>
+                    <xsl:value-of select="$Parse-JSON/ns3:ActivityOutputClass/pfx4:campaignVO/pfx4:validateRepeat"/>
+                </validateRepeatSubmit>
+            </root>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Catch">
+        <pd:type>com.tibco.pe.core.CatchActivity</pd:type>
+        <pd:resourceType>ae.activities.catch</pd:resourceType>
+        <pd:x>1637</pd:x>
+        <pd:y>84</pd:y>
+        <pd:handler>true</pd:handler>
+        <config>
+            <catchAll>true</catchAll>
+        </config>
+        <pd:inputBindings/>
+    </pd:activity>
+    <pd:activity name="Rethrow">
+        <pd:type>com.tibco.pe.core.RethrowActivity</pd:type>
+        <pd:resourceType>ae.activities.rethrow</pd:resourceType>
+        <pd:x>1678</pd:x>
+        <pd:y>228</pd:y>
+        <config/>
+        <pd:inputBindings/>
+    </pd:activity>
+    <pd:group name="Group">
+        <pd:type>com.tibco.pe.core.TransactionGroup</pd:type>
+        <pd:resourceType>ae.process.group</pd:resourceType>
+        <pd:x>1075</pd:x>
+        <pd:y>6</pd:y>
+        <pd:width>316</pd:width>
+        <pd:height>146</pd:height>
+        <pd:collapsedWidth>57</pd:collapsedWidth>
+        <pd:collapsedHeight>70</pd:collapsedHeight>
+        <pd:groupVariables/>
+        <pd:joinToggle>inherit</pd:joinToggle>
+        <config>
+            <pd:groupType>transactionGroup</pd:groupType>
+            <pd:serializable>false</pd:serializable>
+            <pd:transactionType>JDBCTransaction</pd:transactionType>
+            <pd:includeCheckpoint>false</pd:includeCheckpoint>
+        </config>
+        <pd:inputBindings/>
+        <pd:expanded>true</pd:expanded>
+        <pd:transition>
+            <pd:from>start</pd:from>
+            <pd:to>ApplyQueueAdd</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>Send Mail</pd:from>
+            <pd:to>end</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>ApplyQueueAdd</pd:from>
+            <pd:to>Send Mail</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:activity name="Send Mail">
+            <pd:type>com.tibco.plugin.mail.MailPubActivity</pd:type>
+            <pd:resourceType>ae.activities.MailActivityResource</pd:resourceType>
+            <pd:description>mcsystem@mobiexchanger.com</pd:description>
+            <pd:x>1271</pd:x>
+            <pd:y>68</pd:y>
+            <config>
+                <newMimeSupport>true</newMimeSupport>
+                <inputOutputVersion>5.2.0</inputOutputVersion>
+                <authenticate>true</authenticate>
+                <host>smtp.exmail.qq.com</host>
+                <username>mcsystem@mobiexchanger.com</username>
+                <password>Vaz53d0Dr8Mip7ma</password>
+                <useSsl>true</useSsl>
+		 <ns0:ssl xmlns:ns0="http://www.tibco.com/xmlns/aemeta/services/2002">
+                <ns0:strongCipherSuitesOnly>false</ns0:strongCipherSuitesOnly>
+                <ns0:cert isRef="true">/share_resources/mailcerts/.folder</ns0:cert>
+            </ns0:ssl>
+                <InputHeaders>
+                    <xsd:element name="root">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="Content-Type" type="xsd:string" minOccurs="0"/>
+                                <xsd:element name="Message-Id" type="xsd:string" minOccurs="0"/>
+                            </xsd:sequence>
+                        </xsd:complexType>
+                    </xsd:element>
+                </InputHeaders>
+            </config>
+            <pd:inputBindings>
+                <ns:mailActivityInput>
+                    <from>
+                        <xsl:value-of select="&quot;mcsystem@mobiexchanger.com&quot;"/>
+                    </from>
+                    <to>
+                        <xsl:value-of select="$ManagerAccountQuery/ns1:accountResults/ns1:accountObj[1]/ns1:accounteEmail"/>
+                    </to>
+                    <subject>
+                        <xsl:value-of select="&quot;Apply for Campaign Payout  !&quot;"/>
+                    </subject>
+                    <sentdate>
+                        <xsl:value-of select="tib:format-dateTime(&quot;yyyy-MM-dd HH:mm:ss&quot;, current-dateTime())"/>
+                    </sentdate>
+                    <ns2:bodyElement>
+                        <bodyText>
+                            <xsl:value-of select="$Map-Data/root/param"/>
+                        </bodyText>
+                    </ns2:bodyElement>
+                    <Headers>
+                        <Content-Type>
+                            <xsl:value-of select="&quot;text/html; charset=utf-8&quot;"/>
+                        </Content-Type>
+                        <Message-Id>
+                            <xsl:value-of select="&quot;Moning-Mona123 &quot;"/>
+                        </Message-Id>
+                    </Headers>
+                </ns:mailActivityInput>
+            </pd:inputBindings>
+        </pd:activity>
+        <pd:activity name="ApplyQueueAdd">
+            <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+            <pd:resourceType>ae.process.subprocess</pd:resourceType>
+            <pd:x>1146</pd:x>
+            <pd:y>70</pd:y>
+            <config>
+                <processName>/offersMg/offerDao/ApplyQueueAdd.process</processName>
+            </config>
+            <pd:inputBindings>
+                <pfx5:ApplyQueueObj>
+                    <pfx5:applyQueueId>
+                        <xsl:value-of select="$NextApplyQueueIdQuery/root/NextApplyQueueId"/>
+                    </pfx5:applyQueueId>
+                    <pfx5:offerId>
+                        <xsl:value-of select="$Parse-JSON/ns3:ActivityOutputClass/pfx4:campaignVO/pfx4:offerId"/>
+                    </pfx5:offerId>
+                    <pfx5:applyQueueMode>
+                        <xsl:value-of select="$Parse-JSON/ns3:ActivityOutputClass/pfx4:campaignVO/pfx4:campaignExpendT"/>
+                    </pfx5:applyQueueMode>
+                    <pfx5:applyQueueCurrency>
+                        <xsl:value-of select="$Parse-JSON/ns3:ActivityOutputClass/pfx4:campaignVO/pfx4:campaignExpendC"/>
+                    </pfx5:applyQueueCurrency>
+                    <pfx5:applyQueuePayout>
+                        <xsl:value-of select="$Parse-JSON/ns3:ActivityOutputClass/pfx4:campaignVO/pfx4:campaignExpendN"/>
+                    </pfx5:applyQueuePayout>
+                    <pfx5:applyQueueCap>
+                        <xsl:value-of select="$Parse-JSON/ns3:ActivityOutputClass/pfx4:campaignVO/pfx4:campaignCap"/>
+                    </pfx5:applyQueueCap>
+                    <pfx5:applyQueueStatus>
+                        <xsl:value-of select="&quot;pending&quot;"/>
+                    </pfx5:applyQueueStatus>
+                    <xsl:if test="$Java-Code/javaCodeActivityOutput/nId">
+                        <pfx5:nId>
+                            <xsl:value-of select="$Java-Code/javaCodeActivityOutput/nId"/>
+                        </pfx5:nId>
+                    </xsl:if>
+                </pfx5:ApplyQueueObj>
+            </pd:inputBindings>
+        </pd:activity>
+    </pd:group>
+    <pd:activity name="NextApplyQueueIdQuery">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>845</pd:x>
+        <pd:y>75</pd:y>
+        <config>
+            <processName>/offersMg/offerDao/NextApplyQueueIdQuery.process</processName>
+        </config>
+        <pd:inputBindings/>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>Parse JSON</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>ManagerAccountQuery</pd:from>
+        <pd:to>NextApplyQueueIdQuery</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Java Code</pd:from>
+        <pd:to>ManagerAccountQuery</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>validateRepeatSubmit</pd:from>
+        <pd:to>Java Code</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>xpath</pd:conditionType>
+        <pd:xpath>$validateRepeatSubmit/root="false"</pd:xpath>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Parse JSON</pd:from>
+        <pd:to>validateRepeatSubmit</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>validateRepeatSubmit</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>otherwise</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Catch</pd:from>
+        <pd:to>Rethrow</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Map Data</pd:from>
+        <pd:to>Group</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Group</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>NextApplyQueueIdQuery</pd:from>
+        <pd:to>Map Data</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>

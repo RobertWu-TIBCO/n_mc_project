@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:ns="http://www.tibco.com/pe/WriteToLogActivitySchema" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns2="http://www.tibco.com/schemas/n_mc_project/share_resources/schema_resources/Schema.xsd4" xmlns:tib="http://www.tibco.com/bw/xslt/custom-functions" xmlns:ns1="http://www.tibco.com/namespaces/tnt/plugins/mail">
+    <pd:name>ReceivedMail.process</pd:name>
+    <pd:startName>Receive Mail</pd:startName>
+    <pd:startX>0</pd:startX>
+    <pd:startY>0</pd:startY>
+    <pd:returnBindings/>
+    <pd:starter name="Receive Mail">
+        <pd:type>com.tibco.plugin.mail.MailEventSource</pd:type>
+        <pd:resourceType>ae.activities.MailEventSourceResource</pd:resourceType>
+        <pd:x>215</pd:x>
+        <pd:y>96</pd:y>
+        <config>
+            <pollinginterval>5</pollinginterval>
+            <newMimeSupport>true</newMimeSupport>
+            <inputOutputVersion>5.2.0</inputOutputVersion>
+            <host>pop.exmail.qq.com</host>
+            <username>mcsystem@mobiexchanger.com</username>
+            <password>#!iZ0Rfl0MHKw5R0wgLumuWCoYGx6b6+hjfXoO1xIsiYDWyG2dNbbjkEpRqJMFzJjo</password>
+            <useSsl>true</useSsl>
+              <ns0:ssl xmlns:ns0="http://www.tibco.com/xmlns/aemeta/services/2002">
+                <ns0:strongCipherSuitesOnly>false</ns0:strongCipherSuitesOnly>
+                <ns0:cert isRef="true">/share_resources/mailcerts/.folder</ns0:cert>
+            </ns0:ssl>
+		<OutputHeaders>
+                <xsd:element name="root">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="Message-Id" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="Content-Type" type="xsd:string" minOccurs="0"/>
+                            <xsd:any minOccurs="0" maxOccurs="unbounded" processContents="skip"/>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+            </OutputHeaders>
+        </config>
+        <pd:inputBindings/>
+    </pd:starter>
+    <pd:endName>End</pd:endName>
+    <pd:endX>897</pd:endX>
+    <pd:endY>72</pd:endY>
+    <pd:errorSchemas/>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/1495876620547</pd:targetNamespace>
+    <pd:activity name="ApplyQueueUpdate">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>675</pd:x>
+        <pd:y>83</pd:y>
+        <config>
+            <processName>/offersMg/offerDao/ApplyQueueUpdate.process</processName>
+        </config>
+        <pd:inputBindings>
+            <ns2:ApplyQueueObj>
+                <xsl:if test="tib:index-of($Map-Data/root/bodyText, &quot;ApplyQueueId :&quot;)>0">
+                    <ns2:applyQueueId>
+                        <xsl:value-of select="substring-before(substring-after($Map-Data/root/bodyText, &quot;ApplyQueueId : &quot;),  &quot;MC UI Admin&quot;)"/>
+                    </ns2:applyQueueId>
+                </xsl:if>
+                <xsl:choose>
+                    <xsl:when test="contains(lower-case($Map-Data/root/bodyText), &quot;confirm&quot;) and not(contains(lower-case($Map-Data/root/bodyText), &quot;denied&quot;)) and not(contains(lower-case($Map-Data/root/bodyText), &quot;deny&quot;))">
+                        <ns2:applyQueueStatus>
+                            <xsl:value-of select="&quot;confirmed&quot;"/>
+                        </ns2:applyQueueStatus>
+                    </xsl:when>
+                    <xsl:when test="contains(lower-case($Map-Data/root/bodyText), &quot;denied&quot;) or contains(lower-case($Map-Data/root/bodyText), &quot;deny&quot;)">
+                        <ns2:applyQueueStatus>
+                            <xsl:value-of select="&quot;denied&quot;"/>
+                        </ns2:applyQueueStatus>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <ns2:applyQueueStatus>
+                            <xsl:value-of select="&quot;pending&quot;"/>
+                        </ns2:applyQueueStatus>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </ns2:ApplyQueueObj>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Map Data">
+        <pd:type>com.tibco.plugin.mapper.MapperActivity</pd:type>
+        <pd:resourceType>ae.activities.MapperActivity</pd:resourceType>
+        <pd:x>389</pd:x>
+        <pd:y>111</pd:y>
+        <config>
+            <element>
+                <xsd:element name="root">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="bodyText" type="xsd:string"/>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+            </element>
+        </config>
+        <pd:inputBindings>
+            <root>
+                <bodyText>
+                    <xsl:value-of select="$Receive-Mail/ns1:outputClass/bodyText"/>
+                </bodyText>
+            </root>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Catch">
+        <pd:type>com.tibco.pe.core.CatchActivity</pd:type>
+        <pd:resourceType>ae.activities.catch</pd:resourceType>
+        <pd:x>1443</pd:x>
+        <pd:y>106</pd:y>
+        <pd:handler>true</pd:handler>
+        <config>
+            <catchAll>true</catchAll>
+        </config>
+        <pd:inputBindings/>
+    </pd:activity>
+    <pd:activity name="Rethrow">
+        <pd:type>com.tibco.pe.core.RethrowActivity</pd:type>
+        <pd:resourceType>ae.activities.rethrow</pd:resourceType>
+        <pd:x>1433</pd:x>
+        <pd:y>230</pd:y>
+        <config/>
+        <pd:inputBindings/>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>Receive Mail</pd:from>
+        <pd:to>Map Data</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>ApplyQueueUpdate</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Map Data</pd:from>
+        <pd:to>ApplyQueueUpdate</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Catch</pd:from>
+        <pd:to>Rethrow</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>

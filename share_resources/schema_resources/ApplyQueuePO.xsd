@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	 xmlns="http://www.tibco.com/schemas/n_mc_project/share_resources/schema_resources/Schema.xsd4"
+	 targetNamespace="http://www.tibco.com/schemas/n_mc_project/share_resources/schema_resources/Schema.xsd4"
+	 elementFormDefault="qualified"
+	 attributeFormDefault="unqualified">
+	<xs:element name="applyQueueId" type="xs:string"/>
+	<xs:element name="offerId" type="xs:string"/>
+	<xs:element name="applyQueueMode" type="xs:string"/>
+	<xs:element name="applyQueueCurrency" type="xs:string"/>
+	<xs:element name="applyQueuePayout" type="xs:string"/>
+	<xs:element name="applyQueueCap" type="xs:string"/>
+	<xs:element name="applyQueueStatus" type="xs:string"/>
+	<xs:element name="nId" type="xs:string"/>
+	<xs:element name="applyQueueDatetime" type="xs:string"/>
+	<xs:element name="applyQueueReplyDatetime" type="xs:string"/>
+	<xs:element name="offerName" type="xs:string"/>
+	<xs:element name="validateRepeat" type="xs:string"/>
+	<xs:element name="tokenInfo" type="xs:string"/>
+	<xs:element name="ApplyQueueObj">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="applyQueueId" minOccurs="0"/>
+				<xs:element ref="offerId" minOccurs="0"/>
+				<xs:element ref="applyQueueMode" minOccurs="0"/>
+				<xs:element ref="applyQueueCurrency" minOccurs="0"/>
+				<xs:element ref="applyQueuePayout" minOccurs="0"/>
+				<xs:element ref="applyQueueCap" minOccurs="0"/>
+				<xs:element ref="applyQueueStatus" minOccurs="0"/>
+				<xs:element ref="nId" minOccurs="0"/>
+				<xs:element ref="applyQueueDatetime" minOccurs="0"/>
+				<xs:element ref="applyQueueReplyDatetime" minOccurs="0"/>
+				<xs:element ref="offerName" minOccurs="0"/>
+				<xs:element ref="validateRepeat" minOccurs="0"/>
+				<xs:element ref="tokenInfo" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="ApplyQueueResults">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="ApplyQueueObj" minOccurs="0" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

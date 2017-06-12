@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	 xmlns="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd18"
+	 targetNamespace="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd18"
+	 elementFormDefault="qualified"
+	 attributeFormDefault="unqualified">
+	<xs:element name="reportDate" type="xs:string"/>
+	<xs:element name="offerLabel" type="xs:string"/>
+	<xs:element name="nLabel" type="xs:string"/>
+	<xs:element name="campaignLabel" type="xs:string"/>
+	<xs:element name="clickCount" type="xs:string"/>
+	<xs:element name="offerInPrice" type="xs:string"/>
+	<xs:element name="offerEarningType" type="xs:string"/>
+	<xs:element name="offerEarningLabel" type="xs:string"/>
+	<xs:element name="campaignOutPrice" type="xs:string"/>
+	<xs:element name="campaignExpendType" type="xs:string"/>
+	<xs:element name="campaignExpendLabel" type="xs:string"/>
+	<xs:element name="conNormalCount" type="xs:string"/>
+	<xs:element name="conRmCount" type="xs:string"/>
+	<xs:element name="conDuplicateCount" type="xs:string"/>
+	<xs:element name="conversionRate" type="xs:string"/>
+	<xs:element name="clickRate" type="xs:string"/>
+	<xs:element name="offerReportObj">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="reportDate"/>
+				<xs:element ref="offerLabel"/>
+				<xs:element ref="clickCount"/>
+				<xs:element ref="offerInPrice" minOccurs="0"/>
+				<xs:element ref="offerEarningType" minOccurs="0"/>
+				<xs:element ref="offerEarningLabel" minOccurs="0"/>
+				<xs:element ref="conNormalCount" minOccurs="0"/>
+				<xs:element ref="conRmCount" minOccurs="0"/>
+				<xs:element ref="conDuplicateCount"/>
+				<xs:element ref="conversionRate"/>
+				<xs:element ref="clickRate"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="nReportObj">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="reportDate"/>
+				<xs:element ref="nLabel"/>
+				<xs:element ref="clickCount"/>
+				<xs:element ref="conNormalCount"/>
+				<xs:element ref="conRmCount"/>
+				<xs:element ref="conDuplicateCount"/>
+				<xs:element ref="conversionRate"/>
+				<xs:element ref="clickRate"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="campaignReportObj">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="reportDate"/>
+				<xs:element ref="campaignLabel"/>
+				<xs:element ref="clickCount"/>
+				<xs:element ref="conNormalCount"/>
+				<xs:element ref="conRmCount"/>
+				<xs:element ref="conDuplicateCount"/>
+				<xs:element ref="conversionRate"/>
+				<xs:element ref="clickRate"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="reportObj">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="reportDate"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="offerReportResults">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="offerReportObj" minOccurs="0" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="nReportResults">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="nReportObj" minOccurs="0" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="campaignReportResults">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="campaignReportObj" minOccurs="0" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="ReportResults">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="reportObj" minOccurs="0" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<BWSharedResource>
+    <name>JDBC Connection</name>
+    <resourceType>ae.shared.JDBCSharedResource</resourceType>
+    <config>
+        <driver>com.mysql.jdbc.Driver</driver>
+        <maxConnections>10</maxConnections>
+        <loginTimeout>0</loginTimeout>
+        <connectionType>JDBC</connectionType>
+        <UseSharedJndiConfig>false</UseSharedJndiConfig>
+        <location>jdbc:mysql://localhost:3306/mc_new_arch_mona?useOldAliasMetadataBehavior=true</location>
+        <user>root</user>
+        <password>#!Xtb7+zy7BR4Jb5a7HmWOvOwDkq6SXB6nj98V8Sbih1k=</password>
+    </config>
+</BWSharedResource>

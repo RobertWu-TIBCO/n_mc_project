@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:pfx="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd15" xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:tib="http://www.tibco.com/bw/xslt/custom-functions" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <xs:import xmlns:xs="http://www.w3.org/2001/XMLSchema" namespace="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd15" schemaLocation="/share_resources/schema_resources/PostbackPO.xsd"/>
+    <pd:name>postback/postbackDao/PostbackQuery.process</pd:name>
+    <pd:startName>Start</pd:startName>
+    <pd:startType ref="pfx:postbackObj"/>
+    <pd:startX>150</pd:startX>
+    <pd:startY>64</pd:startY>
+    <pd:returnBindings>
+        <pfx:postbackResults>
+            <xsl:for-each select="$SQL-Direct/jdbcGeneralActivityOutput/unknownResultset/row">
+                <pfx:postbackObj>
+                    <pfx:postbackId>
+                        <xsl:value-of select="column[1]/value"/>
+                    </pfx:postbackId>
+                    <xsl:if test="column[2]/value">
+                        <pfx:nId>
+                            <xsl:value-of select="column[2]/value"/>
+                        </pfx:nId>
+                    </xsl:if>
+                    <xsl:if test="column[3]/value">
+                        <pfx:campaignId>
+                            <xsl:value-of select="column[3]/value"/>
+                        </pfx:campaignId>
+                    </xsl:if>
+                    <xsl:if test="column[4]/value">
+                        <pfx:postbackUrl>
+                            <xsl:value-of select="column[4]/value"/>
+                        </pfx:postbackUrl>
+                    </xsl:if>
+                    <xsl:if test="column[5]/value">
+                        <pfx:postbackEventname>
+                            <xsl:value-of select="column[5]/value"/>
+                        </pfx:postbackEventname>
+                    </xsl:if>
+                    <xsl:if test="column[6]/value">
+                        <pfx:postbackType>
+                            <xsl:value-of select="column[6]/value"/>
+                        </pfx:postbackType>
+                    </xsl:if>
+                    <xsl:if test="column[7]/value">
+                        <pfx:postbackTramsmitParameter>
+                            <xsl:value-of select="column[7]/value"/>
+                        </pfx:postbackTramsmitParameter>
+                    </xsl:if>
+                    <xsl:if test="column[8]/value">
+                        <pfx:postbackSynctype>
+                            <xsl:value-of select="column[8]/value"/>
+                        </pfx:postbackSynctype>
+                    </xsl:if>
+                    <xsl:if test="column[9]/value">
+                        <pfx:postbackIstransmit>
+                            <xsl:value-of select="column[9]/value"/>
+                        </pfx:postbackIstransmit>
+                    </xsl:if>
+                    <xsl:if test="column[10]/value">
+                        <pfx:postbackIsDel>
+                            <xsl:value-of select="column[10]/value"/>
+                        </pfx:postbackIsDel>
+                    </xsl:if>
+                    <xsl:if test="column[11]/value">
+                        <pfx:label>
+                            <xsl:value-of select="column[11]/value"/>
+                        </pfx:label>
+                    </xsl:if>
+                </pfx:postbackObj>
+            </xsl:for-each>
+        </pfx:postbackResults>
+    </pd:returnBindings>
+    <pd:endName>End</pd:endName>
+    <pd:endType ref="pfx:postbackResults"/>
+    <pd:endX>559</pd:endX>
+    <pd:endY>73</pd:endY>
+    <pd:errorSchemas/>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/1492056510573</pd:targetNamespace>
+    <pd:activity name="SQL Direct">
+        <pd:type>com.tibco.plugin.jdbc.JDBCGeneralActivity</pd:type>
+        <pd:resourceType>ae.activities.JDBCGeneralActivity</pd:resourceType>
+        <pd:x>332</pd:x>
+        <pd:y>72</pd:y>
+        <config>
+            <timeout>10</timeout>
+            <commit>false</commit>
+            <maxRows>0</maxRows>
+            <jdbcSharedConfig>/share_resources/JDBC Connection.sharedjdbc</jdbcSharedConfig>
+        </config>
+        <pd:inputBindings>
+            <jdbcGeneralActivityInput>
+                <statement>
+                    <xsl:value-of select="concat(&quot;SELECT * from ( select bp.*, CONCAT(ba.ACCOUNT_NAME) as label  from tab_postback bp INNER JOIN tab_account ba on bp.N_ID= ba.ACCOUNT_ID &quot;,&#xA;if (exists($Start/pfx:postbackObj/pfx:nId) and tib:trim($Start/pfx:postbackObj/pfx:nId)!=&quot;&quot;) then concat(&quot;and bp.N_ID=&quot;,$Start/pfx:postbackObj/pfx:nId) else &quot;&quot;,&#xA;&quot;  WHERE 1=1 and POSTBACK_ISDEL=0&quot;,&#xA;if (exists($Start/pfx:postbackObj/pfx:postbackId) and tib:trim($Start/pfx:postbackObj/pfx:postbackId)!=&quot;&quot;) then concat(&quot; and POSTBACK_ID=&quot;,$Start/pfx:postbackObj/pfx:postbackId) else &quot;&quot;,&#xA;&#xA;if (exists($Start/pfx:postbackObj/pfx:campaignId) and tib:trim($Start/pfx:postbackObj/pfx:campaignId)!=&quot;&quot;) then concat(&quot;  and CAMPAIGN_ID=&quot;,$Start/pfx:postbackObj/pfx:campaignId) else &quot;&quot;,&#xA;if (exists($Start/pfx:postbackObj/pfx:postbackType) and tib:trim($Start/pfx:postbackObj/pfx:postbackType)!=&quot;&quot;) then concat(&quot;  and POSTBACK_TYPE='&quot;, tib:trim($Start/pfx:postbackObj/pfx:postbackType),&quot;'&quot;) else &quot;&quot;,&#xA;if (exists($Start/pfx:postbackObj/pfx:postbackIstransmit) and tib:trim($Start/pfx:postbackObj/pfx:postbackIstransmit)!=&quot;&quot;) then concat(&quot;  and  POSTBACK_ISTRANSMIT=&quot;,$Start/pfx:postbackObj/pfx:postbackIstransmit) else &quot;&quot;,&#xA;if (exists($Start/pfx:postbackObj/pfx:postbackIsDel) and tib:trim($Start/pfx:postbackObj/pfx:postbackIsDel)!=&quot;&quot;) then concat(&quot;  and POSTBACK_ISDEL=&quot;,$Start/pfx:postbackObj/pfx:postbackIsDel) else &quot;&quot;,&#xA;if (exists($Start/pfx:postbackObj/pfx:searchVal) and tib:trim($Start/pfx:postbackObj/pfx:searchVal)!=&quot;&quot;) then concat(&quot;  AND (ba.ACCOUNT_ID='&quot;,tib:trim($Start/pfx:postbackObj/pfx:searchVal),&quot;'  or ba.ACCOUNT_NAME like '%&quot;,tib:trim($Start/pfx:postbackObj/pfx:searchVal),&quot;%')&quot;) else &quot;&quot;,&#xA;&#xA;&quot; union all &quot;,&#xA;&#xA;&quot; select bp.* , CONCAT(bc.CAMPAIGN_NAME,'-', bc.CAMPAIGN_STATUS) as label from tab_postback bp INNER JOIN tab_campaign bc on bp.campaign_id= bc.campaign_id&quot;,&#xA;if (exists($Start/pfx:postbackObj/pfx:campaignId) and tib:trim($Start/pfx:postbackObj/pfx:campaignId)!=&quot;&quot;) then concat(&quot;  and bp.CAMPAIGN_ID=&quot;,$Start/pfx:postbackObj/pfx:campaignId) else &quot;&quot;,&#xA;&quot;  WHERE 1=1 and POSTBACK_ISDEL=0&quot;,&#xA;if (exists($Start/pfx:postbackObj/pfx:nId) and tib:trim($Start/pfx:postbackObj/pfx:nId)!=&quot;&quot;) then concat(&quot; and bc.N_ID=&quot;,$Start/pfx:postbackObj/pfx:nId) else &quot;&quot;,&#xA;if (exists($Start/pfx:postbackObj/pfx:postbackId) and tib:trim($Start/pfx:postbackObj/pfx:postbackId)!=&quot;&quot;) then concat(&quot; and POSTBACK_ID=&quot;,$Start/pfx:postbackObj/pfx:postbackId) else &quot;&quot;,&#xA;if (exists($Start/pfx:postbackObj/pfx:postbackType) and tib:trim($Start/pfx:postbackObj/pfx:postbackType)!=&quot;&quot;) then concat(&quot;  and POSTBACK_TYPE='&quot;, tib:trim($Start/pfx:postbackObj/pfx:postbackType),&quot;'&quot;) else &quot;&quot;,&#xA;if (exists($Start/pfx:postbackObj/pfx:postbackIstransmit) and tib:trim($Start/pfx:postbackObj/pfx:postbackIstransmit)!=&quot;&quot;) then concat(&quot;  and  POSTBACK_ISTRANSMIT=&quot;,$Start/pfx:postbackObj/pfx:postbackIstransmit) else &quot;&quot;,&#xA;if (exists($Start/pfx:postbackObj/pfx:postbackIsDel) and tib:trim($Start/pfx:postbackObj/pfx:postbackIsDel)!=&quot;&quot;) then concat(&quot;  and POSTBACK_ISDEL=&quot;,$Start/pfx:postbackObj/pfx:postbackIsDel) else &quot;&quot;,&#xA;if (exists($Start/pfx:postbackObj/pfx:searchVal) and tib:trim($Start/pfx:postbackObj/pfx:searchVal)!=&quot;&quot;) then concat(&quot;  AND (bc.CAMPAIGN_ID='&quot;,tib:trim($Start/pfx:postbackObj/pfx:searchVal),&quot;'  or bc.CAMPAIGN_NAME  like '%&quot;,tib:trim($Start/pfx:postbackObj/pfx:searchVal),&quot;%')&quot;) else &quot;&quot;&#xA;, &quot;) a order by a.POSTBACK_ID desc&quot;&#xA;)"/>
+                </statement>
+                <maxRows>
+                    <xsl:value-of select="0"/>
+                </maxRows>
+            </jdbcGeneralActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Catch">
+        <pd:type>com.tibco.pe.core.CatchActivity</pd:type>
+        <pd:resourceType>ae.activities.catch</pd:resourceType>
+        <pd:x>839</pd:x>
+        <pd:y>34</pd:y>
+        <pd:handler>true</pd:handler>
+        <config>
+            <catchAll>true</catchAll>
+        </config>
+        <pd:inputBindings/>
+    </pd:activity>
+    <pd:activity name="Rethrow">
+        <pd:type>com.tibco.pe.core.RethrowActivity</pd:type>
+        <pd:resourceType>ae.activities.rethrow</pd:resourceType>
+        <pd:x>858</pd:x>
+        <pd:y>174</pd:y>
+        <config/>
+        <pd:inputBindings/>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>SQL Direct</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>SQL Direct</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Catch</pd:from>
+        <pd:to>Rethrow</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>

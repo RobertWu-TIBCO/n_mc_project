@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:pfx="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd2" xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tib="http://www.tibco.com/bw/xslt/custom-functions" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <xsd:import namespace="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd2" schemaLocation="/share_resources/schema_resources/ProductPOSchema.xsd"/>
+    <pd:name>offersMg/offerDao/ProductQuery.process</pd:name>
+    <pd:startName>Start</pd:startName>
+    <pd:startType>
+        <xsd:element name="root">
+            <xsd:complexType>
+                <xsd:sequence>
+                    <xsd:element name="productId" type="xsd:string" minOccurs="0"/>
+                    <xsd:element name="omid" type="xsd:string" minOccurs="0"/>
+                    <xsd:element name="productStatus" type="xsd:string" minOccurs="0"/>
+                    <xsd:element name="searchVal" type="xsd:string" minOccurs="0"/>
+                    <xsd:element name="productName" type="xsd:string" minOccurs="0"/>
+                    <xsd:element name="paraSelfId" type="xsd:string" minOccurs="0"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:element>
+    </pd:startType>
+    <pd:startX>150</pd:startX>
+    <pd:startY>64</pd:startY>
+    <pd:returnBindings>
+        <pfx:productResults>
+            <xsl:for-each select="$SQL-Direct/jdbcGeneralActivityOutput/unknownResultset/row">
+                <pfx:productObj>
+                    <pfx:productId>
+                        <xsl:value-of select="column[1]/value"/>
+                    </pfx:productId>
+                    <pfx:omId>
+                        <xsl:value-of select="column[2]/value"/>
+                    </pfx:omId>
+                    <pfx:productName>
+                        <xsl:value-of select="column[3]/value"/>
+                    </pfx:productName>
+                    <pfx:productType>
+                        <xsl:value-of select="column[4]/value"/>
+                    </pfx:productType>
+                    <pfx:productOS>
+                        <xsl:value-of select="column[5]/value"/>
+                    </pfx:productOS>
+                    <pfx:productlp>
+                        <xsl:value-of select="column[6]/value"/>
+                    </pfx:productlp>
+                    <xsl:if test="not((column[7]/value/@xsi:nil=(&quot;true&quot;)) or (column[7]/value/@xsi:nil=(&quot;1&quot;)))">
+                        <pfx:productDcp>
+                            <xsl:value-of select="column[7]/value"/>
+                        </pfx:productDcp>
+                    </xsl:if>
+                    <xsl:if test="column[8]/value">
+                        <pfx:productAppId>
+                            <xsl:value-of select="column[8]/value"/>
+                        </pfx:productAppId>
+                    </xsl:if>
+                    <pfx:productStatus>
+                        <xsl:value-of select="column[9]/value"/>
+                    </pfx:productStatus>
+                    <pfx:productCreateTime>
+                        <xsl:value-of select="column[10]/value"/>
+                    </pfx:productCreateTime>
+                </pfx:productObj>
+            </xsl:for-each>
+        </pfx:productResults>
+    </pd:returnBindings>
+    <pd:endName>End</pd:endName>
+    <pd:endType ref="pfx:productResults"/>
+    <pd:endX>449</pd:endX>
+    <pd:endY>64</pd:endY>
+    <pd:errorSchemas/>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/1489456146496</pd:targetNamespace>
+    <pd:activity name="SQL Direct">
+        <pd:type>com.tibco.plugin.jdbc.JDBCGeneralActivity</pd:type>
+        <pd:resourceType>ae.activities.JDBCGeneralActivity</pd:resourceType>
+        <pd:x>288</pd:x>
+        <pd:y>103</pd:y>
+        <config>
+            <timeout>10</timeout>
+            <commit>false</commit>
+            <maxRows>0</maxRows>
+            <jdbcSharedConfig>/share_resources/JDBC Connection.sharedjdbc</jdbcSharedConfig>
+        </config>
+        <pd:inputBindings>
+            <jdbcGeneralActivityInput>
+                <statement>
+                    <xsl:value-of select="concat(&quot;select * from tab_product where 1=1&quot;,&#xA;if (exists( $Start/root/productId) and tib:trim($Start/root/productId) !=&quot;&quot;) then concat(&quot; and PRODUCT_ID=&quot;,$Start/root/productId) else &quot;&quot;,&#xA;if (exists( $Start/root/paraSelfId) and tib:trim($Start/root/paraSelfId) !=&quot;&quot;) then concat(&quot; and PRODUCT_ID!=&quot;,$Start/root/paraSelfId) else &quot;&quot;,&#xA;if (exists( $Start/root/productName) and tib:trim($Start/root/productName) !=&quot;&quot;) then concat(&quot; and PRODUCT_NAME='&quot;, tib:trim($Start/root/productName),&quot;' &quot;)  else &quot;&quot;,&#xA;if (exists( $Start/root/omid) and  tib:trim($Start/root/omid) !=&quot;&quot;) then concat(&quot; and OM_ID=&quot;,$Start/root/omid) else &quot;&quot;,&#xA;if(exists($Start/root/productStatus) and    tib:trim($Start/root/productStatus) !=&quot;&quot;) then concat(&quot; and product_status='&quot;,$Start/root/productStatus,&quot;'&quot;) else &quot;&quot;,&#xA;if(exists($Start/root/searchVal) and  tib:trim($Start/root/searchVal)!=&quot;&quot;) then concat(&quot; and  (product_name like '%&quot;, tib:trim($Start/root/searchVal) ,&quot;%' or PRODUCT_ID like '%&quot;,tib:trim($Start/root/searchVal),&quot;%' )&quot;) else &quot;&quot;&#xA;,&quot; ORDER BY PRODUCT_ID desc&quot;)"/>
+                </statement>
+                <maxRows>
+                    <xsl:value-of select="0"/>
+                </maxRows>
+            </jdbcGeneralActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Catch">
+        <pd:type>com.tibco.pe.core.CatchActivity</pd:type>
+        <pd:resourceType>ae.activities.catch</pd:resourceType>
+        <pd:x>600</pd:x>
+        <pd:y>125</pd:y>
+        <pd:handler>true</pd:handler>
+        <config>
+            <catchAll>true</catchAll>
+        </config>
+        <pd:inputBindings/>
+    </pd:activity>
+    <pd:activity name="Rethrow">
+        <pd:type>com.tibco.pe.core.RethrowActivity</pd:type>
+        <pd:resourceType>ae.activities.rethrow</pd:resourceType>
+        <pd:x>801</pd:x>
+        <pd:y>124</pd:y>
+        <config/>
+        <pd:inputBindings/>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>SQL Direct</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>SQL Direct</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Catch</pd:from>
+        <pd:to>Rethrow</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>

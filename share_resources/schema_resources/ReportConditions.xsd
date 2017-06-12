@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	 xmlns="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd17"
+	 targetNamespace="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd17"
+	 elementFormDefault="qualified"
+	 attributeFormDefault="unqualified">
+	<xs:element name="startDate" type="xs:string"/>
+	<xs:element name="endDate" type="xs:string"/>
+	<xs:element name="offerNCampSelect" type="xs:string"/>
+	<xs:element name="offerReportSearch" type="xs:string"/>
+	<xs:element name="nReportSearch" type="xs:string"/>
+	<xs:element name="offerIn" type="xs:string"/>
+	<xs:element name="campaignOut" type="xs:string"/>
+	<xs:element name="conAll" type="xs:string"/>
+	<xs:element name="conNormal" type="xs:string"/>
+	<xs:element name="conRm" type="xs:string"/>
+	<xs:element name="conDuplicate" type="xs:string"/>
+	<xs:element name="values" type="xs:string"/>
+	<xs:element name="reportStatus" type="xs:string"/>
+	<xs:element name="paraId" type="xs:string"/>
+	<xs:element name="paraTime" type="xs:string"/>
+	<xs:element name="paraLabel" type="xs:string"/>
+	<xs:element name="paraOfferIn" type="xs:string"/>
+	<xs:element name="reportObj">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="startDate" minOccurs="0"/>
+				<xs:element ref="endDate" minOccurs="0"/>
+				<xs:element ref="offerNCampSelect" minOccurs="0"/>
+				<xs:element ref="offerReportSearch" minOccurs="0"/>
+				<xs:element ref="nReportSearch" minOccurs="0"/>
+				<xs:element ref="offerIn" minOccurs="0"/>
+				<xs:element ref="campaignOut" minOccurs="0"/>
+				<xs:element ref="conAll" minOccurs="0"/>
+				<xs:element ref="conNormal" minOccurs="0"/>
+				<xs:element ref="conRm" minOccurs="0"/>
+				<xs:element ref="conDuplicate" minOccurs="0"/>
+				<xs:element ref="values" minOccurs="0"/>
+				<xs:element ref="reportStatus" minOccurs="0"/>
+				<xs:element ref="paraId" minOccurs="0"/>
+				<xs:element ref="paraTime" minOccurs="0"/>
+				<xs:element ref="paraLabel" minOccurs="0"/>
+				<xs:element ref="paraOfferIn" minOccurs="0"/>
+				<xs:element ref="tokenInfo" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="tokenInfo" type="xs:string"/>
+</xs:schema>

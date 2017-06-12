@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	 xmlns="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd3"
+	 targetNamespace="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd3"
+	 elementFormDefault="qualified"
+	 attributeFormDefault="unqualified">
+	<xs:element name="creativeId" type="xs:string"/>
+	<xs:element name="productId" type="xs:string"/>
+	<xs:element name="creativeName" type="xs:string"/>
+	<xs:element name="creativeSizelist" type="xs:string"/>
+	<xs:element name="creativeObj">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="creativeId" minOccurs="0"/>
+				<xs:element ref="productId" minOccurs="0"/>
+				<xs:element ref="creativeName" minOccurs="0"/>
+				<xs:element ref="creativeSizelist" minOccurs="0"/>
+				<xs:element ref="validateRepeat" minOccurs="0"/>
+				<xs:element ref="tokenInfo" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="creativeResults">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="creativeObj" minOccurs="0" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="tokenInfo" type="xs:string"/>
+	<xs:element name="validateRepeat" type="xs:string"/>
+</xs:schema>

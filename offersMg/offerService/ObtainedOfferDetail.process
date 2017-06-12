@@ -1,0 +1,333 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:pfx="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd12" xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:pfx2="http://www.tibco.com/schemas/n_mc_project/share_resources/schema_resources/Schema.xsd2" xmlns:ns="http://www.tibco.com/namespaces/tnt/plugins/json" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns2="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd" xmlns:ns1="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd5" xmlns:ns4="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd3" xmlns:ns3="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd2">
+    <xsd:import namespace="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd12" schemaLocation="/share_resources/schema_resources/ConditionsSchema.xsd"/>
+    <xsd:import namespace="http://www.tibco.com/schemas/n_mc_project/share_resources/schema_resources/Schema.xsd2" schemaLocation="/share_resources/schema_resources/ObtainedOfferDetailVO.xsd"/>
+    <pd:name>offersMg/offerService/ObtainedOfferDetail.process</pd:name>
+    <pd:startName>Start</pd:startName>
+    <pd:startType ref="pfx:requestParams"/>
+    <pd:startX>131</pd:startX>
+    <pd:startY>51</pd:startY>
+    <pd:returnBindings>
+        <responseJsonStr>
+            <xsl:value-of select="$Render-JSON/ns:ActivityOutputClass/jsonString"/>
+        </responseJsonStr>
+    </pd:returnBindings>
+    <pd:endName>End</pd:endName>
+    <pd:endType>
+        <xsd:element name="responseJsonStr" type="xsd:string"/>
+    </pd:endType>
+    <pd:endX>1258</pd:endX>
+    <pd:endY>90</pd:endY>
+    <pd:errorSchemas/>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/1495545045984</pd:targetNamespace>
+    <pd:activity name="Parse JSON">
+        <pd:type>com.tibco.plugin.json.activities.JSONParserActivity</pd:type>
+        <pd:resourceType>ae.activities.JSONParserActivity</pd:resourceType>
+        <pd:x>270</pd:x>
+        <pd:y>120</pd:y>
+        <config>
+            <SchemaType>xsdType</SchemaType>
+            <BadgerfishCheck>false</BadgerfishCheck>
+            <ActivityOutputEditor ref="pfx:requestParams"/>
+        </config>
+        <pd:inputBindings>
+            <ns:ActivityInputClass>
+                <jsonString>
+                    <xsl:value-of select="$Start/pfx:requestParams/pfx:jsonPostData"/>
+                </jsonString>
+            </ns:ActivityInputClass>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="ProductDetail">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>753</pd:x>
+        <pd:y>118</pd:y>
+        <config>
+            <processName>/offersMg/offerDao/ProductQuery.process</processName>
+        </config>
+        <pd:inputBindings>
+            <root>
+                <productId>
+                    <xsl:value-of select="$OfferDetail/ns2:offerResults/ns2:offerObj[1]/ns2:productId"/>
+                </productId>
+            </root>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="OfferDetail">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>608</pd:x>
+        <pd:y>119</pd:y>
+        <config>
+            <processName>/offersMg/offerDao/OfferQuery.process</processName>
+        </config>
+        <pd:inputBindings>
+            <root>
+                <offerId>
+                    <xsl:value-of select="$CampaignDetail/ns1:campaignResults/ns1:campaignObj[1]/ns1:offerId"/>
+                </offerId>
+            </root>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="CampaignDetail">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>450</pd:x>
+        <pd:y>122</pd:y>
+        <config>
+            <processName>/offersMg/offerDao/CampaignQuery.process</processName>
+        </config>
+        <pd:inputBindings>
+            <root>
+                <xsl:if test="$Parse-JSON/ns:ActivityOutputClass/pfx:requestParams/pfx:paraId">
+                    <campaignId>
+                        <xsl:value-of select="$Parse-JSON/ns:ActivityOutputClass/pfx:requestParams/pfx:paraId"/>
+                    </campaignId>
+                </xsl:if>
+            </root>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Render JSON">
+        <pd:type>com.tibco.plugin.json.activities.JSONRenderActivity</pd:type>
+        <pd:resourceType>ae.activities.JSONRenderActivity</pd:resourceType>
+        <pd:x>1115</pd:x>
+        <pd:y>100</pd:y>
+        <config>
+            <SchemaType>xsdType</SchemaType>
+            <BadgerfishCheck>false</BadgerfishCheck>
+            <ActivityInputEditor ref="pfx2:ObtainedOfferDetailVO"/>
+        </config>
+        <pd:inputBindings>
+            <ns:ActivityInputClass>
+                <pfx2:ObtainedOfferDetailVO>
+                    <ns3:productObj>
+                        <ns3:productId>
+                            <xsl:value-of select="$ProductDetail/ns3:productResults/ns3:productObj[1]/ns3:productId"/>
+                        </ns3:productId>
+                        <ns3:omId>
+                            <xsl:value-of select="$ProductDetail/ns3:productResults/ns3:productObj[1]/ns3:omId"/>
+                        </ns3:omId>
+                        <ns3:productName>
+                            <xsl:value-of select="$ProductDetail/ns3:productResults/ns3:productObj[1]/ns3:productName"/>
+                        </ns3:productName>
+                        <ns3:productType>
+                            <xsl:value-of select="$ProductDetail/ns3:productResults/ns3:productObj[1]/ns3:productType"/>
+                        </ns3:productType>
+                        <ns3:productOS>
+                            <xsl:value-of select="$ProductDetail/ns3:productResults/ns3:productObj[1]/ns3:productOS"/>
+                        </ns3:productOS>
+                        <ns3:productlp>
+                            <xsl:value-of select="$ProductDetail/ns3:productResults/ns3:productObj[1]/ns3:productlp"/>
+                        </ns3:productlp>
+                        <xsl:if test="$ProductDetail/ns3:productResults/ns3:productObj[1]/ns3:productDcp">
+                            <ns3:productDcp>
+                                <xsl:value-of select="$ProductDetail/ns3:productResults/ns3:productObj[1]/ns3:productDcp"/>
+                            </ns3:productDcp>
+                        </xsl:if>
+                        <xsl:if test="$ProductDetail/ns3:productResults/ns3:productObj[1]/ns3:productAppId">
+                            <ns3:productAppId>
+                                <xsl:value-of select="$ProductDetail/ns3:productResults/ns3:productObj[1]/ns3:productAppId"/>
+                            </ns3:productAppId>
+                        </xsl:if>
+                        <ns3:productStatus>
+                            <xsl:value-of select="$ProductDetail/ns3:productResults/ns3:productObj[1]/ns3:productStatus"/>
+                        </ns3:productStatus>
+                        <xsl:if test="$ProductDetail/ns3:productResults/ns3:productObj[1]/ns3:productCreateTime">
+                            <ns3:productCreateTime>
+                                <xsl:value-of select="$ProductDetail/ns3:productResults/ns3:productObj[1]/ns3:productCreateTime"/>
+                            </ns3:productCreateTime>
+                        </xsl:if>
+                    </ns3:productObj>
+                    <ns2:offerObj>
+                        <ns2:offerId>
+                            <xsl:value-of select="$OfferDetail/ns2:offerResults/ns2:offerObj[1]/ns2:offerId"/>
+                        </ns2:offerId>
+                        <xsl:if test="$OfferDetail/ns2:offerResults/ns2:offerObj[1]/ns2:productId">
+                            <ns2:productId>
+                                <xsl:value-of select="$OfferDetail/ns2:offerResults/ns2:offerObj[1]/ns2:productId"/>
+                            </ns2:productId>
+                        </xsl:if>
+                        <xsl:if test="$OfferDetail/ns2:offerResults/ns2:offerObj[1]/ns2:advertiserId">
+                            <ns2:advertiserId>
+                                <xsl:value-of select="$OfferDetail/ns2:offerResults/ns2:offerObj[1]/ns2:advertiserId"/>
+                            </ns2:advertiserId>
+                        </xsl:if>
+                        <xsl:if test="$OfferDetail/ns2:offerResults/ns2:offerObj[1]/ns2:offerName">
+                            <ns2:offerName>
+                                <xsl:value-of select="$OfferDetail/ns2:offerResults/ns2:offerObj[1]/ns2:offerName"/>
+                            </ns2:offerName>
+                        </xsl:if>
+                        <xsl:if test="$OfferDetail/ns2:offerResults/ns2:offerObj[1]/ns2:offerClickTl">
+                            <ns2:offerClickTl>
+                                <xsl:value-of select="$OfferDetail/ns2:offerResults/ns2:offerObj[1]/ns2:offerClickTl"/>
+                            </ns2:offerClickTl>
+                        </xsl:if>
+                        <xsl:if test="$OfferDetail/ns2:offerResults/ns2:offerObj[1]/ns2:offerSDate">
+                            <ns2:offerSDate>
+                                <xsl:value-of select="$OfferDetail/ns2:offerResults/ns2:offerObj[1]/ns2:offerSDate"/>
+                            </ns2:offerSDate>
+                        </xsl:if>
+                        <xsl:if test="$OfferDetail/ns2:offerResults/ns2:offerObj[1]/ns2:offerEDate">
+                            <ns2:offerEDate>
+                                <xsl:value-of select="$OfferDetail/ns2:offerResults/ns2:offerObj[1]/ns2:offerEDate"/>
+                            </ns2:offerEDate>
+                        </xsl:if>
+                        <xsl:if test="$OfferDetail/ns2:offerResults/ns2:offerObj[1]/ns2:offerEExpendT">
+                            <ns2:offerEExpendT>
+                                <xsl:value-of select="$OfferDetail/ns2:offerResults/ns2:offerObj[1]/ns2:offerEExpendT"/>
+                            </ns2:offerEExpendT>
+                        </xsl:if>
+                        <xsl:if test="$OfferDetail/ns2:offerResults/ns2:offerObj[1]/ns2:offerEExpendC">
+                            <ns2:offerEExpendC>
+                                <xsl:value-of select="$OfferDetail/ns2:offerResults/ns2:offerObj[1]/ns2:offerEExpendC"/>
+                            </ns2:offerEExpendC>
+                        </xsl:if>
+                        <xsl:if test="$OfferDetail/ns2:offerResults/ns2:offerObj[1]/ns2:offerEExpendN">
+                            <ns2:offerEExpendN>
+                                <xsl:value-of select="$OfferDetail/ns2:offerResults/ns2:offerObj[1]/ns2:offerEExpendN"/>
+                            </ns2:offerEExpendN>
+                        </xsl:if>
+                        <xsl:if test="$OfferDetail/ns2:offerResults/ns2:offerObj[1]/ns2:offerDcp">
+                            <ns2:offerDcp>
+                                <xsl:value-of select="$OfferDetail/ns2:offerResults/ns2:offerObj[1]/ns2:offerDcp"/>
+                            </ns2:offerDcp>
+                        </xsl:if>
+                        <xsl:if test="$OfferDetail/ns2:offerResults/ns2:offerObj[1]/ns2:offerStatus">
+                            <ns2:offerStatus>
+                                <xsl:value-of select="$OfferDetail/ns2:offerResults/ns2:offerObj[1]/ns2:offerStatus"/>
+                            </ns2:offerStatus>
+                        </xsl:if>
+                        <xsl:if test="$OfferDetail/ns2:offerResults/ns2:offerObj[1]/ns2:offerSynctype">
+                            <ns2:offerSynctype>
+                                <xsl:value-of select="$OfferDetail/ns2:offerResults/ns2:offerObj[1]/ns2:offerSynctype"/>
+                            </ns2:offerSynctype>
+                        </xsl:if>
+                        <xsl:if test="$OfferDetail/ns2:offerResults/ns2:offerObj[1]/ns2:offerActiveEvent">
+                            <ns2:offerActiveEvent>
+                                <xsl:value-of select="$OfferDetail/ns2:offerResults/ns2:offerObj[1]/ns2:offerActiveEvent"/>
+                            </ns2:offerActiveEvent>
+                        </xsl:if>
+                    </ns2:offerObj>
+                    <ns1:campaignObj>
+                        <ns1:campaignId>
+                            <xsl:value-of select="$CampaignDetail/ns1:campaignResults/ns1:campaignObj[1]/ns1:campaignId"/>
+                        </ns1:campaignId>
+                        <xsl:if test="$CampaignDetail/ns1:campaignResults/ns1:campaignObj[1]/ns1:campaignTl">
+                            <ns1:campaignTl>
+                                <xsl:value-of select="$CampaignDetail/ns1:campaignResults/ns1:campaignObj[1]/ns1:campaignTl"/>
+                            </ns1:campaignTl>
+                        </xsl:if>
+                        <xsl:if test="$CampaignDetail/ns1:campaignResults/ns1:campaignObj[1]/ns1:campaignCap">
+                            <ns1:campaignCap>
+                                <xsl:value-of select="$CampaignDetail/ns1:campaignResults/ns1:campaignObj[1]/ns1:campaignCap"/>
+                            </ns1:campaignCap>
+                        </xsl:if>
+                        <xsl:if test="$CampaignDetail/ns1:campaignResults/ns1:campaignObj[1]/ns1:campaignStatus">
+                            <ns1:campaignStatus>
+                                <xsl:value-of select="$CampaignDetail/ns1:campaignResults/ns1:campaignObj[1]/ns1:campaignStatus"/>
+                            </ns1:campaignStatus>
+                        </xsl:if>
+                    </ns1:campaignObj>
+                    <ns4:creativeResults>
+                        <xsl:copy-of select="$CreativeList/ns4:creativeResults/ns4:creativeObj"/>
+                    </ns4:creativeResults>
+                </pfx2:ObtainedOfferDetailVO>
+            </ns:ActivityInputClass>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="CreativeList">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>903</pd:x>
+        <pd:y>161</pd:y>
+        <config>
+            <processName>/offersMg/offerDao/CreativeQuery.process</processName>
+        </config>
+        <pd:inputBindings>
+            <root>
+                <xsl:if test="$CampaignDetail/ns1:campaignResults/ns1:campaignObj[1]/ns1:campaignId">
+                    <campaignId>
+                        <xsl:value-of select="$CampaignDetail/ns1:campaignResults/ns1:campaignObj[1]/ns1:campaignId"/>
+                    </campaignId>
+                </xsl:if>
+            </root>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Catch">
+        <pd:type>com.tibco.pe.core.CatchActivity</pd:type>
+        <pd:resourceType>ae.activities.catch</pd:resourceType>
+        <pd:x>1567</pd:x>
+        <pd:y>123</pd:y>
+        <pd:handler>true</pd:handler>
+        <config>
+            <catchAll>true</catchAll>
+        </config>
+        <pd:inputBindings/>
+    </pd:activity>
+    <pd:activity name="Rethrow">
+        <pd:type>com.tibco.pe.core.RethrowActivity</pd:type>
+        <pd:resourceType>ae.activities.rethrow</pd:resourceType>
+        <pd:x>1530</pd:x>
+        <pd:y>303</pd:y>
+        <config/>
+        <pd:inputBindings/>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>Parse JSON</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Parse JSON</pd:from>
+        <pd:to>CampaignDetail</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>ProductDetail</pd:from>
+        <pd:to>CreativeList</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Render JSON</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>CampaignDetail</pd:from>
+        <pd:to>OfferDetail</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>OfferDetail</pd:from>
+        <pd:to>ProductDetail</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>CreativeList</pd:from>
+        <pd:to>Render JSON</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Catch</pd:from>
+        <pd:to>Rethrow</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>

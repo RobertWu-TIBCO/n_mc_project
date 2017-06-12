@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	 xmlns="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd2"
+	 targetNamespace="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd2"
+	 elementFormDefault="qualified"
+	 attributeFormDefault="unqualified">
+
+	<!--Product Element end-->
+	<!--Product Element Start-->
+	<xs:element name="productId" type="xs:string"/>
+	<xs:element name="omId" type="xs:string"/>
+	<xs:element name="productName" type="xs:string"/>
+	<xs:element name="productType" type="xs:string"/>
+	<xs:element name="productOS" type="xs:string"/>
+	<xs:element name="productlp" type="xs:string"/>
+	<xs:element name="productDcp" type="xs:string"/>
+	<xs:element name="productAppId" type="xs:string"/>
+	<xs:element name="productStatus" type="xs:string"/>
+	<xs:element name="productObj">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="productId"/>
+				<xs:element ref="omId"/>
+				<xs:element ref="productName"/>
+				<xs:element ref="productType"/>
+				<xs:element ref="productOS"/>
+				<xs:element ref="productlp"/>
+				<xs:element ref="productDcp" minOccurs="0"/>
+				<xs:element ref="productAppId" minOccurs="0"/>
+				<xs:element ref="productStatus"/>
+				<xs:element ref="productCreateTime" minOccurs="0"/>
+				<xs:element ref="validateRepeat" minOccurs="0"/>
+				<xs:element ref="tokenInfo" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="productCreateTime" type="xs:string"/>
+	<xs:element name="productResults">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="productObj" minOccurs="0" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="tokenInfo" type="xs:string"/>
+	<xs:element name="validateRepeat" type="xs:string"/>
+</xs:schema>

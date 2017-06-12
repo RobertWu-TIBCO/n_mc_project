@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	 xmlns="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd"
+	 targetNamespace="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd"
+	 elementFormDefault="qualified"
+	 attributeFormDefault="unqualified">
+	<xs:element name="offerId" type="xs:string"/>
+	<xs:element name="productId" type="xs:string"/>
+	<xs:element name="advertiserId" type="xs:string"/>
+	<xs:element name="offerName" type="xs:string"/>
+	<xs:element name="offerClickTl" type="xs:string"/>
+	<xs:element name="offerSDate" type="xs:string"/>
+	<xs:element name="offerEDate" type="xs:string"/>
+	<xs:element name="offerEarningT" type="xs:string"/>
+	<xs:element name="offerEarningC" type="xs:string"/>
+	<xs:element name="offerEarningN" type="xs:string"/>
+	<xs:element name="offerEExpendT" type="xs:string"/>
+	<xs:element name="offerEExpendC" type="xs:string"/>
+	<xs:element name="offerEExpendN" type="xs:string"/>
+	<xs:element name="offerDcp" type="xs:string"/>
+	<xs:element name="offerStatus" type="xs:string"/>
+	<xs:element name="offerSynctype" type="xs:string"/>
+	<xs:element name="offerActiveEvent" type="xs:string"/>
+	<xs:element name="OfferIsmode1" type="xs:string"/>
+	<xs:element name="offerReplaceRedirect" type="xs:string"/>
+	<xs:element name="offerObj">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="offerId"/>
+				<xs:element ref="productId" minOccurs="0"/>
+				<xs:element ref="advertiserId" minOccurs="0"/>
+				<xs:element ref="offerName" minOccurs="0"/>
+				<xs:element ref="offerClickTl" minOccurs="0"/>
+				<xs:element ref="offerSDate" minOccurs="0"/>
+				<xs:element ref="offerEDate" minOccurs="0"/>
+				<xs:element ref="offerEarningT" minOccurs="0"/>
+				<xs:element ref="offerEarningC" minOccurs="0"/>
+				<xs:element ref="offerEarningN" minOccurs="0"/>
+				<xs:element ref="offerEExpendT" minOccurs="0"/>
+				<xs:element ref="offerEExpendC" minOccurs="0"/>
+				<xs:element ref="offerEExpendN" minOccurs="0"/>
+				<xs:element ref="offerDcp" minOccurs="0"/>
+				<xs:element ref="offerStatus" minOccurs="0"/>
+				<xs:element ref="offerSynctype" minOccurs="0"/>
+				<xs:element ref="offerActiveEvent" minOccurs="0"/>
+				<xs:element ref="OfferIsmode1" minOccurs="0"/>
+				<xs:element ref="offerReplaceRedirect" minOccurs="0"/>
+				<xs:element ref="clickCount" minOccurs="0"/>
+				<xs:element ref="conversionCount" minOccurs="0"/>
+				<xs:element ref="validateRepeat" minOccurs="0"/>
+				<xs:element ref="tokenInfo" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="offerResults">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="offerObj" minOccurs="0" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="clickCount" type="xs:string"/>
+	<xs:element name="conversionCount" type="xs:string"/>
+	<xs:element name="tokenInfo" type="xs:string"/>
+	<xs:element name="validateRepeat" type="xs:string"/>
+</xs:schema>

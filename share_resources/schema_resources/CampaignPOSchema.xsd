@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	 xmlns="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd5"
+	 targetNamespace="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd5"
+	 elementFormDefault="qualified"
+	 attributeFormDefault="unqualified">
+	<xs:element name="campaignId" type="xs:string"/>
+	<xs:element name="offerId" type="xs:string"/>
+	<xs:element name="nId" type="xs:string"/>
+	<xs:element name="campaignName" type="xs:string"/>
+	<xs:element name="campaignTl" type="xs:string"/>
+	<xs:element name="campaignExpendT" type="xs:string"/>
+	<xs:element name="campaignExpendC" type="xs:string"/>
+	<xs:element name="campaignExpendN" type="xs:string"/>
+	<xs:element name="campaignRm" type="xs:string"/>
+	<xs:element name="campaignCap" type="xs:string"/>
+	<xs:element name="campaignStatus" type="xs:string"/>
+	<xs:element name="campaignObj">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="campaignId"/>
+				<xs:element ref="offerId" minOccurs="0"/>
+				<xs:element ref="nId" minOccurs="0"/>
+				<xs:element ref="campaignName" minOccurs="0"/>
+				<xs:element ref="campaignTl" minOccurs="0"/>
+				<xs:element ref="campaignExpendT" minOccurs="0"/>
+				<xs:element ref="campaignExpendC" minOccurs="0"/>
+				<xs:element ref="campaignExpendN" minOccurs="0"/>
+				<xs:element ref="campaignRm" minOccurs="0"/>
+				<xs:element ref="campaignCap" minOccurs="0"/>
+				<xs:element ref="campaignStatus" minOccurs="0"/>
+				<xs:element ref="modleUrl" minOccurs="0"/>
+				<xs:element ref="modleIsExists" minOccurs="0"/>
+				<xs:element ref="modleIsmode2" minOccurs="0"/>
+				<xs:element ref="OfferIsmode1" minOccurs="0"/>
+				<xs:element ref="offerReplaceRedirect" minOccurs="0"/>
+				<xs:element ref="clickCount" minOccurs="0"/>
+				<xs:element ref="conversionCount" minOccurs="0"/>
+				<xs:element ref="redisOfferClickTl" minOccurs="0"/>
+				<xs:element ref="redisOfferSynctype" minOccurs="0"/>
+				<xs:element ref="redisOfferActiveEvent" minOccurs="0"/>
+				<xs:element ref="redisProductId" minOccurs="0"/>
+				<xs:element ref="redisProductAppId" minOccurs="0"/>
+				<xs:element ref="redisProductLp" minOccurs="0"/>
+				<xs:element ref="redisProductName" minOccurs="0"/>
+				<xs:element ref="validateRepeat" minOccurs="0"/>
+				<xs:element ref="tokenInfo" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="campaignResults">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="campaignObj" minOccurs="0" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="modleUrl" type="xs:string"/>
+	<xs:element name="modleIsExists" type="xs:string"/>
+	<xs:element name="modleIsmode2" type="xs:string"/>
+	<xs:element name="OfferIsmode1" type="xs:string"/>
+	<xs:element name="offerReplaceRedirect" type="xs:string"/>
+	<xs:element name="clickCount" type="xs:string"/>
+	<xs:element name="conversionCount" type="xs:string"/>
+	<xs:element name="redisOfferClickTl" type="xs:string"/>
+	<xs:element name="redisOfferSynctype" type="xs:string"/>
+	<xs:element name="redisOfferActiveEvent" type="xs:string"/>
+	<xs:element name="redisProductId" type="xs:string"/>
+	<xs:element name="redisProductAppId" type="xs:string"/>
+	<xs:element name="redisProductLp" type="xs:string"/>
+	<xs:element name="redisProductName" type="xs:string"/>
+	<xs:element name="tokenInfo" type="xs:string"/>
+	<xs:element name="validateRepeat" type="xs:string"/>
+</xs:schema>

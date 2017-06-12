@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <pd:name>common_functions/ValidateRepeatSubmit.process</pd:name>
+    <pd:startName>Start</pd:startName>
+    <pd:startType>
+        <xsd:element name="root">
+            <xsd:complexType>
+                <xsd:sequence>
+                    <xsd:element name="tokenInfo" type="xsd:string"/>
+                    <xsd:element name="validateRepeatSubmit" type="xsd:string"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:element>
+    </pd:startType>
+    <pd:startX>150</pd:startX>
+    <pd:startY>64</pd:startY>
+    <pd:returnBindings>
+        <root>
+            <xsl:value-of select="$Java-Code/javaCodeActivityOutput/isRepeatSubmit"/>
+        </root>
+    </pd:returnBindings>
+    <pd:endName>End</pd:endName>
+    <pd:endType>
+        <xsd:element name="root" type="xsd:boolean"/>
+    </pd:endType>
+    <pd:endX>450</pd:endX>
+    <pd:endY>64</pd:endY>
+    <pd:errorSchemas/>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/1491370858002</pd:targetNamespace>
+    <pd:activity name="Java Code">
+        <pd:type>com.tibco.plugin.java.JavaActivity</pd:type>
+        <pd:resourceType>ae.javapalette.javaActivity</pd:resourceType>
+        <pd:x>263</pd:x>
+        <pd:y>71</pd:y>
+        <config>
+            <fileName>ValidateRepeatSubmitJavaCode</fileName>
+            <packageName>common_functions.ValidateRepeatSubmit</packageName>
+            <fullsource>package common_functions.ValidateRepeatSubmit;
+import java.util.*;
+import java.io.*;
+import com.tm.mc.redis.MCRedisInstance;
+import redis.clients.jedis.Jedis;
+public class ValidateRepeatSubmitJavaCode{
+/****** START SET/GET METHOD, DO NOT MODIFY *****/
+	protected String tokenInfo = "";
+	protected String validateRepeatSubmit = "";
+	protected boolean isRepeatSubmit = false;
+	public String gettokenInfo() {
+		return tokenInfo;
+	}
+	public void settokenInfo(String val) {
+		tokenInfo = val;
+	}
+	public String getvalidateRepeatSubmit() {
+		return validateRepeatSubmit;
+	}
+	public void setvalidateRepeatSubmit(String val) {
+		validateRepeatSubmit = val;
+	}
+	public boolean getisRepeatSubmit() {
+		return isRepeatSubmit;
+	}
+	public void setisRepeatSubmit(boolean val) {
+		isRepeatSubmit = val;
+	}
+/****** END SET/GET METHOD, DO NOT MODIFY *****/
+	public ValidateRepeatSubmitJavaCode() {
+	}
+	public void invoke() throws Exception {
+/* Available Variables: DO NOT MODIFY
+	In  : String tokenInfo
+	In  : String validateRepeatSubmit
+	Out : boolean isRepeatSubmit
+* Available Variables: DO NOT MODIFY *****/
+
+		boolean flag = true;
+		Jedis jedis = MCRedisInstance.getInstance().getJedis();
+		String validateRepeatVal = jedis.hget(tokenInfo.trim(), "validateRepeat");
+		if(validateRepeatVal!=null &amp;&amp; !validateRepeatVal.equals("")){
+			if(validateRepeatSubmit.trim().equals(validateRepeatVal)){
+				 flag = false;
+			}
+		}
+		
+		jedis.hset(tokenInfo, "validateRepeat", String.valueOf(System.currentTimeMillis()));
+		isRepeatSubmit = flag;
+		jedis.close();}
+}
+</fullsource>
+            <outputData>
+                <row>
+                    <fieldName>isRepeatSubmit</fieldName>
+                    <fieldType>boolean</fieldType>
+                    <fieldRequired>optional</fieldRequired>
+                </row>
+            </outputData>
+            <inputData>
+                <row>
+                    <fieldName>tokenInfo</fieldName>
+                    <fieldType>string</fieldType>
+                    <fieldRequired>optional</fieldRequired>
+                </row>
+                <row>
+                    <fieldName>validateRepeatSubmit</fieldName>
+                    <fieldType>string</fieldType>
+                    <fieldRequired>optional</fieldRequired>
+                </row>
+            </inputData>
+            <byteCode>
+                <class>
+                    <name>ValidateRepeatSubmitJavaCode</name>
+                    <byteCode>yv66vgAAADMAVwkAEAAtCQAQAC4JABAALwoAEQAwCAAxCgAyADMKADIANAoANQA2CAA3CgA4ADkKADUAOgoAOwA8CgA1AD0KADgAPgoAOAA/BwBABwBBAQAJdG9rZW5JbmZvAQASTGphdmEvbGFuZy9TdHJpbmc7AQAUdmFsaWRhdGVSZXBlYXRTdWJtaXQBAA5pc1JlcGVhdFN1Ym1pdAEAAVoBAAxnZXR0b2tlbkluZm8BABQoKUxqYXZhL2xhbmcvU3RyaW5nOwEABENvZGUBAA9MaW5lTnVtYmVyVGFibGUBAAxzZXR0b2tlbkluZm8BABUoTGphdmEvbGFuZy9TdHJpbmc7KVYBABdnZXR2YWxpZGF0ZVJlcGVhdFN1Ym1pdAEAF3NldHZhbGlkYXRlUmVwZWF0U3VibWl0AQARZ2V0aXNSZXBlYXRTdWJtaXQBAAMoKVoBABFzZXRpc1JlcGVhdFN1Ym1pdAEABChaKVYBAAY8aW5pdD4BAAMoKVYBAAZpbnZva2UBAA1TdGFja01hcFRhYmxlBwBCBwBDAQAKRXhjZXB0aW9ucwcARAEAClNvdXJjZUZpbGUBACFWYWxpZGF0ZVJlcGVhdFN1Ym1pdEphdmFDb2RlLmphdmEMABIAEwwAFAATDAAVABYMACMAJAEAAAcARQwARgBHDABIAEkHAEMMAEoAGAEADnZhbGlkYXRlUmVwZWF0BwBCDABLAEwMAE0ATgcATwwAUABRDABSAFMMAFQAVQwAVgAkAQBCY29tbW9uX2Z1bmN0aW9ucy9WYWxpZGF0ZVJlcGVhdFN1Ym1pdC9WYWxpZGF0ZVJlcGVhdFN1Ym1pdEphdmFDb2RlAQAQamF2YS9sYW5nL09iamVjdAEAGXJlZGlzL2NsaWVudHMvamVkaXMvSmVkaXMBABBqYXZhL2xhbmcvU3RyaW5nAQATamF2YS9sYW5nL0V4Y2VwdGlvbgEAH2NvbS90bS9tYy9yZWRpcy9NQ1JlZGlzSW5zdGFuY2UBAAtnZXRJbnN0YW5jZQEAIygpTGNvbS90bS9tYy9yZWRpcy9NQ1JlZGlzSW5zdGFuY2U7AQAIZ2V0SmVkaXMBAB0oKUxyZWRpcy9jbGllbnRzL2plZGlzL0plZGlzOwEABHRyaW0BAARoZ2V0AQA4KExqYXZhL2xhbmcvU3RyaW5nO0xqYXZhL2xhbmcvU3RyaW5nOylMamF2YS9sYW5nL1N0cmluZzsBAAZlcXVhbHMBABUoTGphdmEvbGFuZy9PYmplY3Q7KVoBABBqYXZhL2xhbmcvU3lzdGVtAQARY3VycmVudFRpbWVNaWxsaXMBAAMoKUoBAAd2YWx1ZU9mAQAVKEopTGphdmEvbGFuZy9TdHJpbmc7AQAEaHNldAEASChMamF2YS9sYW5nL1N0cmluZztMamF2YS9sYW5nL1N0cmluZztMamF2YS9sYW5nL1N0cmluZzspTGphdmEvbGFuZy9Mb25nOwEABWNsb3NlACEAEAARAAAAAwAEABIAEwAAAAQAFAATAAAABAAVABYAAAAIAAEAFwAYAAEAGQAAAB0AAQABAAAABSq0AAGwAAAAAQAaAAAABgABAAAADAABABsAHAABABkAAAAiAAIAAgAAAAYqK7UAAbEAAAABABoAAAAKAAIAAAAPAAUAEAABAB0AGAABABkAAAAdAAEAAQAAAAUqtAACsAAAAAEAGgAAAAYAAQAAABIAAQAeABwAAQAZAAAAIgACAAIAAAAGKiu1AAKxAAAAAQAaAAAACgACAAAAFQAFABYAAQAfACAAAQAZAAAAHQABAAEAAAAFKrQAA6wAAAABABoAAAAGAAEAAAAYAAEAIQAiAAEAGQAAACIAAgACAAAABiobtQADsQAAAAEAGgAAAAoAAgAAABsABQAcAAEAIwAkAAEAGQAAAD4AAgABAAAAFiq3AAQqEgW1AAEqEgW1AAIqA7UAA7EAAAABABoAAAAWAAUAAAAeAAQACAAKAAkAEAAKABUAHwABACUAJAACABkAAACZAAUABAAAAE8EPLgABrYAB00sKrQAAbYACBIJtgAKTi3GABwtEgW2AAuaABMqtAACtgAILbYAC5kABQM8LCq0AAESCbgADLgADbYADlcqG7UAAyy2AA+xAAAAAgAaAAAAJgAJAAAAJwACACgACQApABcAKgAkACsAMgAsADQAMABFADEASgAyACYAAAAMAAH+ADQBBwAnBwAoACkAAAAEAAEAKgABACsAAAACACw=</byteCode>
+                </class>
+            </byteCode>
+        </config>
+        <pd:inputBindings>
+            <javaCodeActivityInput>
+                <tokenInfo>
+                    <xsl:value-of select="$Start/root/tokenInfo"/>
+                </tokenInfo>
+                <validateRepeatSubmit>
+                    <xsl:value-of select="$Start/root/validateRepeatSubmit"/>
+                </validateRepeatSubmit>
+            </javaCodeActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>Java Code</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Java Code</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>

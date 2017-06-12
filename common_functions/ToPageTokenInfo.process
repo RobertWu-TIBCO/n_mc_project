@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ns="http://www.tibco.com/namespaces/tnt/plugins/json" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:pfx="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd12">
+    <xsd:import namespace="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd12" schemaLocation="/share_resources/schema_resources/ConditionsSchema.xsd"/>
+    <pd:name>common_functions/ToPageTokenInfo.process</pd:name>
+    <pd:startName>Start</pd:startName>
+    <pd:startType ref="pfx:requestParams"/>
+    <pd:startX>150</pd:startX>
+    <pd:startY>64</pd:startY>
+    <pd:returnBindings>
+        <responseJsonStr>
+            <xsl:value-of select="concat(' {&quot;responseStatus&quot;:&quot;success&quot;, &quot;validateRepeat&quot;:&quot;',$Java-Code/javaCodeActivityOutput/validateRepeatSubmit,'&quot;}')"/>
+        </responseJsonStr>
+    </pd:returnBindings>
+    <pd:endName>End</pd:endName>
+    <pd:endType>
+        <xsd:element name="responseJsonStr" type="xsd:string"/>
+    </pd:endType>
+    <pd:endX>764</pd:endX>
+    <pd:endY>81</pd:endY>
+    <pd:errorSchemas/>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/1491410648450</pd:targetNamespace>
+    <pd:activity name="Java Code">
+        <pd:type>com.tibco.plugin.java.JavaActivity</pd:type>
+        <pd:resourceType>ae.javapalette.javaActivity</pd:resourceType>
+        <pd:x>530</pd:x>
+        <pd:y>97</pd:y>
+        <config>
+            <fullsource>package common_functions.ToPageTokenInfo;
+import java.util.*;
+import java.io.*;
+import com.tm.mc.redis.MCRedisInstance;
+import redis.clients.jedis.Jedis;
+public class ToPageTokenInfoJavaCode{
+/****** START SET/GET METHOD, DO NOT MODIFY *****/
+	protected String tokenInfo = "";
+	protected String validateRepeatSubmit = "";
+	public String gettokenInfo() {
+		return tokenInfo;
+	}
+	public void settokenInfo(String val) {
+		tokenInfo = val;
+	}
+	public String getvalidateRepeatSubmit() {
+		return validateRepeatSubmit;
+	}
+	public void setvalidateRepeatSubmit(String val) {
+		validateRepeatSubmit = val;
+	}
+/****** END SET/GET METHOD, DO NOT MODIFY *****/
+	public ToPageTokenInfoJavaCode() {
+	}
+	public void invoke() throws Exception {
+/* Available Variables: DO NOT MODIFY
+	In  : String tokenInfo
+	Out : String validateRepeatSubmit
+* Available Variables: DO NOT MODIFY *****/
+
+Jedis jedis = MCRedisInstance.getInstance().getJedis();
+		String pageValidateRepeatVal = String.valueOf(System.currentTimeMillis());
+		jedis.hset(tokenInfo, "validateRepeat",pageValidateRepeatVal);
+		
+		//传递pageValidateRepeatVal 到页面
+		validateRepeatSubmit = pageValidateRepeatVal;
+	}
+}
+</fullsource>
+            <fileName>ToPageTokenInfoJavaCode</fileName>
+            <packageName>common_functions.ToPageTokenInfo</packageName>
+            <outputData>
+                <row>
+                    <fieldName>validateRepeatSubmit</fieldName>
+                    <fieldType>string</fieldType>
+                    <fieldRequired>optional</fieldRequired>
+                </row>
+            </outputData>
+            <inputData>
+                <row>
+                    <fieldName>tokenInfo</fieldName>
+                    <fieldType>string</fieldType>
+                    <fieldRequired>optional</fieldRequired>
+                </row>
+            </inputData>
+            <byteCode>
+                <class>
+                    <name>ToPageTokenInfoJavaCode</name>
+                    <byteCode>yv66vgAAADMAPgkACwAfCQALACAKAAwAIQgAIgoAIwAkCgAjACUKACYAJwoAKAApCAAqCgArACwHAC0HAC4BAAl0b2tlbkluZm8BABJMamF2YS9sYW5nL1N0cmluZzsBABR2YWxpZGF0ZVJlcGVhdFN1Ym1pdAEADGdldHRva2VuSW5mbwEAFCgpTGphdmEvbGFuZy9TdHJpbmc7AQAEQ29kZQEAD0xpbmVOdW1iZXJUYWJsZQEADHNldHRva2VuSW5mbwEAFShMamF2YS9sYW5nL1N0cmluZzspVgEAF2dldHZhbGlkYXRlUmVwZWF0U3VibWl0AQAXc2V0dmFsaWRhdGVSZXBlYXRTdWJtaXQBAAY8aW5pdD4BAAMoKVYBAAZpbnZva2UBAApFeGNlcHRpb25zBwAvAQAKU291cmNlRmlsZQEAHFRvUGFnZVRva2VuSW5mb0phdmFDb2RlLmphdmEMAA0ADgwADwAODAAYABkBAAAHADAMADEAMgwAMwA0BwA1DAA2ADcHADgMADkAOgEADnZhbGlkYXRlUmVwZWF0BwA7DAA8AD0BADhjb21tb25fZnVuY3Rpb25zL1RvUGFnZVRva2VuSW5mby9Ub1BhZ2VUb2tlbkluZm9KYXZhQ29kZQEAEGphdmEvbGFuZy9PYmplY3QBABNqYXZhL2xhbmcvRXhjZXB0aW9uAQAfY29tL3RtL21jL3JlZGlzL01DUmVkaXNJbnN0YW5jZQEAC2dldEluc3RhbmNlAQAjKClMY29tL3RtL21jL3JlZGlzL01DUmVkaXNJbnN0YW5jZTsBAAhnZXRKZWRpcwEAHSgpTHJlZGlzL2NsaWVudHMvamVkaXMvSmVkaXM7AQAQamF2YS9sYW5nL1N5c3RlbQEAEWN1cnJlbnRUaW1lTWlsbGlzAQADKClKAQAQamF2YS9sYW5nL1N0cmluZwEAB3ZhbHVlT2YBABUoSilMamF2YS9sYW5nL1N0cmluZzsBABlyZWRpcy9jbGllbnRzL2plZGlzL0plZGlzAQAEaHNldAEASChMamF2YS9sYW5nL1N0cmluZztMamF2YS9sYW5nL1N0cmluZztMamF2YS9sYW5nL1N0cmluZzspTGphdmEvbGFuZy9Mb25nOwAhAAsADAAAAAIABAANAA4AAAAEAA8ADgAAAAYAAQAQABEAAQASAAAAHQABAAEAAAAFKrQAAbAAAAABABMAAAAGAAEAAAALAAEAFAAVAAEAEgAAACIAAgACAAAABiortQABsQAAAAEAEwAAAAoAAgAAAA4ABQAPAAEAFgARAAEAEgAAAB0AAQABAAAABSq0AAKwAAAAAQATAAAABgABAAAAEQABABcAFQABABIAAAAiAAIAAgAAAAYqK7UAArEAAAABABMAAAAKAAIAAAAUAAUAFQABABgAGQABABIAAAA1AAIAAQAAABEqtwADKhIEtQABKhIEtQACsQAAAAEAEwAAABIABAAAABcABAAIAAoACQAQABgAAQAaABkAAgASAAAASAAEAAMAAAAguAAFtgAGTLgAB7gACE0rKrQAARIJLLYAClcqLLUAArEAAAABABMAAAAWAAUAAAAfAAcAIAAOACEAGgAkAB8AJQAbAAAABAABABwAAQAdAAAAAgAe</byteCode>
+                </class>
+            </byteCode>
+        </config>
+        <pd:inputBindings>
+            <javaCodeActivityInput>
+                <tokenInfo>
+                    <xsl:value-of select="$Parse-JSON/ns:ActivityOutputClass/pfx:requestParams/pfx:tokenInfo"/>
+                </tokenInfo>
+            </javaCodeActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Parse JSON">
+        <pd:type>com.tibco.plugin.json.activities.JSONParserActivity</pd:type>
+        <pd:resourceType>ae.activities.JSONParserActivity</pd:resourceType>
+        <pd:x>288</pd:x>
+        <pd:y>76</pd:y>
+        <config>
+            <SchemaType>xsdType</SchemaType>
+            <BadgerfishCheck>false</BadgerfishCheck>
+            <ActivityOutputEditor ref="pfx:requestParams"/>
+        </config>
+        <pd:inputBindings>
+            <ns:ActivityInputClass>
+                <jsonString>
+                    <xsl:value-of select="$Start/pfx:requestParams/pfx:jsonPostData"/>
+                </jsonString>
+            </ns:ActivityInputClass>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>Parse JSON</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Java Code</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Parse JSON</pd:from>
+        <pd:to>Java Code</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>

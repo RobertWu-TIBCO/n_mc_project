@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:pfx="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd3" xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:ns="http://www.tibco.com/pe/WriteToLogActivitySchema" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tib="http://www.tibco.com/bw/xslt/custom-functions">
+    <xsd:import namespace="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd3" schemaLocation="/share_resources/schema_resources/CreativePOSchema.xsd"/>
+    <pd:name>offersMg/offerDao/CreativeQuery.process</pd:name>
+    <pd:startName>Start</pd:startName>
+    <pd:startType>
+        <xsd:element name="root">
+            <xsd:complexType>
+                <xsd:sequence>
+                    <xsd:element name="productId" type="xsd:string" minOccurs="0"/>
+                    <xsd:element name="campaignId" type="xsd:string" minOccurs="0"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:element>
+    </pd:startType>
+    <pd:startX>155</pd:startX>
+    <pd:startY>103</pd:startY>
+    <pd:returnBindings>
+        <pfx:creativeResults>
+            <xsl:for-each select="$SQL-Direct/jdbcGeneralActivityOutput/unknownResultset/row">
+                <pfx:creativeObj>
+                    <pfx:creativeId>
+                        <xsl:value-of select="column[1]/value"/>
+                    </pfx:creativeId>
+                    <pfx:productId>
+                        <xsl:value-of select="column[2]/value"/>
+                    </pfx:productId>
+                    <pfx:creativeName>
+                        <xsl:value-of select="column[3]/value"/>
+                    </pfx:creativeName>
+                    <pfx:creativeSizelist>
+                        <xsl:value-of select="column[4]/value"/>
+                    </pfx:creativeSizelist>
+                </pfx:creativeObj>
+            </xsl:for-each>
+        </pfx:creativeResults>
+    </pd:returnBindings>
+    <pd:endName>End</pd:endName>
+    <pd:endType ref="pfx:creativeResults"/>
+    <pd:endX>622</pd:endX>
+    <pd:endY>79</pd:endY>
+    <pd:errorSchemas/>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/1489456146496</pd:targetNamespace>
+    <pd:activity name="SQL Direct">
+        <pd:type>com.tibco.plugin.jdbc.JDBCGeneralActivity</pd:type>
+        <pd:resourceType>ae.activities.JDBCGeneralActivity</pd:resourceType>
+        <pd:x>348</pd:x>
+        <pd:y>100</pd:y>
+        <config>
+            <timeout>10</timeout>
+            <commit>false</commit>
+            <maxRows>0</maxRows>
+            <jdbcSharedConfig>/share_resources/JDBC Connection.sharedjdbc</jdbcSharedConfig>
+        </config>
+        <pd:inputBindings>
+            <jdbcGeneralActivityInput>
+                <statement>
+                    <xsl:value-of select="if (exists($Start/root/productId) and tib:trim($Start/root/productId) !=&quot;&quot;)  then &#xA;&#xA;concat(&quot;select * from tab_creative where PRODUCT_ID=&quot;, $Start/root/productId, &quot; ORDER BY CREATIVE_ID desc&quot;) else&#xA;if(exists($Start/root/campaignId) and  tib:trim($Start/root/campaignId) !=&quot;&quot;) then &#xA;concat(&quot;select bcr.* from tab_campaign bc  inner join tab_cc bcc on bcc.CAMPAIGN_ID = bc.CAMPAIGN_ID and bc.CAMPAIGN_ID=&quot;,$Start/root/campaignId,&quot; INNER JOIN tab_creative bcr on bcc.CREATIVE_ID = bcr.CREATIVE_ID&quot;)&#xA;else &quot;&quot;"/>
+                </statement>
+                <maxRows>
+                    <xsl:value-of select="0"/>
+                </maxRows>
+            </jdbcGeneralActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Catch">
+        <pd:type>com.tibco.pe.core.CatchActivity</pd:type>
+        <pd:resourceType>ae.activities.catch</pd:resourceType>
+        <pd:x>726</pd:x>
+        <pd:y>275</pd:y>
+        <pd:handler>true</pd:handler>
+        <config>
+            <catchAll>true</catchAll>
+        </config>
+        <pd:inputBindings/>
+    </pd:activity>
+    <pd:activity name="Rethrow">
+        <pd:type>com.tibco.pe.core.RethrowActivity</pd:type>
+        <pd:resourceType>ae.activities.rethrow</pd:resourceType>
+        <pd:x>885</pd:x>
+        <pd:y>237</pd:y>
+        <config/>
+        <pd:inputBindings/>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>SQL Direct</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>SQL Direct</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Catch</pd:from>
+        <pd:to>Rethrow</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>

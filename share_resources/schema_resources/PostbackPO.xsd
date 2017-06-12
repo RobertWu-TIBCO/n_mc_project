@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	 xmlns="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd15"
+	 targetNamespace="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd15"
+	 elementFormDefault="qualified"
+	 attributeFormDefault="unqualified">
+	<xs:element name="postbackId" type="xs:string"/>
+	<xs:element name="nId" type="xs:string"/>
+	<xs:element name="postbackUrl" type="xs:string"/>
+	<xs:element name="postbackEventname" type="xs:string"/>
+	<xs:element name="postbackType" type="xs:string"/>
+	<xs:element name="postbackTramsmitParameter" type="xs:string"/>
+	<xs:element name="postbackSynctype" type="xs:string"/>
+	<xs:element name="postbackIstransmit" type="xs:string"/>
+	<xs:element name="postbackIsDel" type="xs:string"/>
+	<xs:element name="postbackObj">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="postbackId" minOccurs="0"/>
+				<xs:element ref="nId" minOccurs="0"/>
+				<xs:element ref="campaignId" minOccurs="0"/>
+				<xs:element ref="postbackUrl" minOccurs="0"/>
+				<xs:element ref="postbackEventname" minOccurs="0"/>
+				<xs:element ref="postbackType" minOccurs="0"/>
+				<xs:element ref="postbackTramsmitParameter" minOccurs="0"/>
+				<xs:element ref="postbackSynctype" minOccurs="0"/>
+				<xs:element ref="postbackIstransmit" minOccurs="0"/>
+				<xs:element ref="postbackIsDel" minOccurs="0"/>
+				<xs:element ref="label" minOccurs="0"/>
+				<xs:element ref="searchVal" minOccurs="0"/>
+				<xs:element ref="validateRepeat" minOccurs="0"/>
+				<xs:element ref="tokenInfo" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="postbackResults">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="postbackObj" minOccurs="0" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="campaignId" type="xs:string"/>
+	<xs:element name="validateRepeat" type="xs:string"/>
+	<xs:element name="tokenInfo" type="xs:string"/>
+	<xs:element name="searchVal" type="xs:string"/>
+	<xs:element name="label" type="xs:string"/>
+</xs:schema>

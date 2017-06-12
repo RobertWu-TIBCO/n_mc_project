@@ -1,0 +1,359 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:ns2="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd4" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ns1="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd14" xmlns:ns="http://www.tibco.com/namespaces/tnt/plugins/json" xmlns:ns4="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd5" xmlns:ns3="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:pfx3="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/NSchema.xsd" xmlns:pfx2="http://www.tibco.com/schemas/n_mc_project/share_resources/schema_resources/Schema.xsd" xmlns:pfx="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd12">
+    <xsd:import namespace="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd12" schemaLocation="/share_resources/schema_resources/ConditionsSchema.xsd"/>
+    <xsd:import namespace="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/NSchema.xsd" schemaLocation="/share_resources/schema_resources/PublisherIndexVO.xsd"/>
+    <pd:name>offersMg/offerService/PublisherInex.process</pd:name>
+    <pd:startName>Start</pd:startName>
+    <pd:startType ref="pfx:requestParams"/>
+    <pd:startX>146</pd:startX>
+    <pd:startY>136</pd:startY>
+    <pd:returnBindings>
+        <responseJsonStr>
+            <xsl:value-of select="$Render-JSON/ns:ActivityOutputClass/jsonString"/>
+        </responseJsonStr>
+    </pd:returnBindings>
+    <pd:endName>End</pd:endName>
+    <pd:endType>
+        <xsd:element name="responseJsonStr" type="xsd:string"/>
+    </pd:endType>
+    <pd:endX>1088</pd:endX>
+    <pd:endY>97</pd:endY>
+    <pd:errorSchemas/>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/1495497612409</pd:targetNamespace>
+    <pd:activity name="Parse JSON">
+        <pd:type>com.tibco.plugin.json.activities.JSONParserActivity</pd:type>
+        <pd:resourceType>ae.activities.JSONParserActivity</pd:resourceType>
+        <pd:x>296</pd:x>
+        <pd:y>139</pd:y>
+        <config>
+            <SchemaType>xsdType</SchemaType>
+            <BadgerfishCheck>false</BadgerfishCheck>
+            <ActivityOutputEditor ref="pfx:requestParams"/>
+        </config>
+        <pd:inputBindings>
+            <ns:ActivityInputClass>
+                <jsonString>
+                    <xsl:value-of select="$Start/pfx:requestParams/pfx:jsonPostData"/>
+                </jsonString>
+            </ns:ActivityInputClass>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="AccouintDetail">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>642</pd:x>
+        <pd:y>46</pd:y>
+        <config>
+            <processName>/accountMg/accountDao/AccountQuery.process</processName>
+        </config>
+        <pd:inputBindings>
+            <root>
+                <xsl:if test="$Java-Code/javaCodeActivityOutput/nId">
+                    <accountId>
+                        <xsl:value-of select="$Java-Code/javaCodeActivityOutput/nId"/>
+                    </accountId>
+                </xsl:if>
+            </root>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="AvailableOffer">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>642</pd:x>
+        <pd:y>145</pd:y>
+        <config>
+            <processName>/offersMg/offerDao/AvailableOfferQuery.process</processName>
+        </config>
+        <pd:inputBindings>
+            <root>
+                <offerStatus>
+                    <xsl:value-of select="&quot;public&quot;"/>
+                </offerStatus>
+            </root>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="ObtainedOfferQuery">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>637</pd:x>
+        <pd:y>255</pd:y>
+        <config>
+            <processName>/offersMg/offerDao/CampaignQuery.process</processName>
+        </config>
+        <pd:inputBindings>
+            <root>
+                <xsl:if test="$Java-Code/javaCodeActivityOutput/nId">
+                    <nId>
+                        <xsl:value-of select="$Java-Code/javaCodeActivityOutput/nId"/>
+                    </nId>
+                </xsl:if>
+            </root>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Render JSON">
+        <pd:type>com.tibco.plugin.json.activities.JSONRenderActivity</pd:type>
+        <pd:resourceType>ae.activities.JSONRenderActivity</pd:resourceType>
+        <pd:x>915</pd:x>
+        <pd:y>111</pd:y>
+        <config>
+            <SchemaType>xsdType</SchemaType>
+            <BadgerfishCheck>false</BadgerfishCheck>
+            <ActivityInputEditor ref="pfx3:PublisherIndexVO"/>
+        </config>
+        <pd:inputBindings>
+            <ns:ActivityInputClass>
+                <pfx3:PublisherIndexVO>
+                    <ns1:accountObj>
+                        <xsl:if test="$AccouintDetail/ns1:accountResults/ns1:accountObj[1]/ns1:accountId">
+                            <ns1:accountId>
+                                <xsl:value-of select="$AccouintDetail/ns1:accountResults/ns1:accountObj[1]/ns1:accountId"/>
+                            </ns1:accountId>
+                        </xsl:if>
+                        <xsl:if test="$AccouintDetail/ns1:accountResults/ns1:accountObj[1]/ns1:managerAccountId">
+                            <ns1:managerAccountId>
+                                <xsl:value-of select="$AccouintDetail/ns1:accountResults/ns1:accountObj[1]/ns1:managerAccountId"/>
+                            </ns1:managerAccountId>
+                        </xsl:if>
+                        <xsl:if test="$AccouintDetail/ns1:accountResults/ns1:accountObj[1]/ns1:accounteEmail">
+                            <ns1:accounteEmail>
+                                <xsl:value-of select="$AccouintDetail/ns1:accountResults/ns1:accountObj[1]/ns1:accounteEmail"/>
+                            </ns1:accounteEmail>
+                        </xsl:if>
+                        <xsl:if test="$AccouintDetail/ns1:accountResults/ns1:accountObj[1]/ns1:accountName">
+                            <ns1:accountName>
+                                <xsl:value-of select="$AccouintDetail/ns1:accountResults/ns1:accountObj[1]/ns1:accountName"/>
+                            </ns1:accountName>
+                        </xsl:if>
+                        <xsl:if test="$AccouintDetail/ns1:accountResults/ns1:accountObj[1]/ns1:accountAddress">
+                            <ns1:accountAddress>
+                                <xsl:value-of select="$AccouintDetail/ns1:accountResults/ns1:accountObj[1]/ns1:accountAddress"/>
+                            </ns1:accountAddress>
+                        </xsl:if>
+                        <xsl:if test="$AccouintDetail/ns1:accountResults/ns1:accountObj[1]/ns1:accountConcat">
+                            <ns1:accountConcat>
+                                <xsl:value-of select="$AccouintDetail/ns1:accountResults/ns1:accountObj[1]/ns1:accountConcat"/>
+                            </ns1:accountConcat>
+                        </xsl:if>
+                        <xsl:if test="$AccouintDetail/ns1:accountResults/ns1:accountObj[1]/ns1:accountTel">
+                            <ns1:accountTel>
+                                <xsl:value-of select="$AccouintDetail/ns1:accountResults/ns1:accountObj[1]/ns1:accountTel"/>
+                            </ns1:accountTel>
+                        </xsl:if>
+                        <xsl:if test="$AccouintDetail/ns1:accountResults/ns1:accountObj[1]/ns1:accountType">
+                            <ns1:accountType>
+                                <xsl:value-of select="$AccouintDetail/ns1:accountResults/ns1:accountObj[1]/ns1:accountType"/>
+                            </ns1:accountType>
+                        </xsl:if>
+                        <xsl:if test="$AccouintDetail/ns1:accountResults/ns1:accountObj[1]/ns1:accountStatus">
+                            <ns1:accountStatus>
+                                <xsl:value-of select="$AccouintDetail/ns1:accountResults/ns1:accountObj[1]/ns1:accountStatus"/>
+                            </ns1:accountStatus>
+                        </xsl:if>
+                        <xsl:if test="$AccouintDetail/ns1:accountResults/ns1:accountObj[1]/ns1:label">
+                            <ns1:label>
+                                <xsl:value-of select="$AccouintDetail/ns1:accountResults/ns1:accountObj[1]/ns1:label"/>
+                            </ns1:label>
+                        </xsl:if>
+                        <xsl:if test="$AccouintDetail/ns1:accountResults/ns1:accountObj[1]/ns1:managerLabel">
+                            <ns1:managerLabel>
+                                <xsl:value-of select="$AccouintDetail/ns1:accountResults/ns1:accountObj[1]/ns1:managerLabel"/>
+                            </ns1:managerLabel>
+                        </xsl:if>
+                    </ns1:accountObj>
+                    <ns2:objResults>
+                        <xsl:for-each select="$AvailableOffer/ns2:objResults/ns2:listObj">
+                            <ns2:listObj>
+                                <ns2:objId>
+                                    <xsl:value-of select="ns2:objId"/>
+                                </ns2:objId>
+                                <ns2:label>
+                                    <xsl:value-of select="ns2:label"/>
+                                </ns2:label>
+                            </ns2:listObj>
+                        </xsl:for-each>
+                    </ns2:objResults>
+                    <ns2:objResults>
+                        <xsl:for-each select="$ObtainedOfferQuery/ns4:campaignResults/ns4:campaignObj">
+                            <ns2:listObj>
+                                <ns2:objId>
+                                    <xsl:value-of select="ns4:campaignId"/>
+                                </ns2:objId>
+                                <ns2:label>
+                                    <xsl:value-of select="concat(ns4:campaignId,&quot;-&quot;,ns4:campaignName, &quot;-&quot;,ns4:campaignStatus)"/>
+                                </ns2:label>
+                            </ns2:listObj>
+                        </xsl:for-each>
+                    </ns2:objResults>
+                </pfx3:PublisherIndexVO>
+            </ns:ActivityInputClass>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Java Code">
+        <pd:type>com.tibco.plugin.java.JavaActivity</pd:type>
+        <pd:resourceType>ae.javapalette.javaActivity</pd:resourceType>
+        <pd:x>452</pd:x>
+        <pd:y>143</pd:y>
+        <config>
+            <fileName>PublisherInexJavaCode</fileName>
+            <packageName>offersMg.offerService.PublisherInex</packageName>
+            <fullsource>package offersMg.offerService.PublisherInex;
+import java.util.*;
+import java.io.*;
+import com.tm.mc.redis.MCRedisInstance;
+import redis.clients.jedis.Jedis;
+
+public class PublisherInexJavaCode{
+/****** START SET/GET METHOD, DO NOT MODIFY *****/
+	protected String tokenInfo = "";
+	protected String nId = "";
+	public String gettokenInfo() {
+		return tokenInfo;
+	}
+	public void settokenInfo(String val) {
+		tokenInfo = val;
+	}
+	public String getnId() {
+		return nId;
+	}
+	public void setnId(String val) {
+		nId = val;
+	}
+/****** END SET/GET METHOD, DO NOT MODIFY *****/
+	public PublisherInexJavaCode() {
+	}
+	public void invoke() throws Exception {
+/* Available Variables: DO NOT MODIFY
+	In  : String tokenInfo
+	Out : String nId
+* Available Variables: DO NOT MODIFY *****/
+
+Jedis jedis = MCRedisInstance.getInstance().getJedis();
+		if(jedis.exists(tokenInfo.trim())){
+			nId = jedis.hget(tokenInfo, "userId");
+		}
+		jedis.close();
+	}
+}
+</fullsource>
+            <outputData>
+                <row>
+                    <fieldName>nId</fieldName>
+                    <fieldType>string</fieldType>
+                    <fieldRequired>optional</fieldRequired>
+                </row>
+            </outputData>
+            <inputData>
+                <row>
+                    <fieldName>tokenInfo</fieldName>
+                    <fieldType>string</fieldType>
+                    <fieldRequired>optional</fieldRequired>
+                </row>
+            </inputData>
+            <byteCode>
+                <class>
+                    <name>PublisherInexJavaCode</name>
+                    <byteCode>yv66vgAAADMARgkADQAjCQANACQKAA4AJQgAJgoAJwAoCgAnACkKACoAKwoALAAtCgAuAC8IADAKACwAMQoALAAyBwAzBwA0AQAJdG9rZW5JbmZvAQASTGphdmEvbGFuZy9TdHJpbmc7AQADbklkAQAMZ2V0dG9rZW5JbmZvAQAUKClMamF2YS9sYW5nL1N0cmluZzsBAARDb2RlAQAPTGluZU51bWJlclRhYmxlAQAMc2V0dG9rZW5JbmZvAQAVKExqYXZhL2xhbmcvU3RyaW5nOylWAQAGZ2V0bklkAQAGc2V0bklkAQAGPGluaXQ+AQADKClWAQAGaW52b2tlAQANU3RhY2tNYXBUYWJsZQcANQEACkV4Y2VwdGlvbnMHADYBAApTb3VyY2VGaWxlAQAaUHVibGlzaGVySW5leEphdmFDb2RlLmphdmEMAA8AEAwAEQAQDAAaABsBAAAHADcMADgAOQwAOgA7BwA8DAA9ABMHADUMAD4APwcAQAwAQQBCAQAGdXNlcklkDABDAEQMAEUAGwEAOW9mZmVyc01nL29mZmVyU2VydmljZS9QdWJsaXNoZXJJbmV4L1B1Ymxpc2hlckluZXhKYXZhQ29kZQEAEGphdmEvbGFuZy9PYmplY3QBABlyZWRpcy9jbGllbnRzL2plZGlzL0plZGlzAQATamF2YS9sYW5nL0V4Y2VwdGlvbgEAH2NvbS90bS9tYy9yZWRpcy9NQ1JlZGlzSW5zdGFuY2UBAAtnZXRJbnN0YW5jZQEAIygpTGNvbS90bS9tYy9yZWRpcy9NQ1JlZGlzSW5zdGFuY2U7AQAIZ2V0SmVkaXMBAB0oKUxyZWRpcy9jbGllbnRzL2plZGlzL0plZGlzOwEAEGphdmEvbGFuZy9TdHJpbmcBAAR0cmltAQAGZXhpc3RzAQAnKExqYXZhL2xhbmcvU3RyaW5nOylMamF2YS9sYW5nL0Jvb2xlYW47AQARamF2YS9sYW5nL0Jvb2xlYW4BAAxib29sZWFuVmFsdWUBAAMoKVoBAARoZ2V0AQA4KExqYXZhL2xhbmcvU3RyaW5nO0xqYXZhL2xhbmcvU3RyaW5nOylMamF2YS9sYW5nL1N0cmluZzsBAAVjbG9zZQAhAA0ADgAAAAIABAAPABAAAAAEABEAEAAAAAYAAQASABMAAQAUAAAAHQABAAEAAAAFKrQAAbAAAAABABUAAAAGAAEAAAAMAAEAFgAXAAEAFAAAACIAAgACAAAABiortQABsQAAAAEAFQAAAAoAAgAAAA8ABQAQAAEAGAATAAEAFAAAAB0AAQABAAAABSq0AAKwAAAAAQAVAAAABgABAAAAEgABABkAFwABABQAAAAiAAIAAgAAAAYqK7UAArEAAAABABUAAAAKAAIAAAAVAAUAFgABABoAGwABABQAAAA1AAIAAQAAABEqtwADKhIEtQABKhIEtQACsQAAAAEAFQAAABIABAAAABgABAAJAAoACgAQABkAAQAcABsAAgAUAAAAYQAEAAIAAAAruAAFtgAGTCsqtAABtgAHtgAItgAJmQARKisqtAABEgq2AAu1AAIrtgAMsQAAAAIAFQAAABYABQAAACAABwAhABgAIgAmACQAKgAlAB0AAAAIAAH8ACYHAB4AHwAAAAQAAQAgAAEAIQAAAAIAIg==</byteCode>
+                </class>
+            </byteCode>
+        </config>
+        <pd:inputBindings>
+            <javaCodeActivityInput>
+                <xsl:if test="$Parse-JSON/ns:ActivityOutputClass/pfx:requestParams/pfx:tokenInfo">
+                    <tokenInfo>
+                        <xsl:value-of select="$Parse-JSON/ns:ActivityOutputClass/pfx:requestParams/pfx:tokenInfo"/>
+                    </tokenInfo>
+                </xsl:if>
+            </javaCodeActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Catch">
+        <pd:type>com.tibco.pe.core.CatchActivity</pd:type>
+        <pd:resourceType>ae.activities.catch</pd:resourceType>
+        <pd:x>1558</pd:x>
+        <pd:y>68</pd:y>
+        <pd:handler>true</pd:handler>
+        <config>
+            <catchAll>true</catchAll>
+        </config>
+        <pd:inputBindings/>
+    </pd:activity>
+    <pd:activity name="Rethrow">
+        <pd:type>com.tibco.pe.core.RethrowActivity</pd:type>
+        <pd:resourceType>ae.activities.rethrow</pd:resourceType>
+        <pd:x>1578</pd:x>
+        <pd:y>248</pd:y>
+        <config/>
+        <pd:inputBindings/>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>Parse JSON</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>AccouintDetail</pd:from>
+        <pd:to>Render JSON</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>AvailableOffer</pd:from>
+        <pd:to>Render JSON</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>ObtainedOfferQuery</pd:from>
+        <pd:to>Render JSON</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Render JSON</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Parse JSON</pd:from>
+        <pd:to>Java Code</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Java Code</pd:from>
+        <pd:to>AccouintDetail</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Java Code</pd:from>
+        <pd:to>AvailableOffer</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Java Code</pd:from>
+        <pd:to>ObtainedOfferQuery</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Catch</pd:from>
+        <pd:to>Rethrow</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>

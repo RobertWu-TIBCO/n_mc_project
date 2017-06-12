@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:pfx="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd12" xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:pfx2="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd4" xmlns:ns="http://www.tibco.com/namespaces/tnt/plugins/json" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd14">
+    <xsd:import namespace="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd12" schemaLocation="/share_resources/schema_resources/ConditionsSchema.xsd"/>
+    <xsd:import namespace="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd4" schemaLocation="/share_resources/schema_resources/ListObjectSchema.xsd"/>
+    <pd:name>accountMg/accountService/ListAccounts.process</pd:name>
+    <pd:startName>Start</pd:startName>
+    <pd:startType ref="pfx:requestParams"/>
+    <pd:startX>98</pd:startX>
+    <pd:startY>64</pd:startY>
+    <pd:returnBindings>
+        <responseJsonStr>
+            <xsl:value-of select="$Render-JSON/ns:ActivityOutputClass/jsonString"/>
+        </responseJsonStr>
+    </pd:returnBindings>
+    <pd:endName>End</pd:endName>
+    <pd:endType>
+        <xsd:element name="responseJsonStr" type="xsd:string"/>
+    </pd:endType>
+    <pd:endX>765</pd:endX>
+    <pd:endY>53</pd:endY>
+    <pd:errorSchemas/>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/1490684297426</pd:targetNamespace>
+    <pd:activity name="CallAccountDao">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>474</pd:x>
+        <pd:y>86</pd:y>
+        <config>
+            <processName>/accountMg/accountDao/AccountQuery.process</processName>
+        </config>
+        <pd:inputBindings>
+            <root>
+                <xsl:choose>
+                    <xsl:when test="$Parse-JSON/ns:ActivityOutputClass/pfx:requestParams/pfx:paraAccountType =&quot;checkAll&quot;">
+                        <accountType>
+                            <xsl:value-of select="&quot;&quot;"/>
+                        </accountType>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:if test="$Parse-JSON/ns:ActivityOutputClass/pfx:requestParams/pfx:paraAccountType">
+                            <accountType>
+                                <xsl:value-of select="$Parse-JSON/ns:ActivityOutputClass/pfx:requestParams/pfx:paraAccountType"/>
+                            </accountType>
+                        </xsl:if>
+                    </xsl:otherwise>
+                </xsl:choose>
+                <searchVal>
+                    <xsl:value-of select="$Parse-JSON/ns:ActivityOutputClass/pfx:requestParams/pfx:paraSearchValue"/>
+                </searchVal>
+                <xsl:if test="$Parse-JSON/ns:ActivityOutputClass/pfx:requestParams/pfx:paraObjAlias">
+                    <accouintEmail>
+                        <xsl:value-of select="$Parse-JSON/ns:ActivityOutputClass/pfx:requestParams/pfx:paraObjAlias"/>
+                    </accouintEmail>
+                </xsl:if>
+                <xsl:if test="$Parse-JSON/ns:ActivityOutputClass/pfx:requestParams/pfx:paraObjName">
+                    <accountName>
+                        <xsl:value-of select="$Parse-JSON/ns:ActivityOutputClass/pfx:requestParams/pfx:paraObjName"/>
+                    </accountName>
+                </xsl:if>
+                <paraSelfId>
+                    <xsl:value-of select="$Parse-JSON/ns:ActivityOutputClass/pfx:requestParams/pfx:paraSelfId"/>
+                </paraSelfId>
+            </root>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Parse JSON">
+        <pd:type>com.tibco.plugin.json.activities.JSONParserActivity</pd:type>
+        <pd:resourceType>ae.activities.JSONParserActivity</pd:resourceType>
+        <pd:x>242</pd:x>
+        <pd:y>111</pd:y>
+        <config>
+            <SchemaType>xsdType</SchemaType>
+            <BadgerfishCheck>false</BadgerfishCheck>
+            <ActivityOutputEditor ref="pfx:requestParams"/>
+        </config>
+        <pd:inputBindings>
+            <ns:ActivityInputClass>
+                <jsonString>
+                    <xsl:value-of select="$Start/pfx:requestParams/pfx:jsonPostData"/>
+                </jsonString>
+            </ns:ActivityInputClass>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Render JSON">
+        <pd:type>com.tibco.plugin.json.activities.JSONRenderActivity</pd:type>
+        <pd:resourceType>ae.activities.JSONRenderActivity</pd:resourceType>
+        <pd:x>620</pd:x>
+        <pd:y>178</pd:y>
+        <config>
+            <SchemaType>xsdType</SchemaType>
+            <BadgerfishCheck>false</BadgerfishCheck>
+            <ActivityInputEditor ref="pfx2:objResults"/>
+        </config>
+        <pd:inputBindings>
+            <ns:ActivityInputClass>
+                <pfx2:objResults>
+                    <xsl:for-each select="$CallAccountDao/ns1:accountResults/ns1:accountObj">
+                        <pfx2:listObj>
+                            <pfx2:objId>
+                                <xsl:value-of select="ns1:accountId"/>
+                            </pfx2:objId>
+                            <pfx2:label>
+                                <xsl:value-of select="concat(current()/ns1:accountId,&quot;-&quot;,current()/ns1:accountName,&quot;-&quot;,current()/ns1:accountType)"/>
+                            </pfx2:label>
+                        </pfx2:listObj>
+                    </xsl:for-each>
+                </pfx2:objResults>
+            </ns:ActivityInputClass>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Catch">
+        <pd:type>com.tibco.pe.core.CatchActivity</pd:type>
+        <pd:resourceType>ae.activities.catch</pd:resourceType>
+        <pd:x>731</pd:x>
+        <pd:y>290</pd:y>
+        <pd:handler>true</pd:handler>
+        <config>
+            <catchAll>true</catchAll>
+        </config>
+        <pd:inputBindings/>
+    </pd:activity>
+    <pd:activity name="Rethrow">
+        <pd:type>com.tibco.pe.core.RethrowActivity</pd:type>
+        <pd:resourceType>ae.activities.rethrow</pd:resourceType>
+        <pd:x>920</pd:x>
+        <pd:y>185</pd:y>
+        <config/>
+        <pd:inputBindings/>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>Parse JSON</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Parse JSON</pd:from>
+        <pd:to>CallAccountDao</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>CallAccountDao</pd:from>
+        <pd:to>Render JSON</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Render JSON</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Catch</pd:from>
+        <pd:to>Rethrow</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>

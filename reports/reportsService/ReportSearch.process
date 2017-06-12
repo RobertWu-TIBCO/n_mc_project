@@ -1,0 +1,552 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ns="http://www.tibco.com/namespaces/tnt/plugins/json" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tib="http://www.tibco.com/bw/xslt/custom-functions" xmlns:pfx3="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd18" xmlns:pfx2="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd12" xmlns:pfx="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd17">
+    <xsd:import namespace="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd12" schemaLocation="/share_resources/schema_resources/ConditionsSchema.xsd"/>
+    <xsd:import namespace="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd18" schemaLocation="/share_resources/schema_resources/ReportVO.xsd"/>
+    <xsd:import namespace="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd17" schemaLocation="/share_resources/schema_resources/ReportConditions.xsd"/>
+    <pd:name>reports/reportsService/ReportSearch.process</pd:name>
+    <pd:startName>Start</pd:startName>
+    <pd:startType ref="pfx2:requestParams"/>
+    <pd:startX>150</pd:startX>
+    <pd:startY>64</pd:startY>
+    <pd:returnBindings>
+        <responseJsonStr>
+            <xsl:value-of select="concat('{&quot;tableHeader&quot;:&quot;',$Java-Code/javaCodeActivityOutput/tableHtml,'&quot;}')"/>
+        </responseJsonStr>
+    </pd:returnBindings>
+    <pd:endName>End</pd:endName>
+    <pd:endType>
+        <xsd:element name="responseJsonStr" type="xsd:string"/>
+    </pd:endType>
+    <pd:endX>747</pd:endX>
+    <pd:endY>36</pd:endY>
+    <pd:errorSchemas/>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/1492592923339</pd:targetNamespace>
+    <pd:activity name="Java Code">
+        <pd:type>com.tibco.plugin.java.JavaActivity</pd:type>
+        <pd:resourceType>ae.javapalette.javaActivity</pd:resourceType>
+        <pd:x>580</pd:x>
+        <pd:y>49</pd:y>
+        <config>
+            <fileName>ReportSearchJavaCode</fileName>
+            <packageName>reports.reportsService.ReportSearch</packageName>
+            <fullsource>package reports.reportsService.ReportSearch;
+import java.util.*;
+import java.io.*;
+import redis.clients.jedis.Jedis;
+import com.tm.mc.util.*;
+import com.tm.mc.redis.*;
+import java.text.DecimalFormat;
+public class ReportSearchJavaCode{
+/****** START SET/GET METHOD, DO NOT MODIFY *****/
+	protected String startDate = "";
+	protected String endDate = "";
+	protected String offerReportSearch = "";
+	protected String values = "";
+	protected String campaignIdLabels = "";
+	protected String reportStatus = "";
+	protected String tableHtml = "";
+	public String getstartDate() {
+		return startDate;
+	}
+	public void setstartDate(String val) {
+		startDate = val;
+	}
+	public String getendDate() {
+		return endDate;
+	}
+	public void setendDate(String val) {
+		endDate = val;
+	}
+	public String getofferReportSearch() {
+		return offerReportSearch;
+	}
+	public void setofferReportSearch(String val) {
+		offerReportSearch = val;
+	}
+	public String getvalues() {
+		return values;
+	}
+	public void setvalues(String val) {
+		values = val;
+	}
+	public String getcampaignIdLabels() {
+		return campaignIdLabels;
+	}
+	public void setcampaignIdLabels(String val) {
+		campaignIdLabels = val;
+	}
+	public String getreportStatus() {
+		return reportStatus;
+	}
+	public void setreportStatus(String val) {
+		reportStatus = val;
+	}
+	public String gettableHtml() {
+		return tableHtml;
+	}
+	public void settableHtml(String val) {
+		tableHtml = val;
+	}
+/****** END SET/GET METHOD, DO NOT MODIFY *****/
+	public ReportSearchJavaCode() {
+	}
+	public void invoke() throws Exception {
+/* Available Variables: DO NOT MODIFY
+	In  : String startDate
+	In  : String endDate
+	In  : String offerReportSearch
+	In  : String values
+	In  : String campaignIdLabels
+	In  : String reportStatus
+	Out : String tableHtml
+* Available Variables: DO NOT MODIFY *****/
+String[] dateArr = getDayArr(startDate,endDate);
+		
+		tableHtml =getCampaignReport(dateArr);}
+
+public String[] getDayArr(String startDate, String endDate){
+		String[] dateArr= null;
+		int dayNum = (int)DateUtils.getTwoDateDifferentDay(startDate, endDate);
+		dayNum = -dayNum;
+		if(dayNum&gt;=0){
+			dateArr=new String[dayNum+1];
+			for(int i=0;i&lt;=dayNum;i++){
+				dateArr[i] = DateUtils.addDateDay(startDate,i);
+			}
+		}
+		return dateArr;
+	}
+	
+		/*渠道报表*/
+	
+	/*投放活动报表*/
+public String getCampaignReport(String[] dateArr){
+		
+		StringBuffer tableHtml = new StringBuffer();
+		StringBuffer trHtmlBuffer = null;
+		//tableHtml.append("&lt;table&gt;");
+		tableHtml.append("&lt;thead&gt;");
+		tableHtml.append("&lt;tr&gt;");
+		/*
+		 * 根据查询条件（当前为 活动）和勾选字段 确定表头
+		 */
+		tableHtml.append("&lt;th&gt;"+Constants.N_TH_REPORT_DATE+"&lt;/th&gt;");//时间
+		tableHtml.append("&lt;th&gt;"+Constants.N_TH_OFFER_LABEL+"&lt;/th&gt;");//投放活动
+		tableHtml.append("&lt;th&gt;"+Constants.N_TH_IMPRESSION_COUNT+"&lt;/th&gt;");//展示数
+		tableHtml.append("&lt;th&gt;"+Constants.N_TH_CLICK_COUNT+"&lt;/th&gt;");//点击数
+		
+		tableHtml.append("&lt;th&gt;"+Constants.N_TH_CAMPAIGN_EXPEND_LABEL+"&lt;/th&gt;");//放出方式单价（CPA-CNY-2.2）
+
+		tableHtml.append("&lt;th&gt;"+Constants.N_TH_CON_NORMAL_COUNT+"&lt;/th&gt;");//独立转化
+		if(values.trim().length()&gt;0 ){
+			tableHtml.append("&lt;th&gt;"+Constants.N_TH_CON_NORMAL_VALUE+"&lt;/th&gt;");//独立转化价值
+		}
+		
+		
+		tableHtml.append("&lt;th&gt;"+Constants.N_TH_CLICK_RATE+"&lt;/th&gt;");//点击率
+		
+		tableHtml.append("&lt;th&gt;"+Constants.N_TH_CONVERSION_RATE+"&lt;/th&gt;");//转化率
+		
+	
+		tableHtml.append("&lt;/tr&gt;");
+		tableHtml.append("&lt;/thead&gt;");
+		/*
+		 * 获取表格中数据
+		 */
+		MCRedisInstance mcRedisInstance = MCRedisInstance.getInstance();
+		Jedis jedis = mcRedisInstance.getJedis();
+		
+		if(campaignIdLabels!="" &amp;&amp; campaignIdLabels.trim().length()&gt;0){
+			tableHtml.append("&lt;tbody&gt;");
+			String[] campaignArr = campaignIdLabels.split(",");
+			for(String campaignIdLabel: campaignArr){
+				String campaignIdLabels1 = campaignIdLabel.split("=")[0];
+				String offerId1 = campaignIdLabel.split("=")[1];
+				
+				String campaignId = campaignIdLabels1.split("-")[0];
+				String campaignName = campaignIdLabels1.split("-")[1];
+				
+				if(dateArr!=null &amp;&amp; dateArr.length&gt;0){
+					for(int j=0;j&lt;dateArr.length;j++){
+						boolean isTrDisplay = true;//是否显示此行
+						boolean isActiveTrDisplay = true;//是否显示此行
+						trHtmlBuffer = new StringBuffer();
+						trHtmlBuffer.append("&lt;tr&gt;");
+						//时间
+						String reportDate = dateArr[j] ;
+						trHtmlBuffer.append("&lt;td  class='paraTime'&gt;"+reportDate+"&lt;/td&gt;");
+						//投放活动
+						String campaignStatus = jedis.hget("counter_campaign_"+campaignId, "cstatus_"+dateArr[j]);
+						String campaignLabel = campaignName+"-"+campaignStatus;
+						trHtmlBuffer.append("&lt;td  class='paraId'&gt;&lt;a href='detail/ObtainedOffer.html?Id="+campaignId+"'&gt;"+campaignLabel+"&lt;/a&gt;&lt;/td&gt;");
+						//展示数
+						String impressionCount = jedis.hget("counter_campaign_"+campaignId, "impcounter_day_"+dateArr[j]);
+						impressionCount = (impressionCount==null|| impressionCount.trim().length()&lt;1)?"0":impressionCount;
+						trHtmlBuffer.append("&lt;td&gt;"+impressionCount+"&lt;/td&gt;");
+						if(impressionCount!=null &amp;&amp; impressionCount.trim().length()&gt;0 &amp;&amp; !impressionCount.equals("0")){
+							isTrDisplay = false;
+						}
+						//点击数
+						String clickCount = jedis.hget("counter_campaign_"+campaignId, "clickcounter_day_"+dateArr[j]);
+						clickCount = (clickCount==null|| clickCount.trim().length()&lt;1)?"0":clickCount;
+						trHtmlBuffer.append("&lt;td&gt;"+clickCount+"&lt;/td&gt;");
+						if(clickCount!=null &amp;&amp; clickCount.trim().length()&gt;0 &amp;&amp; !clickCount.equals("0")){
+							isTrDisplay = false;
+						}
+						
+					
+						//放出方式单价（CPA-CNY-2.2）
+						String campaignExpendN = jedis.hget("counter_campaign_"+campaignId, "cprice_"+dateArr[j]);
+						campaignExpendN = (campaignExpendN==null|| campaignExpendN.trim().length()&lt;1)?"0":campaignExpendN;
+						
+						String ctype= jedis.hget("counter_campaign_"+campaignId, "ctype_"+dateArr[j]);
+						String ccurrency= jedis.hget("counter_campaign_"+campaignId, "ccurrency_"+dateArr[j]);
+						
+						String campaignExpendLabel = ctype+"-"+ccurrency+"-"+campaignExpendN;
+						if((ctype==null|| ctype.trim().length()&lt;1)&amp;&amp;(ccurrency==null|| ccurrency.trim().length()&lt;1) &amp;&amp; campaignExpendN.equals("0")){
+							campaignExpendLabel = "0";
+						}
+						trHtmlBuffer.append("&lt;td&gt;"+campaignExpendLabel+"&lt;/td&gt;");
+						
+						/**********************************************/
+						
+						//独立转化
+						String conNormalCount = "0";
+						conNormalCount = jedis.hget("counter_campaign_"+campaignId, "normalcounter_day_"+dateArr[j]);
+						conNormalCount = (conNormalCount==null|| conNormalCount.trim().length()&lt;1)?"0":conNormalCount;
+						trHtmlBuffer.append("&lt;td&gt;"+conNormalCount+"&lt;/td&gt;");
+						//独立转化价值
+						if(values.trim().length()&gt;0 ){
+							String conNormalValue = jedis.hget("counter_campaign_"+campaignId, "normalvalue_day_"+dateArr[j]);
+							conNormalValue = (conNormalValue==null|| conNormalValue.trim().length()&lt;1)?"0":conNormalValue;
+							trHtmlBuffer.append("&lt;td&gt;"+conNormalValue+"&lt;/td&gt;");
+								
+						}	
+						if(conNormalCount!=null &amp;&amp; conNormalCount.trim().length()&gt;0 &amp;&amp; !conNormalCount.equals("0")){
+							isTrDisplay = false;
+						}
+						
+						/**********************************************/
+						//点击率 =(点击数/展示数)*100%
+						String clickRate1 ="0";
+						clickCount = (clickCount==null || clickCount.equals(""))?"0":clickCount;
+						impressionCount = (impressionCount==null || impressionCount.equals(""))?"0":impressionCount;
+						if(Integer.parseInt(clickCount)&gt;=Integer.parseInt(impressionCount) || impressionCount.equals("0")){
+							clickRate1 ="100";
+						}else{
+							double clickRate =  (Double.parseDouble(clickCount)/Double.parseDouble(impressionCount))*100;
+							DecimalFormat df = new DecimalFormat("0.0000");
+							clickRate1 = df.format(clickRate);
+						}
+						
+						trHtmlBuffer.append("&lt;td&gt;"+clickRate1+"%&lt;/td&gt;");
+						
+						//转化率
+						
+						String conversionRate1 = "";
+						double targetCount= Double.parseDouble(conNormalCount==null?"0":conNormalCount);
+						
+						
+						if(targetCount&gt;=Double.parseDouble(clickCount) || clickCount.equals("0")){
+							conversionRate1 = "100";
+						}else{
+							double conversionRate = (targetCount/Double.parseDouble(clickCount))*100;
+							DecimalFormat df = new DecimalFormat("0.0000");
+							conversionRate1 = df.format(conversionRate);
+						}
+						
+						trHtmlBuffer.append("&lt;td&gt;"+conversionRate1+"%&lt;/td&gt;");
+						
+						trHtmlBuffer.append("&lt;/tr&gt;");
+						
+						
+						if(reportStatus!=null &amp;&amp; reportStatus.trim().length()&gt;0){
+							String ostatus = jedis.hget("counter_campaign_"+campaignId, "cstatus_"+dateArr[j]);
+							
+							if(ostatus !=null &amp;&amp; ostatus.trim().equals("pause")){
+								isActiveTrDisplay = false;
+							}
+							
+						}
+						
+						if(isActiveTrDisplay){
+							if(!isTrDisplay){
+								tableHtml.append(trHtmlBuffer.toString());
+							}
+						}
+						
+					}
+					
+				}
+			}
+			
+			tableHtml.append("&lt;/tbody&gt;");
+		}
+		
+		//tableHtml.append("&lt;/table&gt;");
+		return tableHtml.toString();
+	}
+	
+}
+</fullsource>
+            <outputData>
+                <row>
+                    <fieldName>tableHtml</fieldName>
+                    <fieldType>string</fieldType>
+                    <fieldRequired>optional</fieldRequired>
+                </row>
+            </outputData>
+            <inputData>
+                <row>
+                    <fieldName>startDate</fieldName>
+                    <fieldType>string</fieldType>
+                    <fieldRequired>optional</fieldRequired>
+                </row>
+                <row>
+                    <fieldName>endDate</fieldName>
+                    <fieldType>string</fieldType>
+                    <fieldRequired>optional</fieldRequired>
+                </row>
+                <row>
+                    <fieldName>offerReportSearch</fieldName>
+                    <fieldType>string</fieldType>
+                    <fieldRequired>optional</fieldRequired>
+                </row>
+                <row>
+                    <fieldName>values</fieldName>
+                    <fieldType>string</fieldType>
+                    <fieldRequired>optional</fieldRequired>
+                </row>
+                <row>
+                    <fieldName>campaignIdLabels</fieldName>
+                    <fieldType>string</fieldType>
+                    <fieldRequired>optional</fieldRequired>
+                </row>
+                <row>
+                    <fieldName>reportStatus</fieldName>
+                    <fieldType>string</fieldType>
+                    <fieldRequired>optional</fieldRequired>
+                </row>
+            </inputData>
+            <byteCode>
+                <class>
+                    <name>ReportSearchJavaCode</name>
+                    <byteCode>yv66vgAAADMA5wkASwB5CQBLAHoJAEsAewkASwB8CQBLAH0JAEsAfgkASwB/CgBMAIAIAIEKAEsAggoASwCDCgCEAIUHAIYKAIQAhwcAiAoADwCACACJCgAPAIoIAIsIAIwIAI0IAI4IAI8IAJAIAJEKAA0AkgoADQCTCACUCACVCACWCACXCACYCgCZAJoKAJkAmwgAnAgAnQoADQCeCACfCACgBwChCgAoAIAIAKIKACgAowgApAoAKAClCACmCACnCgCoAKkIAKoIAKsIAKwIAK0IAK4IAK8KAA0AsAgAsQgAsggAswgAtAgAtQgAtgoAtwC4CAC5CgC6ALsGQFkAAAAAAAAHALwIAL0KAEMAvgoAQwC/CADACADBCgAPAKUIAMIHAMMHAMQBAAlzdGFydERhdGUBABJMamF2YS9sYW5nL1N0cmluZzsBAAdlbmREYXRlAQARb2ZmZXJSZXBvcnRTZWFyY2gBAAZ2YWx1ZXMBABBjYW1wYWlnbklkTGFiZWxzAQAMcmVwb3J0U3RhdHVzAQAJdGFibGVIdG1sAQAMZ2V0c3RhcnREYXRlAQAUKClMamF2YS9sYW5nL1N0cmluZzsBAARDb2RlAQAPTGluZU51bWJlclRhYmxlAQAMc2V0c3RhcnREYXRlAQAVKExqYXZhL2xhbmcvU3RyaW5nOylWAQAKZ2V0ZW5kRGF0ZQEACnNldGVuZERhdGUBABRnZXRvZmZlclJlcG9ydFNlYXJjaAEAFHNldG9mZmVyUmVwb3J0U2VhcmNoAQAJZ2V0dmFsdWVzAQAJc2V0dmFsdWVzAQATZ2V0Y2FtcGFpZ25JZExhYmVscwEAE3NldGNhbXBhaWduSWRMYWJlbHMBAA9nZXRyZXBvcnRTdGF0dXMBAA9zZXRyZXBvcnRTdGF0dXMBAAxnZXR0YWJsZUh0bWwBAAxzZXR0YWJsZUh0bWwBAAY8aW5pdD4BAAMoKVYBAAZpbnZva2UBAApFeGNlcHRpb25zBwDFAQAJZ2V0RGF5QXJyAQA5KExqYXZhL2xhbmcvU3RyaW5nO0xqYXZhL2xhbmcvU3RyaW5nOylbTGphdmEvbGFuZy9TdHJpbmc7AQANU3RhY2tNYXBUYWJsZQcAxgEAEWdldENhbXBhaWduUmVwb3J0AQAnKFtMamF2YS9sYW5nL1N0cmluZzspTGphdmEvbGFuZy9TdHJpbmc7BwCIBwDDBwDHBwDIBwCGAQAKU291cmNlRmlsZQEAGVJlcG9ydFNlYXJjaEphdmFDb2RlLmphdmEMAE0ATgwATwBODABQAE4MAFEATgwAUgBODABTAE4MAFQATgwAZwBoAQAADABsAG0MAHAAcQcAyQwAygDLAQAQamF2YS9sYW5nL1N0cmluZwwAzADNAQAWamF2YS9sYW5nL1N0cmluZ0J1ZmZlcgEABzx0aGVhZD4MAM4AzwEABDx0cj4BAA08dGg+VGltZTwvdGg+AQAOPHRoPk9mZmVyPC90aD4BABQ8dGg+SW1wcmVzc2lvbiA8L3RoPgEADjx0aD5DbGljazwvdGg+AQAPPHRoPlBheW91dDwvdGg+AQATPHRoPkNvbnZlcnNpb248L3RoPgwA0ABWDADRANIBAA48dGg+VmFsdWU8L3RoPgEADDx0aD5DVFI8L3RoPgEADDx0aD5DVlI8L3RoPgEABTwvdHI+AQAIPC90aGVhZD4HAMcMANMA1AwA1QDWAQAHPHRib2R5PgEAASwMANcA2AEAAT0BAAEtAQAXamF2YS9sYW5nL1N0cmluZ0J1aWxkZXIBABY8dGQgIGNsYXNzPSdwYXJhVGltZSc+DADOANkBAAU8L3RkPgwA2gBWAQARY291bnRlcl9jYW1wYWlnbl8BAAhjc3RhdHVzXwcAyAwA2wDcAQA6PHRkICBjbGFzcz0ncGFyYUlkJz48YSBocmVmPSdkZXRhaWwvT2J0YWluZWRPZmZlci5odG1sP0lkPQEAAic+AQAJPC9hPjwvdGQ+AQAPaW1wY291bnRlcl9kYXlfAQABMAEABDx0ZD4MAN0A3gEAEWNsaWNrY291bnRlcl9kYXlfAQAHY3ByaWNlXwEABmN0eXBlXwEACmNjdXJyZW5jeV8BABJub3JtYWxjb3VudGVyX2RheV8BABBub3JtYWx2YWx1ZV9kYXlfBwDfDADgAOEBAAMxMDAHAOIMAOMA5AEAF2phdmEvdGV4dC9EZWNpbWFsRm9ybWF0AQAGMC4wMDAwDABnAFoMAOUA5gEABiU8L3RkPgEABXBhdXNlAQAIPC90Ym9keT4BADhyZXBvcnRzL3JlcG9ydHNTZXJ2aWNlL1JlcG9ydFNlYXJjaC9SZXBvcnRTZWFyY2hKYXZhQ29kZQEAEGphdmEvbGFuZy9PYmplY3QBABNqYXZhL2xhbmcvRXhjZXB0aW9uAQATW0xqYXZhL2xhbmcvU3RyaW5nOwEAH2NvbS90bS9tYy9yZWRpcy9NQ1JlZGlzSW5zdGFuY2UBABlyZWRpcy9jbGllbnRzL2plZGlzL0plZGlzAQAYY29tL3RtL21jL3V0aWwvRGF0ZVV0aWxzAQAWZ2V0VHdvRGF0ZURpZmZlcmVudERheQEAJyhMamF2YS9sYW5nL1N0cmluZztMamF2YS9sYW5nL1N0cmluZzspSgEACmFkZERhdGVEYXkBACcoTGphdmEvbGFuZy9TdHJpbmc7SSlMamF2YS9sYW5nL1N0cmluZzsBAAZhcHBlbmQBACwoTGphdmEvbGFuZy9TdHJpbmc7KUxqYXZhL2xhbmcvU3RyaW5nQnVmZmVyOwEABHRyaW0BAAZsZW5ndGgBAAMoKUkBAAtnZXRJbnN0YW5jZQEAIygpTGNvbS90bS9tYy9yZWRpcy9NQ1JlZGlzSW5zdGFuY2U7AQAIZ2V0SmVkaXMBAB0oKUxyZWRpcy9jbGllbnRzL2plZGlzL0plZGlzOwEABXNwbGl0AQAnKExqYXZhL2xhbmcvU3RyaW5nOylbTGphdmEvbGFuZy9TdHJpbmc7AQAtKExqYXZhL2xhbmcvU3RyaW5nOylMamF2YS9sYW5nL1N0cmluZ0J1aWxkZXI7AQAIdG9TdHJpbmcBAARoZ2V0AQA4KExqYXZhL2xhbmcvU3RyaW5nO0xqYXZhL2xhbmcvU3RyaW5nOylMamF2YS9sYW5nL1N0cmluZzsBAAZlcXVhbHMBABUoTGphdmEvbGFuZy9PYmplY3Q7KVoBABFqYXZhL2xhbmcvSW50ZWdlcgEACHBhcnNlSW50AQAVKExqYXZhL2xhbmcvU3RyaW5nOylJAQAQamF2YS9sYW5nL0RvdWJsZQEAC3BhcnNlRG91YmxlAQAVKExqYXZhL2xhbmcvU3RyaW5nOylEAQAGZm9ybWF0AQAVKEQpTGphdmEvbGFuZy9TdHJpbmc7ACEASwBMAAAABwAEAE0ATgAAAAQATwBOAAAABABQAE4AAAAEAFEATgAAAAQAUgBOAAAABABTAE4AAAAEAFQATgAAABIAAQBVAFYAAQBXAAAAHQABAAEAAAAFKrQAAbAAAAAB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</byteCode>
+                </class>
+            </byteCode>
+        </config>
+        <pd:inputBindings>
+            <javaCodeActivityInput>
+                <xsl:if test="$Parse-JSON/ns:ActivityOutputClass/pfx:reportObj/pfx:startDate">
+                    <startDate>
+                        <xsl:value-of select="$Parse-JSON/ns:ActivityOutputClass/pfx:reportObj/pfx:startDate"/>
+                    </startDate>
+                </xsl:if>
+                <xsl:if test="$Parse-JSON/ns:ActivityOutputClass/pfx:reportObj/pfx:endDate">
+                    <endDate>
+                        <xsl:value-of select="$Parse-JSON/ns:ActivityOutputClass/pfx:reportObj/pfx:endDate"/>
+                    </endDate>
+                </xsl:if>
+                <xsl:if test="$Parse-JSON/ns:ActivityOutputClass/pfx:reportObj/pfx:offerReportSearch">
+                    <offerReportSearch>
+                        <xsl:value-of select="$Parse-JSON/ns:ActivityOutputClass/pfx:reportObj/pfx:offerReportSearch"/>
+                    </offerReportSearch>
+                </xsl:if>
+                <xsl:if test="$Parse-JSON/ns:ActivityOutputClass/pfx:reportObj/pfx:values">
+                    <values>
+                        <xsl:value-of select="$Parse-JSON/ns:ActivityOutputClass/pfx:reportObj/pfx:values"/>
+                    </values>
+                </xsl:if>
+                <campaignIdLabels>
+                    <xsl:value-of select="$QueryCampaignIdsForRedis/root/campaignIdLables"/>
+                </campaignIdLabels>
+                <xsl:if test="$Parse-JSON/ns:ActivityOutputClass/pfx:reportObj/pfx:reportStatus">
+                    <reportStatus>
+                        <xsl:value-of select="$Parse-JSON/ns:ActivityOutputClass/pfx:reportObj/pfx:reportStatus"/>
+                    </reportStatus>
+                </xsl:if>
+            </javaCodeActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Parse JSON">
+        <pd:type>com.tibco.plugin.json.activities.JSONParserActivity</pd:type>
+        <pd:resourceType>ae.activities.JSONParserActivity</pd:resourceType>
+        <pd:x>257</pd:x>
+        <pd:y>62</pd:y>
+        <config>
+            <SchemaType>xsdType</SchemaType>
+            <BadgerfishCheck>false</BadgerfishCheck>
+            <ActivityOutputEditor ref="pfx:reportObj"/>
+        </config>
+        <pd:inputBindings>
+            <ns:ActivityInputClass>
+                <jsonString>
+                    <xsl:value-of select="$Start/pfx2:requestParams/pfx2:jsonPostData"/>
+                </jsonString>
+            </ns:ActivityInputClass>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="QueryCampaignIdsForRedis">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>427</pd:x>
+        <pd:y>57</pd:y>
+        <config>
+            <processName>/reports/reportsDao/QueryForCampaignIds.process</processName>
+        </config>
+        <pd:inputBindings>
+            <root>
+                <xsl:if test="$Parse-JSON/ns:ActivityOutputClass/pfx:reportObj/pfx:offerReportSearch">
+                    <offerName>
+                        <xsl:value-of select="$Parse-JSON/ns:ActivityOutputClass/pfx:reportObj/pfx:offerReportSearch"/>
+                    </offerName>
+                </xsl:if>
+                <xsl:if test="$Parse-JSON/ns:ActivityOutputClass/pfx:reportObj/pfx:nReportSearch">
+                    <nName>
+                        <xsl:value-of select="$Parse-JSON/ns:ActivityOutputClass/pfx:reportObj/pfx:nReportSearch"/>
+                    </nName>
+                </xsl:if>
+                <nId>
+                    <xsl:value-of select="$Java-Code-1/javaCodeActivityOutput/nId"/>
+                </nId>
+            </root>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Catch">
+        <pd:type>com.tibco.pe.core.CatchActivity</pd:type>
+        <pd:resourceType>ae.activities.catch</pd:resourceType>
+        <pd:x>1172</pd:x>
+        <pd:y>95</pd:y>
+        <pd:handler>true</pd:handler>
+        <config>
+            <catchAll>true</catchAll>
+        </config>
+        <pd:inputBindings/>
+    </pd:activity>
+    <pd:activity name="Rethrow">
+        <pd:type>com.tibco.pe.core.RethrowActivity</pd:type>
+        <pd:resourceType>ae.activities.rethrow</pd:resourceType>
+        <pd:x>1175</pd:x>
+        <pd:y>272</pd:y>
+        <config/>
+        <pd:inputBindings/>
+    </pd:activity>
+    <pd:activity name="Java-Code-1">
+        <pd:type>com.tibco.plugin.java.JavaActivity</pd:type>
+        <pd:resourceType>ae.javapalette.javaActivity</pd:resourceType>
+        <pd:x>393</pd:x>
+        <pd:y>189</pd:y>
+        <config>
+            <fullsource>package reports.reportsService.ReportSearch;
+import java.util.*;
+import java.io.*;
+import redis.clients.jedis.Jedis;
+import com.tm.mc.redis.*;
+public class ReportSearchJavaCode1{
+/****** START SET/GET METHOD, DO NOT MODIFY *****/
+	protected String tokenInfo = "";
+	protected String nId = "";
+	public String gettokenInfo() {
+		return tokenInfo;
+	}
+	public void settokenInfo(String val) {
+		tokenInfo = val;
+	}
+	public String getnId() {
+		return nId;
+	}
+	public void setnId(String val) {
+		nId = val;
+	}
+/****** END SET/GET METHOD, DO NOT MODIFY *****/
+	public ReportSearchJavaCode1() {
+	}
+	public void invoke() throws Exception {
+/* Available Variables: DO NOT MODIFY
+	In  : String tokenInfo
+	Out : String nId
+* Available Variables: DO NOT MODIFY *****/
+
+Jedis jedis = MCRedisInstance.getInstance().getJedis();
+
+
+	nId = jedis.hget(tokenInfo, "userId");
+
+	jedis.close();}
+}
+</fullsource>
+            <fileName>ReportSearchJavaCode1</fileName>
+            <packageName>reports.reportsService.ReportSearch</packageName>
+            <inputData>
+                <row>
+                    <fieldName>tokenInfo</fieldName>
+                    <fieldType>string</fieldType>
+                    <fieldRequired>optional</fieldRequired>
+                </row>
+            </inputData>
+            <outputData>
+                <row>
+                    <fieldName>nId</fieldName>
+                    <fieldType>string</fieldType>
+                    <fieldRequired>optional</fieldRequired>
+                </row>
+            </outputData>
+            <byteCode>
+                <class>
+                    <name>ReportSearchJavaCode1</name>
+                    <byteCode>yv66vgAAADMANQkACgAeCQAKAB8KAAsAIAgAIQoAIgAjCgAiACQIACUKACYAJwoAJgAoBwApBwAqAQAJdG9rZW5JbmZvAQASTGphdmEvbGFuZy9TdHJpbmc7AQADbklkAQAMZ2V0dG9rZW5JbmZvAQAUKClMamF2YS9sYW5nL1N0cmluZzsBAARDb2RlAQAPTGluZU51bWJlclRhYmxlAQAMc2V0dG9rZW5JbmZvAQAVKExqYXZhL2xhbmcvU3RyaW5nOylWAQAGZ2V0bklkAQAGc2V0bklkAQAGPGluaXQ+AQADKClWAQAGaW52b2tlAQAKRXhjZXB0aW9ucwcAKwEAClNvdXJjZUZpbGUBABpSZXBvcnRTZWFyY2hKYXZhQ29kZTEuamF2YQwADAANDAAOAA0MABcAGAEAAAcALAwALQAuDAAvADABAAZ1c2VySWQHADEMADIAMwwANAAYAQA5cmVwb3J0cy9yZXBvcnRzU2VydmljZS9SZXBvcnRTZWFyY2gvUmVwb3J0U2VhcmNoSmF2YUNvZGUxAQAQamF2YS9sYW5nL09iamVjdAEAE2phdmEvbGFuZy9FeGNlcHRpb24BAB9jb20vdG0vbWMvcmVkaXMvTUNSZWRpc0luc3RhbmNlAQALZ2V0SW5zdGFuY2UBACMoKUxjb20vdG0vbWMvcmVkaXMvTUNSZWRpc0luc3RhbmNlOwEACGdldEplZGlzAQAdKClMcmVkaXMvY2xpZW50cy9qZWRpcy9KZWRpczsBABlyZWRpcy9jbGllbnRzL2plZGlzL0plZGlzAQAEaGdldAEAOChMamF2YS9sYW5nL1N0cmluZztMamF2YS9sYW5nL1N0cmluZzspTGphdmEvbGFuZy9TdHJpbmc7AQAFY2xvc2UAIQAKAAsAAAACAAQADAANAAAABAAOAA0AAAAGAAEADwAQAAEAEQAAAB0AAQABAAAABSq0AAGwAAAAAQASAAAABgABAAAACwABABMAFAABABEAAAAiAAIAAgAAAAYqK7UAAbEAAAABABIAAAAKAAIAAAAOAAUADwABABUAEAABABEAAAAdAAEAAQAAAAUqtAACsAAAAAEAEgAAAAYAAQAAABEAAQAWABQAAQARAAAAIgACAAIAAAAGKiu1AAKxAAAAAQASAAAACgACAAAAFAAFABUAAQAXABgAAQARAAAANQACAAEAAAARKrcAAyoSBLUAASoSBLUAArEAAAABABIAAAASAAQAAAAXAAQACAAKAAkAEAAYAAEAGQAYAAIAEQAAADoABAACAAAAGrgABbYABkwqKyq0AAESB7YACLUAAiu2AAmxAAAAAQASAAAADgADAAAAHwAHACIAFQAkABoAAAAEAAEAGwABABwAAAACAB0=</byteCode>
+                </class>
+            </byteCode>
+        </config>
+        <pd:inputBindings>
+            <javaCodeActivityInput>
+                <tokenInfo>
+                    <xsl:value-of select="$Parse-JSON/ns:ActivityOutputClass/pfx:reportObj/pfx:tokenInfo"/>
+                </tokenInfo>
+            </javaCodeActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>Parse JSON</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Java Code</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>QueryCampaignIdsForRedis</pd:from>
+        <pd:to>Java Code</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Catch</pd:from>
+        <pd:to>Rethrow</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Parse JSON</pd:from>
+        <pd:to>Java-Code-1</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Java-Code-1</pd:from>
+        <pd:to>QueryCampaignIdsForRedis</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>
