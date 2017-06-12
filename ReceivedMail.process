@@ -11,18 +11,19 @@
         <pd:x>215</pd:x>
         <pd:y>96</pd:y>
         <config>
-            <pollinginterval>5</pollinginterval>
+            <pollinginterval>360</pollinginterval>
             <newMimeSupport>true</newMimeSupport>
             <inputOutputVersion>5.2.0</inputOutputVersion>
             <host>pop.exmail.qq.com</host>
             <username>mcsystem@mobiexchanger.com</username>
             <password>#!iZ0Rfl0MHKw5R0wgLumuWCoYGx6b6+hjfXoO1xIsiYDWyG2dNbbjkEpRqJMFzJjo</password>
             <useSsl>true</useSsl>
-              <ns0:ssl xmlns:ns0="http://www.tibco.com/xmlns/aemeta/services/2002">
+            <ns0:ssl xmlns:ns0="http://www.tibco.com/xmlns/aemeta/services/2002">
                 <ns0:strongCipherSuitesOnly>false</ns0:strongCipherSuitesOnly>
                 <ns0:cert isRef="true">/share_resources/mailcerts/.folder</ns0:cert>
             </ns0:ssl>
-		<OutputHeaders>
+            <deletemail>true</deletemail>
+            <OutputHeaders>
                 <xsd:element name="root">
                     <xsd:complexType>
                         <xsd:sequence>
@@ -37,16 +38,16 @@
         <pd:inputBindings/>
     </pd:starter>
     <pd:endName>End</pd:endName>
-    <pd:endX>897</pd:endX>
-    <pd:endY>72</pd:endY>
+    <pd:endX>791</pd:endX>
+    <pd:endY>99</pd:endY>
     <pd:errorSchemas/>
     <pd:processVariables/>
     <pd:targetNamespace>http://xmlns.example.com/1495876620547</pd:targetNamespace>
     <pd:activity name="ApplyQueueUpdate">
         <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
         <pd:resourceType>ae.process.subprocess</pd:resourceType>
-        <pd:x>675</pd:x>
-        <pd:y>83</pd:y>
+        <pd:x>597</pd:x>
+        <pd:y>99</pd:y>
         <config>
             <processName>/offersMg/offerDao/ApplyQueueUpdate.process</processName>
         </config>
