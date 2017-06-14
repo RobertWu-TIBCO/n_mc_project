@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<pd:ProcessDefinition xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:pfx="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd12" xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:pfx2="http://www.tibco.com/schemas/n_mc_project/share_resources/schema_resources/Schema.xsd2" xmlns:ns="http://www.tibco.com/namespaces/tnt/plugins/json" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns2="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd" xmlns:ns1="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd5" xmlns:ns4="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd3" xmlns:ns3="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd2">
+<pd:ProcessDefinition xmlns:ns2="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd" xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:ns1="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd5" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ns4="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd3" xmlns:ns="http://www.tibco.com/namespaces/tnt/plugins/json" xmlns:ns3="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd2" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:pfx2="http://www.tibco.com/schemas/n_mc_project/share_resources/schema_resources/Schema.xsd2" xmlns:pfx="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd12">
     <xsd:import namespace="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd12" schemaLocation="/share_resources/schema_resources/ConditionsSchema.xsd"/>
     <xsd:import namespace="http://www.tibco.com/schemas/n_mc_project/share_resources/schema_resources/Schema.xsd2" schemaLocation="/share_resources/schema_resources/ObtainedOfferDetailVO.xsd"/>
     <pd:name>offersMg/offerService/ObtainedOfferDetail.process</pd:name>
@@ -174,21 +174,6 @@
                                 <xsl:value-of select="$OfferDetail/ns2:offerResults/ns2:offerObj[1]/ns2:offerEDate"/>
                             </ns2:offerEDate>
                         </xsl:if>
-                        <xsl:if test="$OfferDetail/ns2:offerResults/ns2:offerObj[1]/ns2:offerEExpendT">
-                            <ns2:offerEExpendT>
-                                <xsl:value-of select="$OfferDetail/ns2:offerResults/ns2:offerObj[1]/ns2:offerEExpendT"/>
-                            </ns2:offerEExpendT>
-                        </xsl:if>
-                        <xsl:if test="$OfferDetail/ns2:offerResults/ns2:offerObj[1]/ns2:offerEExpendC">
-                            <ns2:offerEExpendC>
-                                <xsl:value-of select="$OfferDetail/ns2:offerResults/ns2:offerObj[1]/ns2:offerEExpendC"/>
-                            </ns2:offerEExpendC>
-                        </xsl:if>
-                        <xsl:if test="$OfferDetail/ns2:offerResults/ns2:offerObj[1]/ns2:offerEExpendN">
-                            <ns2:offerEExpendN>
-                                <xsl:value-of select="$OfferDetail/ns2:offerResults/ns2:offerObj[1]/ns2:offerEExpendN"/>
-                            </ns2:offerEExpendN>
-                        </xsl:if>
                         <xsl:if test="$OfferDetail/ns2:offerResults/ns2:offerObj[1]/ns2:offerDcp">
                             <ns2:offerDcp>
                                 <xsl:value-of select="$OfferDetail/ns2:offerResults/ns2:offerObj[1]/ns2:offerDcp"/>
@@ -218,6 +203,21 @@
                             <ns1:campaignTl>
                                 <xsl:value-of select="$CampaignDetail/ns1:campaignResults/ns1:campaignObj[1]/ns1:campaignTl"/>
                             </ns1:campaignTl>
+                        </xsl:if>
+                        <xsl:if test="$CampaignDetail/ns1:campaignResults/ns1:campaignObj[1]/ns1:campaignExpendT">
+                            <ns1:campaignExpendT>
+                                <xsl:value-of select="$CampaignDetail/ns1:campaignResults/ns1:campaignObj[1]/ns1:campaignExpendT"/>
+                            </ns1:campaignExpendT>
+                        </xsl:if>
+                        <xsl:if test="$CampaignDetail/ns1:campaignResults/ns1:campaignObj[1]/ns1:campaignExpendC">
+                            <ns1:campaignExpendC>
+                                <xsl:value-of select="$CampaignDetail/ns1:campaignResults/ns1:campaignObj[1]/ns1:campaignExpendC"/>
+                            </ns1:campaignExpendC>
+                        </xsl:if>
+                        <xsl:if test="$CampaignDetail/ns1:campaignResults/ns1:campaignObj[1]/ns1:campaignExpendN">
+                            <ns1:campaignExpendN>
+                                <xsl:value-of select="$CampaignDetail/ns1:campaignResults/ns1:campaignObj[1]/ns1:campaignExpendN"/>
+                            </ns1:campaignExpendN>
                         </xsl:if>
                         <xsl:if test="$CampaignDetail/ns1:campaignResults/ns1:campaignObj[1]/ns1:campaignCap">
                             <ns1:campaignCap>

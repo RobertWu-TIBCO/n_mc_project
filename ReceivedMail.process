@@ -16,7 +16,7 @@
             <inputOutputVersion>5.2.0</inputOutputVersion>
             <host>pop.exmail.qq.com</host>
             <username>mcsystem@mobiexchanger.com</username>
-            <password>#!iZ0Rfl0MHKw5R0wgLumuWCoYGx6b6+hjfXoO1xIsiYDWyG2dNbbjkEpRqJMFzJjo</password>
+	    <password>#!9IUB1hf5uzGJM9US5s4w2Vcjc/1RY4IknhLFpFOzwyP8CiZwWo3Xw6ChjZqXzMmt</password>
             <useSsl>true</useSsl>
             <ns0:ssl xmlns:ns0="http://www.tibco.com/xmlns/aemeta/services/2002">
                 <ns0:strongCipherSuitesOnly>false</ns0:strongCipherSuitesOnly>
