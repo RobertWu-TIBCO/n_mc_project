@@ -93,12 +93,6 @@
             <ns:ActivityInputClass>
                 <pfx2:availableOfferDetailVO>
                     <ns4:productObj>
-                        <ns4:productId>
-                            <xsl:value-of select="$ProductDetail/ns4:productResults/ns4:productObj[1]/ns4:productId"/>
-                        </ns4:productId>
-                        <ns4:omId>
-                            <xsl:value-of select="$ProductDetail/ns4:productResults/ns4:productObj[1]/ns4:omId"/>
-                        </ns4:omId>
                         <ns4:productName>
                             <xsl:value-of select="$ProductDetail/ns4:productResults/ns4:productObj[1]/ns4:productName"/>
                         </ns4:productName>
@@ -111,47 +105,19 @@
                         <ns4:productlp>
                             <xsl:value-of select="$ProductDetail/ns4:productResults/ns4:productObj[1]/ns4:productlp"/>
                         </ns4:productlp>
-                        <xsl:if test="$ProductDetail/ns4:productResults/ns4:productObj[1]/ns4:productDcp">
-                            <ns4:productDcp>
-                                <xsl:value-of select="$ProductDetail/ns4:productResults/ns4:productObj[1]/ns4:productDcp"/>
-                            </ns4:productDcp>
-                        </xsl:if>
                         <xsl:if test="$ProductDetail/ns4:productResults/ns4:productObj[1]/ns4:productAppId">
                             <ns4:productAppId>
                                 <xsl:value-of select="$ProductDetail/ns4:productResults/ns4:productObj[1]/ns4:productAppId"/>
                             </ns4:productAppId>
-                        </xsl:if>
-                        <ns4:productStatus>
-                            <xsl:value-of select="$ProductDetail/ns4:productResults/ns4:productObj[1]/ns4:productStatus"/>
-                        </ns4:productStatus>
-                        <xsl:if test="$ProductDetail/ns4:productResults/ns4:productObj[1]/ns4:productCreateTime">
-                            <ns4:productCreateTime>
-                                <xsl:value-of select="$ProductDetail/ns4:productResults/ns4:productObj[1]/ns4:productCreateTime"/>
-                            </ns4:productCreateTime>
                         </xsl:if>
                     </ns4:productObj>
                     <ns3:offerObj>
                         <ns3:offerId>
                             <xsl:value-of select="$AvailableOfferQuery/ns3:offerResults/ns3:offerObj[1]/ns3:offerId"/>
                         </ns3:offerId>
-                        <xsl:if test="$AvailableOfferQuery/ns3:offerResults/ns3:offerObj[1]/ns3:productId">
-                            <ns3:productId>
-                                <xsl:value-of select="$AvailableOfferQuery/ns3:offerResults/ns3:offerObj[1]/ns3:productId"/>
-                            </ns3:productId>
-                        </xsl:if>
-                        <xsl:if test="$AvailableOfferQuery/ns3:offerResults/ns3:offerObj[1]/ns3:advertiserId">
-                            <ns3:advertiserId>
-                                <xsl:value-of select="$AvailableOfferQuery/ns3:offerResults/ns3:offerObj[1]/ns3:advertiserId"/>
-                            </ns3:advertiserId>
-                        </xsl:if>
                         <ns3:offerName>
                             <xsl:value-of select="$AvailableOfferQuery/ns3:offerResults/ns3:offerObj[1]/ns3:offerName"/>
                         </ns3:offerName>
-                        <xsl:if test="$AvailableOfferQuery/ns3:offerResults/ns3:offerObj[1]/ns3:offerClickTl">
-                            <ns3:offerClickTl>
-                                <xsl:value-of select="$AvailableOfferQuery/ns3:offerResults/ns3:offerObj[1]/ns3:offerClickTl"/>
-                            </ns3:offerClickTl>
-                        </xsl:if>
                         <xsl:if test="$AvailableOfferQuery/ns3:offerResults/ns3:offerObj[1]/ns3:offerSDate">
                             <ns3:offerSDate>
                                 <xsl:value-of select="$AvailableOfferQuery/ns3:offerResults/ns3:offerObj[1]/ns3:offerSDate"/>
@@ -181,16 +147,6 @@
                             <ns3:offerDcp>
                                 <xsl:value-of select="$AvailableOfferQuery/ns3:offerResults/ns3:offerObj[1]/ns3:offerDcp"/>
                             </ns3:offerDcp>
-                        </xsl:if>
-                        <xsl:if test="$AvailableOfferQuery/ns3:offerResults/ns3:offerObj[1]/ns3:offerStatus">
-                            <ns3:offerStatus>
-                                <xsl:value-of select="$AvailableOfferQuery/ns3:offerResults/ns3:offerObj[1]/ns3:offerStatus"/>
-                            </ns3:offerStatus>
-                        </xsl:if>
-                        <xsl:if test="$AvailableOfferQuery/ns3:offerResults/ns3:offerObj[1]/ns3:offerSynctype">
-                            <ns3:offerSynctype>
-                                <xsl:value-of select="$AvailableOfferQuery/ns3:offerResults/ns3:offerObj[1]/ns3:offerSynctype"/>
-                            </ns3:offerSynctype>
                         </xsl:if>
                         <xsl:if test="$AvailableOfferQuery/ns3:offerResults/ns3:offerObj[1]/ns3:offerActiveEvent">
                             <ns3:offerActiveEvent>

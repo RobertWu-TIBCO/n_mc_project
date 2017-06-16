@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<pd:ProcessDefinition xmlns:ns2="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd" xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:ns1="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd5" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ns4="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd3" xmlns:ns="http://www.tibco.com/namespaces/tnt/plugins/json" xmlns:ns3="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd2" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:pfx2="http://www.tibco.com/schemas/n_mc_project/share_resources/schema_resources/Schema.xsd2" xmlns:pfx="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd12">
+<pd:ProcessDefinition xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:pfx="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd12" xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:pfx2="http://www.tibco.com/schemas/n_mc_project/share_resources/schema_resources/Schema.xsd2" xmlns:ns="http://www.tibco.com/namespaces/tnt/plugins/json" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns2="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd" xmlns:ns1="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd5" xmlns:ns4="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd3" xmlns:ns3="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd2">
     <xsd:import namespace="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd12" schemaLocation="/share_resources/schema_resources/ConditionsSchema.xsd"/>
     <xsd:import namespace="http://www.tibco.com/schemas/n_mc_project/share_resources/schema_resources/Schema.xsd2" schemaLocation="/share_resources/schema_resources/ObtainedOfferDetailVO.xsd"/>
     <pd:name>offersMg/offerService/ObtainedOfferDetail.process</pd:name>
@@ -106,9 +106,6 @@
                         <ns3:productId>
                             <xsl:value-of select="$ProductDetail/ns3:productResults/ns3:productObj[1]/ns3:productId"/>
                         </ns3:productId>
-                        <ns3:omId>
-                            <xsl:value-of select="$ProductDetail/ns3:productResults/ns3:productObj[1]/ns3:omId"/>
-                        </ns3:omId>
                         <ns3:productName>
                             <xsl:value-of select="$ProductDetail/ns3:productResults/ns3:productObj[1]/ns3:productName"/>
                         </ns3:productName>
@@ -121,39 +118,16 @@
                         <ns3:productlp>
                             <xsl:value-of select="$ProductDetail/ns3:productResults/ns3:productObj[1]/ns3:productlp"/>
                         </ns3:productlp>
-                        <xsl:if test="$ProductDetail/ns3:productResults/ns3:productObj[1]/ns3:productDcp">
-                            <ns3:productDcp>
-                                <xsl:value-of select="$ProductDetail/ns3:productResults/ns3:productObj[1]/ns3:productDcp"/>
-                            </ns3:productDcp>
-                        </xsl:if>
                         <xsl:if test="$ProductDetail/ns3:productResults/ns3:productObj[1]/ns3:productAppId">
                             <ns3:productAppId>
                                 <xsl:value-of select="$ProductDetail/ns3:productResults/ns3:productObj[1]/ns3:productAppId"/>
                             </ns3:productAppId>
-                        </xsl:if>
-                        <ns3:productStatus>
-                            <xsl:value-of select="$ProductDetail/ns3:productResults/ns3:productObj[1]/ns3:productStatus"/>
-                        </ns3:productStatus>
-                        <xsl:if test="$ProductDetail/ns3:productResults/ns3:productObj[1]/ns3:productCreateTime">
-                            <ns3:productCreateTime>
-                                <xsl:value-of select="$ProductDetail/ns3:productResults/ns3:productObj[1]/ns3:productCreateTime"/>
-                            </ns3:productCreateTime>
                         </xsl:if>
                     </ns3:productObj>
                     <ns2:offerObj>
                         <ns2:offerId>
                             <xsl:value-of select="$OfferDetail/ns2:offerResults/ns2:offerObj[1]/ns2:offerId"/>
                         </ns2:offerId>
-                        <xsl:if test="$OfferDetail/ns2:offerResults/ns2:offerObj[1]/ns2:productId">
-                            <ns2:productId>
-                                <xsl:value-of select="$OfferDetail/ns2:offerResults/ns2:offerObj[1]/ns2:productId"/>
-                            </ns2:productId>
-                        </xsl:if>
-                        <xsl:if test="$OfferDetail/ns2:offerResults/ns2:offerObj[1]/ns2:advertiserId">
-                            <ns2:advertiserId>
-                                <xsl:value-of select="$OfferDetail/ns2:offerResults/ns2:offerObj[1]/ns2:advertiserId"/>
-                            </ns2:advertiserId>
-                        </xsl:if>
                         <xsl:if test="$OfferDetail/ns2:offerResults/ns2:offerObj[1]/ns2:offerName">
                             <ns2:offerName>
                                 <xsl:value-of select="$OfferDetail/ns2:offerResults/ns2:offerObj[1]/ns2:offerName"/>
@@ -178,16 +152,6 @@
                             <ns2:offerDcp>
                                 <xsl:value-of select="$OfferDetail/ns2:offerResults/ns2:offerObj[1]/ns2:offerDcp"/>
                             </ns2:offerDcp>
-                        </xsl:if>
-                        <xsl:if test="$OfferDetail/ns2:offerResults/ns2:offerObj[1]/ns2:offerStatus">
-                            <ns2:offerStatus>
-                                <xsl:value-of select="$OfferDetail/ns2:offerResults/ns2:offerObj[1]/ns2:offerStatus"/>
-                            </ns2:offerStatus>
-                        </xsl:if>
-                        <xsl:if test="$OfferDetail/ns2:offerResults/ns2:offerObj[1]/ns2:offerSynctype">
-                            <ns2:offerSynctype>
-                                <xsl:value-of select="$OfferDetail/ns2:offerResults/ns2:offerObj[1]/ns2:offerSynctype"/>
-                            </ns2:offerSynctype>
                         </xsl:if>
                         <xsl:if test="$OfferDetail/ns2:offerResults/ns2:offerObj[1]/ns2:offerActiveEvent">
                             <ns2:offerActiveEvent>

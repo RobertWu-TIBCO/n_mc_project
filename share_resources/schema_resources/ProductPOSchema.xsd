@@ -20,15 +20,15 @@
 	<xs:element name="productObj">
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element ref="productId"/>
-				<xs:element ref="omId"/>
-				<xs:element ref="productName"/>
-				<xs:element ref="productType"/>
-				<xs:element ref="productOS"/>
-				<xs:element ref="productlp"/>
+				<xs:element ref="productId" minOccurs="0"/>
+				<xs:element ref="omId" minOccurs="0"/>
+				<xs:element ref="productName" minOccurs="0"/>
+				<xs:element ref="productType" minOccurs="0"/>
+				<xs:element ref="productOS" minOccurs="0"/>
+				<xs:element ref="productlp" minOccurs="0"/>
 				<xs:element ref="productDcp" minOccurs="0"/>
 				<xs:element ref="productAppId" minOccurs="0"/>
-				<xs:element ref="productStatus"/>
+				<xs:element ref="productStatus" minOccurs="0"/>
 				<xs:element ref="productCreateTime" minOccurs="0"/>
 				<xs:element ref="validateRepeat" minOccurs="0"/>
 				<xs:element ref="tokenInfo" minOccurs="0"/>
