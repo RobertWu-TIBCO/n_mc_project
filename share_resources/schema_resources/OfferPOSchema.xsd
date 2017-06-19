@@ -27,7 +27,7 @@
 	<xs:element name="offerObj">
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element ref="offerId"/>
+				<xs:element ref="offerId" minOccurs="0"/>
 				<xs:element ref="productId" minOccurs="0"/>
 				<xs:element ref="advertiserId" minOccurs="0"/>
 				<xs:element ref="offerName" minOccurs="0"/>

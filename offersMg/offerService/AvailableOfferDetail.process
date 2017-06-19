@@ -93,6 +93,11 @@
             <ns:ActivityInputClass>
                 <pfx2:availableOfferDetailVO>
                     <ns4:productObj>
+                        <xsl:if test="$ProductDetail/ns4:productResults/ns4:productObj[1]/ns4:productId">
+                            <ns4:productId>
+                                <xsl:value-of select="$ProductDetail/ns4:productResults/ns4:productObj[1]/ns4:productId"/>
+                            </ns4:productId>
+                        </xsl:if>
                         <ns4:productName>
                             <xsl:value-of select="$ProductDetail/ns4:productResults/ns4:productObj[1]/ns4:productName"/>
                         </ns4:productName>

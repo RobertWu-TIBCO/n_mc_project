@@ -125,19 +125,6 @@
                         </xsl:if>
                     </ns3:productObj>
                     <ns2:offerObj>
-                        <ns2:offerId>
-                            <xsl:value-of select="$OfferDetail/ns2:offerResults/ns2:offerObj[1]/ns2:offerId"/>
-                        </ns2:offerId>
-                        <xsl:if test="$OfferDetail/ns2:offerResults/ns2:offerObj[1]/ns2:offerName">
-                            <ns2:offerName>
-                                <xsl:value-of select="$OfferDetail/ns2:offerResults/ns2:offerObj[1]/ns2:offerName"/>
-                            </ns2:offerName>
-                        </xsl:if>
-                        <xsl:if test="$OfferDetail/ns2:offerResults/ns2:offerObj[1]/ns2:offerClickTl">
-                            <ns2:offerClickTl>
-                                <xsl:value-of select="$OfferDetail/ns2:offerResults/ns2:offerObj[1]/ns2:offerClickTl"/>
-                            </ns2:offerClickTl>
-                        </xsl:if>
                         <xsl:if test="$OfferDetail/ns2:offerResults/ns2:offerObj[1]/ns2:offerSDate">
                             <ns2:offerSDate>
                                 <xsl:value-of select="$OfferDetail/ns2:offerResults/ns2:offerObj[1]/ns2:offerSDate"/>

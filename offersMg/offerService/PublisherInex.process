@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<pd:ProcessDefinition xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:ns2="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd4" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ns1="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd14" xmlns:ns="http://www.tibco.com/namespaces/tnt/plugins/json" xmlns:ns4="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd5" xmlns:ns3="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:pfx3="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/NSchema.xsd" xmlns:pfx2="http://www.tibco.com/schemas/n_mc_project/share_resources/schema_resources/Schema.xsd" xmlns:pfx="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd12">
+<pd:ProcessDefinition xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:pfx="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd12" xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:pfx2="http://www.tibco.com/schemas/n_mc_project/share_resources/schema_resources/Schema.xsd" xmlns:ns="http://www.tibco.com/namespaces/tnt/plugins/json" xmlns:pfx3="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/NSchema.xsd" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns2="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd4" xmlns:ns1="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd14" xmlns:ns4="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd5" xmlns:ns3="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd">
     <xsd:import namespace="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd12" schemaLocation="/share_resources/schema_resources/ConditionsSchema.xsd"/>
     <xsd:import namespace="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/NSchema.xsd" schemaLocation="/share_resources/schema_resources/PublisherIndexVO.xsd"/>
     <pd:name>offersMg/offerService/PublisherInex.process</pd:name>
@@ -105,16 +105,6 @@
             <ns:ActivityInputClass>
                 <pfx3:PublisherIndexVO>
                     <ns1:accountObj>
-                        <xsl:if test="$AccouintDetail/ns1:accountResults/ns1:accountObj[1]/ns1:accountId">
-                            <ns1:accountId>
-                                <xsl:value-of select="$AccouintDetail/ns1:accountResults/ns1:accountObj[1]/ns1:accountId"/>
-                            </ns1:accountId>
-                        </xsl:if>
-                        <xsl:if test="$AccouintDetail/ns1:accountResults/ns1:accountObj[1]/ns1:managerAccountId">
-                            <ns1:managerAccountId>
-                                <xsl:value-of select="$AccouintDetail/ns1:accountResults/ns1:accountObj[1]/ns1:managerAccountId"/>
-                            </ns1:managerAccountId>
-                        </xsl:if>
                         <xsl:if test="$AccouintDetail/ns1:accountResults/ns1:accountObj[1]/ns1:accounteEmail">
                             <ns1:accounteEmail>
                                 <xsl:value-of select="$AccouintDetail/ns1:accountResults/ns1:accountObj[1]/ns1:accounteEmail"/>
@@ -139,26 +129,6 @@
                             <ns1:accountTel>
                                 <xsl:value-of select="$AccouintDetail/ns1:accountResults/ns1:accountObj[1]/ns1:accountTel"/>
                             </ns1:accountTel>
-                        </xsl:if>
-                        <xsl:if test="$AccouintDetail/ns1:accountResults/ns1:accountObj[1]/ns1:accountType">
-                            <ns1:accountType>
-                                <xsl:value-of select="$AccouintDetail/ns1:accountResults/ns1:accountObj[1]/ns1:accountType"/>
-                            </ns1:accountType>
-                        </xsl:if>
-                        <xsl:if test="$AccouintDetail/ns1:accountResults/ns1:accountObj[1]/ns1:accountStatus">
-                            <ns1:accountStatus>
-                                <xsl:value-of select="$AccouintDetail/ns1:accountResults/ns1:accountObj[1]/ns1:accountStatus"/>
-                            </ns1:accountStatus>
-                        </xsl:if>
-                        <xsl:if test="$AccouintDetail/ns1:accountResults/ns1:accountObj[1]/ns1:label">
-                            <ns1:label>
-                                <xsl:value-of select="$AccouintDetail/ns1:accountResults/ns1:accountObj[1]/ns1:label"/>
-                            </ns1:label>
-                        </xsl:if>
-                        <xsl:if test="$AccouintDetail/ns1:accountResults/ns1:accountObj[1]/ns1:managerLabel">
-                            <ns1:managerLabel>
-                                <xsl:value-of select="$AccouintDetail/ns1:accountResults/ns1:accountObj[1]/ns1:managerLabel"/>
-                            </ns1:managerLabel>
                         </xsl:if>
                     </ns1:accountObj>
                     <ns2:objResults>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<pd:ProcessDefinition xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:ns2="http://www.tibco.com/namespaces/tnt/plugins/json" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ns="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd15" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:pfx="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd12">
+<pd:ProcessDefinition xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:pfx="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd12" xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:ns="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd15" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns2="http://www.tibco.com/namespaces/tnt/plugins/json">
     <xsd:import namespace="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd15" schemaLocation="/share_resources/schema_resources/PostbackPO.xsd"/>
     <xsd:import namespace="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd12" schemaLocation="/share_resources/schema_resources/ConditionsSchema.xsd"/>
     <pd:name>postback/postbackService/QueryPostback.process</pd:name>
@@ -97,7 +97,40 @@
         <pd:inputBindings>
             <ns2:ActivityInputClass>
                 <ns:postbackResults>
-                    <xsl:copy-of select="$QueryPostback/ns:postbackResults/ns:postbackObj"/>
+                    <xsl:for-each select="$QueryPostback/ns:postbackResults/ns:postbackObj">
+                        <ns:postbackObj>
+                            <xsl:if test="ns:postbackId">
+                                <ns:postbackId>
+                                    <xsl:value-of select="ns:postbackId"/>
+                                </ns:postbackId>
+                            </xsl:if>
+                            <xsl:if test="ns:postbackUrl">
+                                <ns:postbackUrl>
+                                    <xsl:value-of select="ns:postbackUrl"/>
+                                </ns:postbackUrl>
+                            </xsl:if>
+                            <xsl:if test="ns:postbackEventname">
+                                <ns:postbackEventname>
+                                    <xsl:value-of select="ns:postbackEventname"/>
+                                </ns:postbackEventname>
+                            </xsl:if>
+                            <xsl:if test="ns:postbackType">
+                                <ns:postbackType>
+                                    <xsl:value-of select="ns:postbackType"/>
+                                </ns:postbackType>
+                            </xsl:if>
+                            <xsl:if test="ns:postbackSynctype">
+                                <ns:postbackSynctype>
+                                    <xsl:value-of select="ns:postbackSynctype"/>
+                                </ns:postbackSynctype>
+                            </xsl:if>
+                            <xsl:if test="ns:label">
+                                <ns:label>
+                                    <xsl:value-of select="ns:label"/>
+                                </ns:label>
+                            </xsl:if>
+                        </ns:postbackObj>
+                    </xsl:for-each>
                 </ns:postbackResults>
             </ns2:ActivityInputClass>
         </pd:inputBindings>
