@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<pd:ProcessDefinition xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:ns2="http://www.tibco.com/namespaces/tnt/plugins/json" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ns="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd14" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:pfx="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd12">
+<pd:ProcessDefinition xmlns:ns2="http://www.tibco.com/namespaces/tnt/plugins/json" xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ns="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd14" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:pfx="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd12">
     <xsd:import namespace="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd14" schemaLocation="/share_resources/schema_resources/AccountPOSchema.xsd"/>
     <xsd:import namespace="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd12" schemaLocation="/share_resources/schema_resources/ConditionsSchema.xsd"/>
     <pd:name>accountMg/accountService/ValidateUser.process</pd:name>
