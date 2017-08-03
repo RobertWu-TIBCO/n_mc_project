@@ -51,7 +51,7 @@
 		</globalVariable>
 		<globalVariable>
 			<name>JmsProviderUrl</name>
-			<value>tcp://172.17.0.6:7222</value>
+			<value>tcp://172.17.0.5:7222</value>
 			<deploymentSettable>true</deploymentSettable>
 			<serviceSettable>false</serviceSettable>
 			<type>String</type>

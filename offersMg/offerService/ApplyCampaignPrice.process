@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<pd:ProcessDefinition xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:ns2="http://xmlns.tibco.com/body" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ns1="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd14" xmlns:ns="http://www.tibco.com/namespaces/tnt/plugins/mail" xmlns:ns4="http://www.tibco.com/pe/GenerateErrorActivity/InputSchema" xmlns:ns3="http://www.tibco.com/namespaces/tnt/plugins/json" xmlns:pfx5="http://www.tibco.com/schemas/n_mc_project/share_resources/schema_resources/Schema.xsd4" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:pfx4="http://www.tibco.com/schemas/n_mc_project/share_resources/schema_resources/Schema.xsd3" xmlns:tib="http://www.tibco.com/bw/xslt/custom-functions" xmlns:pfx3="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd5" xmlns:pfx2="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd" xmlns:pfx="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd12">
+<pd:ProcessDefinition xmlns:ns2="http://xmlns.tibco.com/body" xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:ns1="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd14" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ns4="http://www.tibco.com/pe/GenerateErrorActivity/InputSchema" xmlns:ns="http://www.tibco.com/namespaces/tnt/plugins/mail" xmlns:ns3="http://www.tibco.com/namespaces/tnt/plugins/json" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:pfx5="http://www.tibco.com/schemas/n_mc_project/share_resources/schema_resources/Schema.xsd4" xmlns:tib="http://www.tibco.com/bw/xslt/custom-functions" xmlns:pfx4="http://www.tibco.com/schemas/n_mc_project/share_resources/schema_resources/Schema.xsd3" xmlns:pfx3="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd5" xmlns:pfx2="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd" xmlns:pfx="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd12">
     <xsd:import namespace="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd12" schemaLocation="/share_resources/schema_resources/ConditionsSchema.xsd"/>
     <xsd:import namespace="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd" schemaLocation="/share_resources/schema_resources/OfferPOSchema.xsd"/>
     <xsd:import namespace="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd5" schemaLocation="/share_resources/schema_resources/CampaignPOSchema.xsd"/>
@@ -265,10 +265,10 @@ Jedis jedis = MCRedisInstance.getInstance().getJedis();
                 <username>mcsystem@mobiexchanger.com</username>
                 <password>Vaz53d0Dr8Mip7ma</password>
                 <useSsl>true</useSsl>
-		 <ns0:ssl xmlns:ns0="http://www.tibco.com/xmlns/aemeta/services/2002">
-                <ns0:strongCipherSuitesOnly>false</ns0:strongCipherSuitesOnly>
-                <ns0:cert isRef="true">/share_resources/mailcerts/.folder</ns0:cert>
-            </ns0:ssl>
+                <ns0:ssl xmlns:ns0="http://www.tibco.com/xmlns/aemeta/services/2002">
+                    <ns0:strongCipherSuitesOnly>false</ns0:strongCipherSuitesOnly>
+                    <ns0:cert isRef="true">/share_resources/mailcerts/.folder</ns0:cert>
+                </ns0:ssl>
                 <InputHeaders>
                     <xsd:element name="root">
                         <xsd:complexType>

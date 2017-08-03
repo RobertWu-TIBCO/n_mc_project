@@ -1,0 +1,1039 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:pfx="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd3" xmlns:pfx2="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd12" xmlns:ns="http://www.tibco.com/pe/DeployedVarsType" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns2="http://www.tibco.com/namespaces/tnt/plugins/file" xmlns:tib="http://www.tibco.com/bw/xslt/custom-functions" xmlns:ns1="http://www.tibco.com/namespaces/tnt/plugins/json" xmlns:ns4="http://xmlns.tibco.com/encodings/mime" xmlns:ns3="http://www.tibco.com/pe/EngineTypes" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ns6="http://www.tibco.com/namespaces/tnt/plugins/jms" xmlns:ns5="http://www.tibco.com/namespaces/tnt/plugins/file/v2" xmlns:pd="http://xmlns.tibco.com/bw/process/2003">
+    <xsd:import namespace="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd12" schemaLocation="/share_resources/schema_resources/ConditionsSchema.xsd"/>
+    <xsd:import namespace="http://www.tibco.com/schemas/mc_project/share_resources/schema_resources/Schema.xsd3" schemaLocation="/share_resources/schema_resources/CreativePOSchema.xsd"/>
+    <pd:name>DownloadCreative.process</pd:name>
+    <pd:startName>HTTP Receiver</pd:startName>
+    <pd:startX>0</pd:startX>
+    <pd:startY>0</pd:startY>
+    <pd:returnBindings/>
+    <pd:starter name="HTTP Receiver">
+        <pd:type>com.tibco.plugin.http.HTTPEventSource</pd:type>
+        <pd:resourceType>httppalette.httpEventSource</pd:resourceType>
+        <pd:x>82</pd:x>
+        <pd:y>391</pd:y>
+        <config>
+            <outputMode>String</outputMode>
+            <defaultEncoding>ISO8859_1</defaultEncoding>
+            <inputOutputVersion>5.3.0</inputOutputVersion>
+            <newMimeSupport>true</newMimeSupport>
+            <sharedChannel>/share_resources/Advertiser_HTTP_Connection.sharedhttp</sharedChannel>
+            <parsePostData>false</parsePostData>
+            <customField>
+                <row>
+                    <attribute>imagePara</attribute>
+                    <attributeType>string</attributeType>
+                    <attributeCard>optional</attributeCard>
+                </row>
+                <row>
+                    <attribute>filePathName</attribute>
+                    <attributeType>string</attributeType>
+                    <attributeCard>optional</attributeCard>
+                </row>
+            </customField>
+            <Headers>
+                <xsd:element name="root">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="Accept" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="Accept-Charset" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="Accept-Encoding" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="Content-Type" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="Content-Length" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="Connection" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="Cookie" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="Pragma" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="user-agent" type="xsd:string" minOccurs="0"/>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+            </Headers>
+        </config>
+        <pd:inputBindings/>
+    </pd:starter>
+    <pd:endName>End</pd:endName>
+    <pd:endX>1158</pd:endX>
+    <pd:endY>374</pd:endY>
+    <pd:errorSchemas/>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/1490624160901</pd:targetNamespace>
+    <pd:activity name="Catch">
+        <pd:type>com.tibco.pe.core.CatchActivity</pd:type>
+        <pd:resourceType>ae.activities.catch</pd:resourceType>
+        <pd:x>1598</pd:x>
+        <pd:y>516</pd:y>
+        <pd:handler>true</pd:handler>
+        <config>
+            <catchAll>true</catchAll>
+        </config>
+        <pd:inputBindings/>
+    </pd:activity>
+    <pd:activity name="ErrorHandlerJson">
+        <pd:type>com.tibco.plugin.json.activities.JSONRenderActivity</pd:type>
+        <pd:resourceType>ae.activities.JSONRenderActivity</pd:resourceType>
+        <pd:x>1434</pd:x>
+        <pd:y>420</pd:y>
+        <config>
+            <SchemaType>xsdType</SchemaType>
+            <BadgerfishCheck>false</BadgerfishCheck>
+            <ActivityInputEditor>
+                <xsd:element name="root">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="responseStatus" type="xsd:string"/>
+                            <xsd:element name="error">
+                                <xsd:complexType>
+                                    <xsd:sequence>
+                                        <xsd:element name="statusCode" type="xsd:string"/>
+                                        <xsd:element name="reasonMsg" type="xsd:string"/>
+                                    </xsd:sequence>
+                                </xsd:complexType>
+                            </xsd:element>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+            </ActivityInputEditor>
+        </config>
+        <pd:inputBindings>
+            <ns1:ActivityInputClass xmlns:ns1="http://www.tibco.com/namespaces/tnt/plugins/json">
+                <root>
+                    <responseStatus>
+                        <xsl:value-of select="&quot;error&quot;"/>
+                    </responseStatus>
+                    <error>
+                        <statusCode>
+                            <xsl:value-of select="$_error/ns3:ErrorReport/MsgCode"/>
+                        </statusCode>
+                        <reasonMsg>
+                            <xsl:value-of select="$_error/ns3:ErrorReport/Msg"/>
+                        </reasonMsg>
+                    </error>
+                </root>
+            </ns1:ActivityInputClass>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Send-HTTP-Response-1">
+        <pd:type>com.tibco.plugin.http.HTTPResponseActivity</pd:type>
+        <pd:resourceType>httppalette.httpWebResponse</pd:resourceType>
+        <pd:x>1294</pd:x>
+        <pd:y>317</pd:y>
+        <config>
+            <closeConnection>true</closeConnection>
+            <eventSource>HTTP Receiver</eventSource>
+            <Headers>
+                <xsd:element name="root">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="Access-Control-Allow-Origin" type="xsd:string"/>
+                            <xsd:element name="StatusLine" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="Content-Type" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="Set-Cookie" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="Pragma" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="Location" type="xsd:string" minOccurs="0"/>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+            </Headers>
+        </config>
+        <pd:inputBindings>
+            <ResponseActivityInput>
+                <asciiContent>
+                    <xsl:value-of select="$ErrorHandlerJson/ns1:ActivityOutputClass/jsonString"/>
+                </asciiContent>
+                <Headers>
+                    <Access-Control-Allow-Origin>
+                        <xsl:value-of select="&quot;*&quot;"/>
+                    </Access-Control-Allow-Origin>
+                </Headers>
+            </ResponseActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Send-HTTP-Response-2">
+        <pd:type>com.tibco.plugin.http.HTTPResponseActivity</pd:type>
+        <pd:resourceType>httppalette.httpWebResponse</pd:resourceType>
+        <pd:x>846</pd:x>
+        <pd:y>381</pd:y>
+        <config>
+            <closeConnection>true</closeConnection>
+            <eventSource>HTTP Receiver</eventSource>
+            <Headers>
+                <xsd:element name="root">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="Access-Control-Allow-Origin" type="xsd:string"/>
+                            <xsd:element name="StatusLine" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="Content-Type" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="Set-Cookie" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="Pragma" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="Location" type="xsd:string" minOccurs="0"/>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+            </Headers>
+        </config>
+        <pd:inputBindings>
+            <ResponseActivityInput>
+                <binaryContent>
+                    <xsl:value-of select="$Read-File-1/ns2:ReadActivityOutputBinaryClass/fileContent/binaryContent"/>
+                </binaryContent>
+                <Headers>
+                    <Access-Control-Allow-Origin>
+                        <xsl:value-of select="&quot;*&quot;"/>
+                    </Access-Control-Allow-Origin>
+                    <Content-Type>
+                        <xsl:value-of select="&quot;image/jpeg&quot;"/>
+                    </Content-Type>
+                </Headers>
+            </ResponseActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Read-File-1">
+        <pd:type>com.tibco.plugin.file.FileReadActivity</pd:type>
+        <pd:resourceType>ae.activities.FileReadActivity</pd:resourceType>
+        <pd:x>479</pd:x>
+        <pd:y>394</pd:y>
+        <config>
+            <encoding>binary</encoding>
+        </config>
+        <pd:inputBindings>
+            <ns2:ReadActivityInputClass>
+                <fileName>
+                    <xsl:value-of select="concat($_globalVariables/ns:GlobalVariables/FileUploadPath,&quot;/&quot;,$DecodeCreativeName/javaCodeActivityOutput/outCreativeName)"/>
+                </fileName>
+            </ns2:ReadActivityInputClass>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Send-HTTP-Response-4">
+        <pd:type>com.tibco.plugin.http.HTTPResponseActivity</pd:type>
+        <pd:resourceType>httppalette.httpWebResponse</pd:resourceType>
+        <pd:x>833</pd:x>
+        <pd:y>123</pd:y>
+        <config>
+            <closeConnection>true</closeConnection>
+            <eventSource>HTTP Receiver</eventSource>
+            <Headers>
+                <xsd:element name="root">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="Access-Control-Allow-Origin" type="xsd:string"/>
+                            <xsd:element name="StatusLine" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="Content-Type" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="Set-Cookie" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="Pragma" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="Location" type="xsd:string" minOccurs="0"/>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+            </Headers>
+        </config>
+        <pd:inputBindings>
+            <ResponseActivityInput>
+                <Headers>
+                    <Access-Control-Allow-Origin>
+                        <xsl:value-of select="&quot;*&quot;"/>
+                    </Access-Control-Allow-Origin>
+                </Headers>
+                <ns4:mimeEnvelopeElement>
+                    <mimePart>
+                        <mimeHeaders>
+                            <content-disposition>
+                                <xsl:value-of select="concat(&quot;attachment;filename=&quot;,$EncodeFileName/javaCodeActivityOutput/outCreativeName)"/>
+                            </content-disposition>
+                            <content-type>
+                                <xsl:value-of select="&quot;application/gzip; charset=utf-8&quot;"/>
+                            </content-type>
+                        </mimeHeaders>
+                        <binaryContent>
+                            <xsl:value-of select="$Read-File/ns2:ReadActivityOutputBinaryClass/fileContent/binaryContent"/>
+                        </binaryContent>
+                    </mimePart>
+                </ns4:mimeEnvelopeElement>
+            </ResponseActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="ZIPFile">
+        <pd:type>com.tibco.plugin.java.JavaActivity</pd:type>
+        <pd:resourceType>ae.javapalette.javaActivity</pd:resourceType>
+        <pd:x>377</pd:x>
+        <pd:y>135</pd:y>
+        <config>
+            <fileName>DownloadCreativeZIPFile</fileName>
+            <packageName>DownloadCreative</packageName>
+            <fullsource>package DownloadCreative;
+
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
+public class DownloadCreativeZIPFile{
+/****** START SET/GET METHOD, DO NOT MODIFY *****/
+	protected String FileDownloadPath = "";
+	protected String creativeName = "";
+	public String getFileDownloadPath() {
+		return FileDownloadPath;
+	}
+	public void setFileDownloadPath(String val) {
+		FileDownloadPath = val;
+	}
+	public String getcreativeName() {
+		return creativeName;
+	}
+	public void setcreativeName(String val) {
+		creativeName = val;
+	}
+/****** END SET/GET METHOD, DO NOT MODIFY *****/
+	public DownloadCreativeZIPFile() {
+	}
+	public void invoke() throws Exception {
+/* Available Variables: DO NOT MODIFY
+	In  : String FileDownloadPath
+	In  : String creativeName
+* Available Variables: DO NOT MODIFY *****/
+	zipImage(FileDownloadPath,creativeName);
+}
+/**
+	 * 获取压缩文件流
+	 * @param creativeDirPath
+	 * @param creativeName
+	 * @return
+	 * @throws IOException
+	 */
+public void zipImage(String FileDownloadPath,String creativeName) {
+		/*if(creativeName!=null &amp;&amp; creativeName.trim().equals("")){
+						creativeName = creativeName.trim();
+		}*/
+		
+		File fileZip = new File(FileDownloadPath+"\\"+creativeName.trim()+".zip");
+		File file = new File(FileDownloadPath+"\\"+creativeName.trim());
+		
+		OutputStream out = null;		
+		BufferedOutputStream bufOut = null;
+		ZipOutputStream  zipOutputstream = null;
+		
+		InputStream in = null;
+		BufferedInputStream bufIn = null;
+			
+		
+		try {
+		out = new FileOutputStream(fileZip);		
+		bufOut = new BufferedOutputStream(out);
+		zipOutputstream = new ZipOutputStream(bufOut);
+			
+		
+		//long startTime = System.currentTimeMillis();
+		
+		if(file.isDirectory()){
+			
+			
+			File[] files = file.listFiles();
+			
+			if(files!=null &amp;&amp; files.length&gt;0){
+				for(File imageFile : files){
+					 in = new FileInputStream(imageFile);
+					 bufIn = new BufferedInputStream(in);
+					
+					
+					zipOutputstream.putNextEntry(new ZipEntry(imageFile.getName()));
+					
+					byte[] bytes= new byte[1024*10];
+					int readInt = 0;
+					while((readInt= bufIn.read(bytes, 0, 1024*10))!=-1){
+						zipOutputstream.write(bytes, 0, readInt);
+						
+					}					
+					
+				}
+			}
+			
+		}
+		//long endTime = System.currentTimeMillis();
+		//System.out.println(endTime-startTime);
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw new RuntimeException(e);  
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw new RuntimeException(e);  
+		}finally{
+			try {
+				
+				if(bufIn!=null) bufIn.close();
+				
+				if(zipOutputstream!=null) zipOutputstream.close();
+				
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				throw new RuntimeException(e);
+			}
+			
+		}
+		
+	}
+
+}
+</fullsource>
+            <inputData>
+                <row>
+                    <fieldName>FileDownloadPath</fieldName>
+                    <fieldType>string</fieldType>
+                    <fieldRequired>optional</fieldRequired>
+                </row>
+                <row>
+                    <fieldName>creativeName</fieldName>
+                    <fieldType>string</fieldType>
+                    <fieldRequired>optional</fieldRequired>
+                </row>
+            </inputData>
+            <byteCode>
+                <class>
+                    <name>DownloadCreativeZIPFile</name>
+                    <byteCode>yv66vgAAADQAjgkAKQBNCQApAE4KACoATwgAUAoAKQBRBwBSBwBTCgAHAE8KAAcAVAgAVQoAVgBXCABYCgAHAFkKAAYAWgcAWwoADwBcBwBdCgARAF4HAF8KABMAXgoABgBgCgAGAGEHAGIKABcAXAcAYwoAGQBkBwBlCgAGAGYKABsAWgoAEwBnCgAZAGgKABMAaQoAGQBqCgATAGoHAGsKACMAbAcAbQoAJQBuBwBvCgAnAGwHAHAHAHEBABBGaWxlRG93bmxvYWRQYXRoAQASTGphdmEvbGFuZy9TdHJpbmc7AQAMY3JlYXRpdmVOYW1lAQATZ2V0RmlsZURvd25sb2FkUGF0aAEAFCgpTGphdmEvbGFuZy9TdHJpbmc7AQAEQ29kZQEAD0xpbmVOdW1iZXJUYWJsZQEAE3NldEZpbGVEb3dubG9hZFBhdGgBABUoTGphdmEvbGFuZy9TdHJpbmc7KVYBAA9nZXRjcmVhdGl2ZU5hbWUBAA9zZXRjcmVhdGl2ZU5hbWUBAAY8aW5pdD4BAAMoKVYBAAZpbnZva2UBAApFeGNlcHRpb25zBwByAQAIemlwSW1hZ2UBACcoTGphdmEvbGFuZy9TdHJpbmc7TGphdmEvbGFuZy9TdHJpbmc7KVYBAA1TdGFja01hcFRhYmxlBwBwBwBzBwBSBwB0BwBdBwBfBwB1BwBjBwB2BwB3BwBrBwBvBwB4AQAKU291cmNlRmlsZQEAHERvd25sb2FkQ3JlYXRpdmVaSVBGaWxlLmphdmEMACsALAwALQAsDAA2ADcBAAAMADsAPAEADGphdmEvaW8vRmlsZQEAF2phdmEvbGFuZy9TdHJpbmdCdWlsZGVyDAB5AHoBAAFcBwBzDAB7AC8BAAQuemlwDAB8AC8MADYAMwEAGGphdmEvaW8vRmlsZU91dHB1dFN0cmVhbQwANgB9AQAcamF2YS9pby9CdWZmZXJlZE91dHB1dFN0cmVhbQwANgB+AQAdamF2YS91dGlsL3ppcC9aaXBPdXRwdXRTdHJlYW0MAH8AgAwAgQCCAQAXamF2YS9pby9GaWxlSW5wdXRTdHJlYW0BABtqYXZhL2lvL0J1ZmZlcmVkSW5wdXRTdHJlYW0MADYAgwEAFmphdmEvdXRpbC96aXAvWmlwRW50cnkMAIQALwwAhQCGDACHAIgMAIkAigwAiwA3AQATamF2YS9pby9JT0V4Y2VwdGlvbgwAjAA3AQAaamF2YS9sYW5nL1J1bnRpbWVFeGNlcHRpb24MADYAjQEAHWphdmEvaW8vRmlsZU5vdEZvdW5kRXhjZXB0aW9uAQAoRG93bmxvYWRDcmVhdGl2ZS9Eb3dubG9hZENyZWF0aXZlWklQRmlsZQEAEGphdmEvbGFuZy9PYmplY3QBABNqYXZhL2xhbmcvRXhjZXB0aW9uAQAQamF2YS9sYW5nL1N0cmluZwEAFGphdmEvaW8vT3V0cHV0U3RyZWFtAQATamF2YS9pby9JbnB1dFN0cmVhbQEAD1tMamF2YS9pby9GaWxlOwEAAltCAQATamF2YS9sYW5nL1Rocm93YWJsZQEABmFwcGVuZAEALShMamF2YS9sYW5nL1N0cmluZzspTGphdmEvbGFuZy9TdHJpbmdCdWlsZGVyOwEABHRyaW0BAAh0b1N0cmluZwEAEShMamF2YS9pby9GaWxlOylWAQAZKExqYXZhL2lvL091dHB1dFN0cmVhbTspVgEAC2lzRGlyZWN0b3J5AQADKClaAQAJbGlzdEZpbGVzAQARKClbTGphdmEvaW8vRmlsZTsBABgoTGphdmEvaW8vSW5wdXRTdHJlYW07KVYBAAdnZXROYW1lAQAMcHV0TmV4dEVudHJ5AQAbKExqYXZhL3V0aWwvemlwL1ppcEVudHJ5OylWAQAEcmVhZAEAByhbQklJKUkBAAV3cml0ZQEAByhbQklJKVYBAAVjbG9zZQEAD3ByaW50U3RhY2tUcmFjZQEAGChMamF2YS9sYW5nL1Rocm93YWJsZTspVgAhACkAKgAAAAIABAArACwAAAAEAC0ALAAAAAcAAQAuAC8AAQAwAAAAHQABAAEAAAAFKrQAAbAAAAABADEAAAAGAAEAAAATAAEAMgAzAAEAMAAAACIAAgACAAAABiortQABsQAAAAEAMQAAAAoAAgAAABYABQAXAAEANAAvAAEAMAAAAB0AAQABAAAABSq0AAKwAAAAAQAxAAAABgABAAAAGQABADUAMwABADAAAAAiAAIAAgAAAAYqK7UAArEAAAABADEAAAAKAAIAAAAcAAUAHQABADYANwABADAAAAA1AAIAAQAAABEqtwADKhIEtQABKhIEtQACsQAAAAEAMQAAABIABAAAAB8ABAAQAAoAEQAQACAAAQA4ADcAAgAwAAAAKQADAAEAAAANKiq0AAEqtAACtgAFsQAAAAEAMQAAAAoAAgAAACYADAAnADkAAAAEAAEAOgABADsAPAABADAAAAM6AAQAEwAAAXu7AAZZuwAHWbcACCu2AAkSCrYACSy2AAu2AAkSDLYACbYADbcADk67AAZZuwAHWbcACCu2AAkSCrYACSy2AAu2AAm2AA23AA46BAE6BQE6BgE6BwE6CAE6CbsAD1kttwAQOgW7ABFZGQW3ABI6BrsAE1kZBrcAFDoHGQS2ABWZAIUZBLYAFjoKGQrGAHkZCr6eAHMZCjoLGQu+NgwDNg0VDRUMogBgGQsVDTI6DrsAF1kZDrcAGDoIuwAZWRkItwAaOgkZB7sAG1kZDrYAHLcAHbYAHhEoALwIOg8DNhAZCRkPAxEoALYAH1k2EAKfABAZBxkPAxUQtgAgp//khA0Bp/+fGQnGAAgZCbYAIRkHxgAIGQe2ACKnAGM6ChkKtgAkuwAlWRkKtwAmvzoKGQq2ACi7ACVZGQq3ACa/OgoZCrYAJLsAJVkZCrcAJr86ERkJxgAIGQm2ACEZB8YACBkHtgAipwAUOhIZErYAJLsAJVkZErcAJr8ZEb+xAAYBAwEXARoAIwBZAQMBKwAnAFkBAwE8ACMAWQEDAU0AAAFPAWMBZgAjASsBTwFNAAAAAgAxAAAAqgAqAAAANAAnADUASgA3AE0AOABQADkAUwA7AFYAPABZAEAAYwBBAG4AQgB5AEcAgQBKAIgATACTAE0ArQBOALgATwDDAFIA1ABUANsAVQDeAFYA8ABXAP0ATQEDAGwBDQBuARcAdAEaAHABHAByASEAcwErAGEBLQBjATIAZAE8AGUBPgBnAUMAaAFNAGoBTwBsAVkAbgFjAHQBZgBwAWgAcgFtAHMBegB4AD0AAADNAA//AJ8ADgcAPgcAPwcAPwcAQAcAQAcAQQcAQgcAQwcARAcARQcARgcARgEBAAD+AD4HAEAHAEcB+AAe/wAFAAoHAD4HAD8HAD8HAEAHAEAHAEEHAEIHAEMHAEQHAEUAAAkJQgcASFAHAElQBwBIUAcASv8ACwASBwA+BwA/BwA/BwBABwBABwBBBwBCBwBDBwBEBwBFAAAAAAAAAAcASgAACUIHAEgQ/wACAAoHAD4HAD8HAD8HAEAHAEAHAEEHAEIHAEMHAEQHAEUAAAABAEsAAAACAEw=</byteCode>
+                </class>
+            </byteCode>
+        </config>
+        <pd:inputBindings>
+            <javaCodeActivityInput>
+                <FileDownloadPath>
+                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/FileUploadPath"/>
+                </FileDownloadPath>
+                <creativeName>
+                    <xsl:value-of select="$DecodeCreativeName-1/javaCodeActivityOutput/outCreativeName"/>
+                </creativeName>
+            </javaCodeActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Read File">
+        <pd:type>com.tibco.plugin.file.FileReadActivity</pd:type>
+        <pd:resourceType>ae.activities.FileReadActivity</pd:resourceType>
+        <pd:x>477</pd:x>
+        <pd:y>232</pd:y>
+        <config>
+            <encoding>binary</encoding>
+        </config>
+        <pd:inputBindings>
+            <ns2:ReadActivityInputClass>
+                <fileName>
+                    <xsl:value-of select="concat($_globalVariables/ns:GlobalVariables/FileUploadPath, &quot;/&quot;,$DecodeCreativeName-1/javaCodeActivityOutput/outCreativeName,&quot;.zip&quot;)"/>
+                </fileName>
+            </ns2:ReadActivityInputClass>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="RemoveZip File">
+        <pd:type>com.tibco.plugin.file.FileRemoveActivity</pd:type>
+        <pd:resourceType>ae.activities.FileRemoveActivity</pd:resourceType>
+        <pd:x>1065</pd:x>
+        <pd:y>196</pd:y>
+        <config/>
+        <pd:inputBindings>
+            <ns2:RemoveActivityInputClass>
+                <fileName>
+                    <xsl:value-of select="concat($_globalVariables/ns:GlobalVariables/FileUploadPath, &quot;/&quot;,$DecodeCreativeName-1/javaCodeActivityOutput/outCreativeName,&quot;.zip&quot;)"/>
+                </fileName>
+            </ns2:RemoveActivityInputClass>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Send-HTTP-Response-4-1">
+        <pd:type>com.tibco.plugin.http.HTTPResponseActivity</pd:type>
+        <pd:resourceType>httppalette.httpWebResponse</pd:resourceType>
+        <pd:x>841</pd:x>
+        <pd:y>264</pd:y>
+        <config>
+            <closeConnection>true</closeConnection>
+            <eventSource>HTTP Receiver</eventSource>
+            <Headers>
+                <xsd:element name="root">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="Access-Control-Allow-Origin" type="xsd:string"/>
+                            <xsd:element name="StatusLine" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="Content-Type" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="Set-Cookie" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="Pragma" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="Location" type="xsd:string" minOccurs="0"/>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+            </Headers>
+        </config>
+        <pd:inputBindings>
+            <ResponseActivityInput>
+                <binaryContent>
+                    <xsl:value-of select="$Read-File/ns2:ReadActivityOutputBinaryClass/fileContent/binaryContent"/>
+                </binaryContent>
+                <Headers>
+                    <Access-Control-Allow-Origin>
+                        <xsl:value-of select="&quot;*&quot;"/>
+                    </Access-Control-Allow-Origin>
+                    <Content-Type>
+                        <xsl:value-of select="&quot;application/x-zip-compressed; charset=utf-8&quot;"/>
+                    </Content-Type>
+                </Headers>
+            </ResponseActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="DecodeCreativeName">
+        <pd:type>com.tibco.plugin.java.JavaActivity</pd:type>
+        <pd:resourceType>ae.javapalette.javaActivity</pd:resourceType>
+        <pd:x>263</pd:x>
+        <pd:y>392</pd:y>
+        <config>
+            <fileName>DownloadCreativeDecodeCreativeName</fileName>
+            <packageName>DownloadCreative</packageName>
+            <fullsource>package DownloadCreative;
+import java.util.*;
+import java.io.*;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
+public class DownloadCreativeDecodeCreativeName{
+/****** START SET/GET METHOD, DO NOT MODIFY *****/
+	protected String inCreativeName = "";
+	protected String outCreativeName = "";
+	public String getinCreativeName() {
+		return inCreativeName;
+	}
+	public void setinCreativeName(String val) {
+		inCreativeName = val;
+	}
+	public String getoutCreativeName() {
+		return outCreativeName;
+	}
+	public void setoutCreativeName(String val) {
+		outCreativeName = val;
+	}
+/****** END SET/GET METHOD, DO NOT MODIFY *****/
+	public DownloadCreativeDecodeCreativeName() {
+	}
+	public void invoke() throws Exception {
+/* Available Variables: DO NOT MODIFY
+	In  : String inCreativeName
+	Out : String outCreativeName
+* Available Variables: DO NOT MODIFY *****/
+	//outCreativeName = new String(inCreativeName.getBytes("ISO8859-1"),"UTF-8");
+	//String s1 = URLEncoder.encode(inCreativeName,"UTF-8");
+	
+	//outCreativeName =URLDecoder.decode(s1,"UTF-8");
+	outCreativeName =URLDecoder.decode(inCreativeName,"UTF-8");
+
+}
+}
+</fullsource>
+            <inputData>
+                <row>
+                    <fieldName>inCreativeName</fieldName>
+                    <fieldType>string</fieldType>
+                    <fieldRequired>optional</fieldRequired>
+                </row>
+            </inputData>
+            <outputData>
+                <row>
+                    <fieldName>outCreativeName</fieldName>
+                    <fieldType>string</fieldType>
+                    <fieldRequired>optional</fieldRequired>
+                </row>
+            </outputData>
+            <byteCode>
+                <class>
+                    <name>DownloadCreativeDecodeCreativeName</name>
+                    <byteCode>yv66vgAAADQAKAkABwAbCQAHABwKAAgAHQgAHggAHwoAIAAhBwAiBwAjAQAOaW5DcmVhdGl2ZU5hbWUBABJMamF2YS9sYW5nL1N0cmluZzsBAA9vdXRDcmVhdGl2ZU5hbWUBABFnZXRpbkNyZWF0aXZlTmFtZQEAFCgpTGphdmEvbGFuZy9TdHJpbmc7AQAEQ29kZQEAD0xpbmVOdW1iZXJUYWJsZQEAEXNldGluQ3JlYXRpdmVOYW1lAQAVKExqYXZhL2xhbmcvU3RyaW5nOylWAQASZ2V0b3V0Q3JlYXRpdmVOYW1lAQASc2V0b3V0Q3JlYXRpdmVOYW1lAQAGPGluaXQ+AQADKClWAQAGaW52b2tlAQAKRXhjZXB0aW9ucwcAJAEAClNvdXJjZUZpbGUBACdEb3dubG9hZENyZWF0aXZlRGVjb2RlQ3JlYXRpdmVOYW1lLmphdmEMAAkACgwACwAKDAAUABUBAAABAAVVVEYtOAcAJQwAJgAnAQAzRG93bmxvYWRDcmVhdGl2ZS9Eb3dubG9hZENyZWF0aXZlRGVjb2RlQ3JlYXRpdmVOYW1lAQAQamF2YS9sYW5nL09iamVjdAEAE2phdmEvbGFuZy9FeGNlcHRpb24BABNqYXZhL25ldC9VUkxEZWNvZGVyAQAGZGVjb2RlAQA4KExqYXZhL2xhbmcvU3RyaW5nO0xqYXZhL2xhbmcvU3RyaW5nOylMamF2YS9sYW5nL1N0cmluZzsAIQAHAAgAAAACAAQACQAKAAAABAALAAoAAAAGAAEADAANAAEADgAAAB0AAQABAAAABSq0AAGwAAAAAQAPAAAABgABAAAACwABABAAEQABAA4AAAAiAAIAAgAAAAYqK7UAAbEAAAABAA8AAAAKAAIAAAAOAAUADwABABIADQABAA4AAAAdAAEAAQAAAAUqtAACsAAAAAEADwAAAAYAAQAAABEAAQATABEAAQAOAAAAIgACAAIAAAAGKiu1AAKxAAAAAQAPAAAACgACAAAAFAAFABUAAQAUABUAAQAOAAAANQACAAEAAAARKrcAAyoSBLUAASoSBLUAArEAAAABAA8AAAASAAQAAAAXAAQACAAKAAkAEAAYAAEAFgAVAAIADgAAACoAAwABAAAADioqtAABEgW4AAa1AAKxAAAAAQAPAAAACgACAAAAIgANACQAFwAAAAQAAQAYAAEAGQAAAAIAGg==</byteCode>
+                </class>
+            </byteCode>
+        </config>
+        <pd:inputBindings>
+            <javaCodeActivityInput>
+                <xsl:if test="$HTTP-Receiver/ProcessStarterOutput/parameters/imagePara">
+                    <inCreativeName>
+                        <xsl:value-of select="$HTTP-Receiver/ProcessStarterOutput/parameters/imagePara"/>
+                    </inCreativeName>
+                </xsl:if>
+            </javaCodeActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="DecodeCreativeName-1">
+        <pd:type>com.tibco.plugin.java.JavaActivity</pd:type>
+        <pd:resourceType>ae.javapalette.javaActivity</pd:resourceType>
+        <pd:x>251</pd:x>
+        <pd:y>252</pd:y>
+        <config>
+            <fileName>DownloadCreativeDecodeCreativeName1</fileName>
+            <packageName>DownloadCreative</packageName>
+            <fullsource>package DownloadCreative;
+import java.util.*;
+import java.io.*;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
+public class DownloadCreativeDecodeCreativeName1{
+/****** START SET/GET METHOD, DO NOT MODIFY *****/
+	protected String inCreativeName = "";
+	protected String outCreativeName = "";
+	public String getinCreativeName() {
+		return inCreativeName;
+	}
+	public void setinCreativeName(String val) {
+		inCreativeName = val;
+	}
+	public String getoutCreativeName() {
+		return outCreativeName;
+	}
+	public void setoutCreativeName(String val) {
+		outCreativeName = val;
+	}
+/****** END SET/GET METHOD, DO NOT MODIFY *****/
+	public DownloadCreativeDecodeCreativeName1() {
+	}
+	public void invoke() throws Exception {
+/* Available Variables: DO NOT MODIFY
+	In  : String inCreativeName
+	Out : String outCreativeName
+* Available Variables: DO NOT MODIFY *****/
+	//outCreativeName = new String(inCreativeName.getBytes("ISO8859-1"),"UTF-8");
+	//String s1 = URLEncoder.encode(inCreativeName,"UTF-8");
+	
+	//outCreativeName =URLDecoder.decode(s1,"UTF-8");
+	outCreativeName =URLDecoder.decode(inCreativeName,"UTF-8").trim();
+
+}
+}
+</fullsource>
+            <inputData>
+                <row>
+                    <fieldName>inCreativeName</fieldName>
+                    <fieldType>string</fieldType>
+                    <fieldRequired>optional</fieldRequired>
+                </row>
+            </inputData>
+            <outputData>
+                <row>
+                    <fieldName>outCreativeName</fieldName>
+                    <fieldType>string</fieldType>
+                    <fieldRequired>optional</fieldRequired>
+                </row>
+            </outputData>
+            <byteCode>
+                <class>
+                    <name>DownloadCreativeDecodeCreativeName1</name>
+                    <byteCode>yv66vgAAADQALQkACAAcCQAIAB0KAAkAHggAHwgAIAoAIQAiCgAjACQHACUHACYBAA5pbkNyZWF0aXZlTmFtZQEAEkxqYXZhL2xhbmcvU3RyaW5nOwEAD291dENyZWF0aXZlTmFtZQEAEWdldGluQ3JlYXRpdmVOYW1lAQAUKClMamF2YS9sYW5nL1N0cmluZzsBAARDb2RlAQAPTGluZU51bWJlclRhYmxlAQARc2V0aW5DcmVhdGl2ZU5hbWUBABUoTGphdmEvbGFuZy9TdHJpbmc7KVYBABJnZXRvdXRDcmVhdGl2ZU5hbWUBABJzZXRvdXRDcmVhdGl2ZU5hbWUBAAY8aW5pdD4BAAMoKVYBAAZpbnZva2UBAApFeGNlcHRpb25zBwAnAQAKU291cmNlRmlsZQEAKERvd25sb2FkQ3JlYXRpdmVEZWNvZGVDcmVhdGl2ZU5hbWUxLmphdmEMAAoACwwADAALDAAVABYBAAABAAVVVEYtOAcAKAwAKQAqBwArDAAsAA4BADREb3dubG9hZENyZWF0aXZlL0Rvd25sb2FkQ3JlYXRpdmVEZWNvZGVDcmVhdGl2ZU5hbWUxAQAQamF2YS9sYW5nL09iamVjdAEAE2phdmEvbGFuZy9FeGNlcHRpb24BABNqYXZhL25ldC9VUkxEZWNvZGVyAQAGZGVjb2RlAQA4KExqYXZhL2xhbmcvU3RyaW5nO0xqYXZhL2xhbmcvU3RyaW5nOylMamF2YS9sYW5nL1N0cmluZzsBABBqYXZhL2xhbmcvU3RyaW5nAQAEdHJpbQAhAAgACQAAAAIABAAKAAsAAAAEAAwACwAAAAYAAQANAA4AAQAPAAAAHQABAAEAAAAFKrQAAbAAAAABABAAAAAGAAEAAAALAAEAEQASAAEADwAAACIAAgACAAAABiortQABsQAAAAEAEAAAAAoAAgAAAA4ABQAPAAEAEwAOAAEADwAAAB0AAQABAAAABSq0AAKwAAAAAQAQAAAABgABAAAAEQABABQAEgABAA8AAAAiAAIAAgAAAAYqK7UAArEAAAABABAAAAAKAAIAAAAUAAUAFQABABUAFgABAA8AAAA1AAIAAQAAABEqtwADKhIEtQABKhIEtQACsQAAAAEAEAAAABIABAAAABcABAAIAAoACQAQABgAAQAXABYAAgAPAAAALQADAAEAAAARKiq0AAESBbgABrYAB7UAArEAAAABABAAAAAKAAIAAAAiABAAJAAYAAAABAABABkAAQAaAAAAAgAb</byteCode>
+                </class>
+            </byteCode>
+        </config>
+        <pd:inputBindings>
+            <javaCodeActivityInput>
+                <inCreativeName>
+                    <xsl:value-of select="$HTTP-Receiver/ProcessStarterOutput/parameters/imagePara"/>
+                </inCreativeName>
+            </javaCodeActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Read-File-1-1">
+        <pd:type>com.tibco.plugin.file.FileReadActivity</pd:type>
+        <pd:resourceType>ae.activities.FileReadActivity</pd:resourceType>
+        <pd:x>486</pd:x>
+        <pd:y>562</pd:y>
+        <config>
+            <encoding>binary</encoding>
+        </config>
+        <pd:inputBindings>
+            <ns2:ReadActivityInputClass>
+                <fileName>
+                    <xsl:value-of select="$HTTP-Receiver/ProcessStarterOutput/parameters/filePathName"/>
+                </fileName>
+            </ns2:ReadActivityInputClass>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Send-HTTP-Response-4-2">
+        <pd:type>com.tibco.plugin.http.HTTPResponseActivity</pd:type>
+        <pd:resourceType>httppalette.httpWebResponse</pd:resourceType>
+        <pd:x>848</pd:x>
+        <pd:y>460</pd:y>
+        <config>
+            <closeConnection>true</closeConnection>
+            <eventSource>HTTP Receiver</eventSource>
+            <Headers>
+                <xsd:element name="root">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="Access-Control-Allow-Origin" type="xsd:string"/>
+                            <xsd:element name="StatusLine" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="Content-Type" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="Set-Cookie" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="Pragma" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="Location" type="xsd:string" minOccurs="0"/>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+            </Headers>
+        </config>
+        <pd:inputBindings>
+            <ResponseActivityInput>
+                <Headers>
+                    <Access-Control-Allow-Origin>
+                        <xsl:value-of select="&quot;*&quot;"/>
+                    </Access-Control-Allow-Origin>
+                </Headers>
+                <ns1:mimeEnvelopeElement xmlns:ns1="http://xmlns.tibco.com/encodings/mime">
+                    <mimePart>
+                        <mimeHeaders>
+                            <content-disposition>
+                                <xsl:value-of select="concat(&quot;attachment;filename=&quot;,$Read-File-1-1/ns2:ReadActivityOutputBinaryClass/fileInfo/fileName)"/>
+                            </content-disposition>
+                            <content-type>
+                                <xsl:value-of select="&quot;application/vnd.ms-excel&quot;"/>
+                            </content-type>
+                        </mimeHeaders>
+                        <binaryContent>
+                            <xsl:value-of select="$Read-File-1-1/ns2:ReadActivityOutputBinaryClass/fileContent/binaryContent"/>
+                        </binaryContent>
+                    </mimePart>
+                </ns1:mimeEnvelopeElement>
+            </ResponseActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="RemoveZip-File-1">
+        <pd:type>com.tibco.plugin.file.FileRemoveActivity</pd:type>
+        <pd:resourceType>ae.activities.FileRemoveActivity</pd:resourceType>
+        <pd:x>1078</pd:x>
+        <pd:y>506</pd:y>
+        <config/>
+        <pd:inputBindings>
+            <ns2:RemoveActivityInputClass>
+                <fileName>
+                    <xsl:value-of select="$Read-File-1-1/ns2:ReadActivityOutputBinaryClass/fileInfo/fileName"/>
+                </fileName>
+            </ns2:RemoveActivityInputClass>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Send-HTTP-Response-4-1-1">
+        <pd:type>com.tibco.plugin.http.HTTPResponseActivity</pd:type>
+        <pd:resourceType>httppalette.httpWebResponse</pd:resourceType>
+        <pd:x>847</pd:x>
+        <pd:y>567</pd:y>
+        <config>
+            <closeConnection>true</closeConnection>
+            <eventSource>HTTP Receiver</eventSource>
+            <Headers>
+                <xsd:element name="root">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="Access-Control-Allow-Origin" type="xsd:string"/>
+                            <xsd:element name="StatusLine" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="Content-Type" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="Set-Cookie" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="Pragma" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="Location" type="xsd:string" minOccurs="0"/>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+            </Headers>
+        </config>
+        <pd:inputBindings>
+            <ResponseActivityInput>
+                <binaryContent>
+                    <xsl:value-of select="$Read-File-1-1/ns2:ReadActivityOutputBinaryClass/fileContent/binaryContent"/>
+                </binaryContent>
+                <Headers>
+                    <Access-Control-Allow-Origin>
+                        <xsl:value-of select="&quot;*&quot;"/>
+                    </Access-Control-Allow-Origin>
+                    <Content-Type>
+                        <xsl:value-of select="&quot;application/vnd.ms-excel&quot;"/>
+                    </Content-Type>
+                </Headers>
+            </ResponseActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="JMS Queue Sender">
+        <pd:type>com.tibco.plugin.jms.JMSQueueSendActivity</pd:type>
+        <pd:resourceType>ae.activities.JMSQueueSendActivity</pd:resourceType>
+        <pd:x>1563</pd:x>
+        <pd:y>230</pd:y>
+        <config>
+            <PermittedMessageType>XML Text</PermittedMessageType>
+            <SessionAttributes>
+                <transacted>false</transacted>
+                <acknowledgeMode>1</acknowledgeMode>
+                <maxSessions>1</maxSessions>
+                <destination>mona_ui_error</destination>
+            </SessionAttributes>
+            <ConfigurableHeaders>
+                <JMSDeliveryMode>PERSISTENT</JMSDeliveryMode>
+                <JMSExpiration>0</JMSExpiration>
+                <JMSPriority>4</JMSPriority>
+            </ConfigurableHeaders>
+            <ConnectionReference>/share_resources/JMS Connection.sharedjmscon</ConnectionReference>
+            <InDataxsdString>
+                <xsd:element name="root">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="subject" type="xsd:string"/>
+                            <xsd:element name="messageBody" type="xsd:string"/>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+            </InDataxsdString>
+        </config>
+        <pd:inputBindings>
+            <ns6:ActivityInput>
+                <Body>
+                    <root>
+                        <subject>
+                            <xsl:value-of select="&quot;MC UI Download Error&quot;"/>
+                        </subject>
+                        <messageBody>
+                            <xsl:value-of select="concat(&quot;MsgCode:&quot;,$_error/ns3:ErrorReport/MsgCode,&quot;,Msg:&quot;,$_error/ns3:ErrorReport/Msg,&quot;StackTrace:&quot;,$_error/ns3:ErrorReport/StackTrace)"/>
+                        </messageBody>
+                    </root>
+                </Body>
+            </ns6:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="EncodeFileName">
+        <pd:type>com.tibco.plugin.java.JavaActivity</pd:type>
+        <pd:resourceType>ae.javapalette.javaActivity</pd:resourceType>
+        <pd:x>696</pd:x>
+        <pd:y>40</pd:y>
+        <config>
+            <fileName>DownloadCreativeEncodeFileName</fileName>
+            <packageName>DownloadCreative</packageName>
+            <fullsource>package DownloadCreative;
+import java.util.*;
+import java.io.*;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
+public class DownloadCreativeEncodeFileName{
+/****** START SET/GET METHOD, DO NOT MODIFY *****/
+	protected String inCreativeName = "";
+	protected String outCreativeName = "";
+	public String getinCreativeName() {
+		return inCreativeName;
+	}
+	public void setinCreativeName(String val) {
+		inCreativeName = val;
+	}
+	public String getoutCreativeName() {
+		return outCreativeName;
+	}
+	public void setoutCreativeName(String val) {
+		outCreativeName = val;
+	}
+/****** END SET/GET METHOD, DO NOT MODIFY *****/
+	public DownloadCreativeEncodeFileName() {
+	}
+	public void invoke() throws Exception {
+/* Available Variables: DO NOT MODIFY
+	In  : String inCreativeName
+	Out : String outCreativeName
+* Available Variables: DO NOT MODIFY *****/
+	outCreativeName = new String(inCreativeName.getBytes("ISO8859-1"),"UTF-8");
+	//outCreativeName = new String(inCreativeName.getBytes("UTF-8"),"ISO8859-1");
+	//String s1 = URLEncoder.encode(inCreativeName,"UTF-8");
+	
+	//outCreativeName =URLDecoder.decode(s1,"UTF-8");
+	//outCreativeName =URLDecoder.decode(inCreativeName,"UTF-8").trim();
+
+}
+}
+</fullsource>
+            <inputData>
+                <row>
+                    <fieldName>inCreativeName</fieldName>
+                    <fieldType>string</fieldType>
+                    <fieldRequired>optional</fieldRequired>
+                </row>
+            </inputData>
+            <outputData>
+                <row>
+                    <fieldName>outCreativeName</fieldName>
+                    <fieldType>string</fieldType>
+                    <fieldRequired>optional</fieldRequired>
+                </row>
+            </outputData>
+            <byteCode>
+                <class>
+                    <name>DownloadCreativeEncodeFileName</name>
+                    <byteCode>yv66vgAAADQALQkACgAeCQAKAB8KAAsAIAgAIQcAIggAIwoABQAkCAAlCgAFACYHACcHACgBAA5pbkNyZWF0aXZlTmFtZQEAEkxqYXZhL2xhbmcvU3RyaW5nOwEAD291dENyZWF0aXZlTmFtZQEAEWdldGluQ3JlYXRpdmVOYW1lAQAUKClMamF2YS9sYW5nL1N0cmluZzsBAARDb2RlAQAPTGluZU51bWJlclRhYmxlAQARc2V0aW5DcmVhdGl2ZU5hbWUBABUoTGphdmEvbGFuZy9TdHJpbmc7KVYBABJnZXRvdXRDcmVhdGl2ZU5hbWUBABJzZXRvdXRDcmVhdGl2ZU5hbWUBAAY8aW5pdD4BAAMoKVYBAAZpbnZva2UBAApFeGNlcHRpb25zBwApAQAKU291cmNlRmlsZQEAI0Rvd25sb2FkQ3JlYXRpdmVFbmNvZGVGaWxlTmFtZS5qYXZhDAAMAA0MAA4ADQwAFwAYAQAAAQAQamF2YS9sYW5nL1N0cmluZwEACUlTTzg4NTktMQwAKgArAQAFVVRGLTgMABcALAEAL0Rvd25sb2FkQ3JlYXRpdmUvRG93bmxvYWRDcmVhdGl2ZUVuY29kZUZpbGVOYW1lAQAQamF2YS9sYW5nL09iamVjdAEAE2phdmEvbGFuZy9FeGNlcHRpb24BAAhnZXRCeXRlcwEAFihMamF2YS9sYW5nL1N0cmluZzspW0IBABcoW0JMamF2YS9sYW5nL1N0cmluZzspVgAhAAoACwAAAAIABAAMAA0AAAAEAA4ADQAAAAYAAQAPABAAAQARAAAAHQABAAEAAAAFKrQAAbAAAAABABIAAAAGAAEAAAALAAEAEwAUAAEAEQAAACIAAgACAAAABiortQABsQAAAAEAEgAAAAoAAgAAAA4ABQAPAAEAFQAQAAEAEQAAAB0AAQABAAAABSq0AAKwAAAAAQASAAAABgABAAAAEQABABYAFAABABEAAAAiAAIAAgAAAAYqK7UAArEAAAABABIAAAAKAAIAAAAUAAUAFQABABcAGAABABEAAAA1AAIAAQAAABEqtwADKhIEtQABKhIEtQACsQAAAAEAEgAAABIABAAAABcABAAIAAoACQAQABgAAQAZABgAAgARAAAAMwAFAAEAAAAXKrsABVkqtAABEga2AAcSCLcACbUAArEAAAABABIAAAAKAAIAAAAeABYAJQAaAAAABAABABsAAQAcAAAAAgAd</byteCode>
+                </class>
+            </byteCode>
+        </config>
+        <pd:inputBindings>
+            <javaCodeActivityInput>
+                <inCreativeName>
+                    <xsl:value-of select="$Read-File/ns2:ReadActivityOutputBinaryClass/fileInfo/fileName"/>
+                </inCreativeName>
+            </javaCodeActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>Catch</pd:from>
+        <pd:to>ErrorHandlerJson</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>ErrorHandlerJson</pd:from>
+        <pd:to>Send-HTTP-Response-1</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Send-HTTP-Response-1</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Send-HTTP-Response-2</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Read-File-1</pd:from>
+        <pd:to>Send-HTTP-Response-2</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>HTTP Receiver</pd:from>
+        <pd:to>DecodeCreativeName</pd:to>
+        <pd:xpathDescription>PreviewCreative</pd:xpathDescription>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>xpath</pd:conditionType>
+        <pd:xpath>contains($HTTP-Receiver/ProcessStarterOutput/RequestURI, "offersMg/downloadCreativePreview")</pd:xpath>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>HTTP Receiver</pd:from>
+        <pd:to>DecodeCreativeName-1</pd:to>
+        <pd:xpathDescription>DownloadCreative</pd:xpathDescription>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>xpath</pd:conditionType>
+        <pd:xpath>contains($HTTP-Receiver/ProcessStarterOutput/RequestURI, "offersMg/downloadCreativZip")</pd:xpath>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Read File</pd:from>
+        <pd:to>EncodeFileName</pd:to>
+        <pd:xpathDescription>OtherBrowser</pd:xpathDescription>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>otherwise</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>RemoveZip File</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Send-HTTP-Response-4</pd:from>
+        <pd:to>RemoveZip File</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Read File</pd:from>
+        <pd:to>Send-HTTP-Response-4-1</pd:to>
+        <pd:xpathDescription>ChromeBrowser</pd:xpathDescription>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>xpath</pd:conditionType>
+        <pd:xpath>contains(lower-case($HTTP-Receiver/ProcessStarterOutput/Headers/user-agent), "chrome")</pd:xpath>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Send-HTTP-Response-4-1</pd:from>
+        <pd:to>RemoveZip File</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>DecodeCreativeName</pd:from>
+        <pd:to>Read-File-1</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>DecodeCreativeName-1</pd:from>
+        <pd:to>ZIPFile</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>ZIPFile</pd:from>
+        <pd:to>Read File</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Read-File-1-1</pd:from>
+        <pd:to>Send-HTTP-Response-4-2</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>otherwise</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Read-File-1-1</pd:from>
+        <pd:to>Send-HTTP-Response-4-1-1</pd:to>
+        <pd:xpathDescription>chromBrowser</pd:xpathDescription>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>xpath</pd:conditionType>
+        <pd:xpath>contains(lower-case($HTTP-Receiver/ProcessStarterOutput/Headers/user-agent), "chrome")</pd:xpath>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Send-HTTP-Response-4-2</pd:from>
+        <pd:to>RemoveZip-File-1</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Send-HTTP-Response-4-1-1</pd:from>
+        <pd:to>RemoveZip-File-1</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>RemoveZip-File-1</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>HTTP Receiver</pd:from>
+        <pd:to>Read-File-1-1</pd:to>
+        <pd:xpathDescription>DownloadExcel</pd:xpathDescription>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>xpath</pd:conditionType>
+        <pd:xpath>contains($HTTP-Receiver/ProcessStarterOutput/RequestURI, "/reports/downloadReporExcel")</pd:xpath>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>EncodeFileName</pd:from>
+        <pd:to>Send-HTTP-Response-4</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>

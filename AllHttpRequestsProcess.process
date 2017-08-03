@@ -498,13 +498,6 @@ if (contains($HTTP-Receiver/ProcessStarterOutput/RequestURI, "/accountMg/loginOu
         <pd:xpath>$isLogin/isLogin="true"</pd:xpath>
     </pd:transition>
     <pd:transition>
-        <pd:from>ErrorHandlerJson</pd:from>
-        <pd:to>JMS Queue Sender</pd:to>
-        <pd:lineType>Default</pd:lineType>
-        <pd:lineColor>-16777216</pd:lineColor>
-        <pd:conditionType>always</pd:conditionType>
-    </pd:transition>
-    <pd:transition>
         <pd:from>JMS Queue Sender</pd:from>
         <pd:to>End</pd:to>
         <pd:lineType>Default</pd:lineType>
